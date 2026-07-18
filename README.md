@@ -23,4 +23,33 @@ Many laundry shops still use manual methods to record customer information, laun
 3. Mark Ephraim Nicor
 4. Marvin Oclarino
 5. Hazil Enoc
+   
+# Record Types
+ Customers
+Laundry Orders
+Pickup Schedules
+Delivery Records
 
+# The Features(CRUD)
+
+**Customer Management**
+Add customer
+View customer
+Update customer
+Delete customer
+
+**Laundry Order Management**
+Create order
+Update order status
+View order history
+Delete order
+
+**Pickup Scheduling**
+Schedule pickup
+Edit pickup date
+Cancel pickup
+
+**Delivery Management**
+Assign delivery
+Track status
+Confirm delivery
