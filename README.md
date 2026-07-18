@@ -83,3 +83,23 @@ The main objective of the study is to develop a Laundry Pickup and Delivery Mana
 1. Assign delivery
 2. Track status
 3. Confirm delivery
+
+# Target Users of the System
+
+The proposed Laundry Pickup and Delivery Management System will serve the following users:
+
+## 1. Customers
+
+Customers can schedule laundry pickups and deliveries, monitor the status of their orders, and view their transaction history.
+
+## 2. Administrator
+
+The administrator is responsible for managing customer records, laundry orders, pickup schedules, deliveries, and payment transactions.
+
+## 3. Delivery Personnel
+
+The delivery personnel handles the pickup and delivery of laundry items and updates the status of each transaction.
+
+## 4. Laundry Staff
+
+The laundry staff manages the washing, drying, folding, and packaging processes and updates the progress of customers' orders.
