@@ -23,12 +23,42 @@ Many laundry shops still use manual methods to record customer information, laun
 3. Mark Ephraim Nicor
 4. Marvin Oclarino
 5. Hazil Enoc
+
+# Objectives 
+
+## General Objective
+
+The main objective of the study is to develop a Laundry Pickup and Delivery Management System that will automate and improve the management of laundry services, including customer records, order processing, pickup scheduling, and delivery tracking.
+
+## Specific Objectives
+
+1. To create a system that allows customers to schedule laundry pickup and delivery services conveniently.
+
+2. To develop a centralized database for managing customer information and laundry orders.
+
+3. To provide real-time updates on the status of laundry orders, from pickup to delivery.
+
+4. To enable administrators to efficiently manage pickup schedules, deliveries, and payment transactions.
+
+5. To evaluate the effectiveness of the system in terms of usability, reliability, efficiency, security, and user satisfaction.
+
    
 # Record Types
 1. Customers
 2. Laundry Orders
 3. Pickup Schedules
 4. Delivery Records
+
+# Crud Table
+
+| Module / Record Type | Create                       | Read                          | Update                      | Delete                  |
+| -------------------- | ---------------------------- | ----------------------------- | --------------------------- | ----------------------- |
+| **Customers**        | Add new customer information | View customer details         | Edit customer information   | Remove customer records |
+| **Laundry Orders**   | Create a new laundry order   | View order details and status | Update order status         | Cancel or delete orders |
+| **Pickup Schedules** | Schedule a pickup request    | View pickup schedules         | Modify pickup date and time | Cancel pickup requests  |
+| **Delivery Records** | Create delivery records      | View delivery status          | Update delivery information | Delete delivery records |
+| **Payments**         | Add payment transactions     | View payment history          | Update payment status       | Delete payment records  |
+
 
 # The Features(CRUD)
 
