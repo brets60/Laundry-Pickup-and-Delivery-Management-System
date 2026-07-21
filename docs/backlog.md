@@ -11,3 +11,11 @@ This backlog contains the CRUD user stories for the Laundry Pickup and Delivery 
 3. Pickup
 4. Delivery
 5. Payment
+   
+## Team Assignment
+
+Customer - John Michael D. Bretaña
+Orders - Tristan Dave M. Plaza
+Pickup - Mark Ephraim Nicor
+Delivery - Marvin Oclarino
+Payment - Hazil Enoc
