@@ -191,3 +191,53 @@ As a staff member, I want to cancel a pickup schedule so that unnecessary schedu
 
 **Acceptance Criteria**
 - Confirmation message appears before deletion.
+
+
+---
+
+# Delivery Module
+
+**Owner:** Member 4
+
+## User Stories
+
+### 1. Create Delivery
+As a staff member, I want to schedule a delivery so that cleaned laundry can be returned to customers.
+
+**Acceptance Criteria**
+- Delivery address is required.
+- Delivery schedule is saved.
+
+---
+
+### 2. Read Delivery List
+As a staff member, I want to view all deliveries so that I can track them.
+
+**Acceptance Criteria**
+- Displays all deliveries.
+- Shows delivery status.
+
+---
+
+### 3. Read Delivery Details
+As a staff member, I want to view delivery details so that I can verify delivery information.
+
+**Acceptance Criteria**
+- Displays complete delivery information.
+
+---
+
+### 4. Update Delivery
+As a staff member, I want to update delivery status so that customers receive accurate information.
+
+**Acceptance Criteria**
+- Status can be changed.
+- Changes are saved successfully.
+
+---
+
+### 5. Delete Delivery
+As a staff member, I want to remove cancelled deliveries so that the records remain organized.
+
+**Acceptance Criteria**
+- Confirmation message appears before deletion.
