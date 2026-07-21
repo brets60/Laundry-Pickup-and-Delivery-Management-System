@@ -191,3 +191,54 @@ As a staff member, I want to cancel a pickup schedule so that unnecessary schedu
 
 **Acceptance Criteria**
 - Confirmation message appears before deletion.
+
+
+---
+
+# Payment Module
+
+**Owner:** Member 5
+
+## User Stories
+
+### 1. Create Payment
+As a staff member, I want to record customer payments so that transactions are documented.
+
+**Acceptance Criteria**
+- Payment amount is required.
+- Payment method is selected.
+- Payment is saved successfully.
+
+---
+
+### 2. Read Payment List
+As a staff member, I want to view all payments so that I can monitor transactions.
+
+**Acceptance Criteria**
+- Displays all payment records.
+- Shows a message if there are no payments.
+
+---
+
+### 3. Read Payment Details
+As a staff member, I want to view payment details so that I can verify transactions.
+
+**Acceptance Criteria**
+- Displays complete payment information.
+
+---
+
+### 4. Update Payment
+As a staff member, I want to update payment records so that errors can be corrected.
+
+**Acceptance Criteria**
+- Payment information can be edited.
+- Changes are saved successfully.
+
+---
+
+### 5. Delete Payment
+As a staff member, I want to remove incorrect payment records so that the payment history remains accurate.
+
+**Acceptance Criteria**
+- Confirmation message appears before deletion.
