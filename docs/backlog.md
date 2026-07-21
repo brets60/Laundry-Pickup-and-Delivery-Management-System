@@ -141,3 +141,53 @@ As a staff member, I want to remove cancelled orders so that the order list rema
 - Confirmation message appears.
 - Order is deleted after confirmation.
 
+
+---
+
+# Pickup Module
+
+**Owner:** Member 3
+
+## User Stories
+
+### 1. Create Pickup
+As a staff member, I want to schedule a pickup so that laundry can be collected from the customer.
+
+**Acceptance Criteria**
+- Pickup date is required.
+- Customer must be selected.
+- Pickup schedule is saved successfully.
+
+---
+
+### 2. Read Pickup List
+As a staff member, I want to view all pickup schedules so that I can manage daily pickups.
+
+**Acceptance Criteria**
+- Displays all pickup schedules.
+- Shows a message if there are no schedules.
+
+---
+
+### 3. Read Pickup Details
+As a staff member, I want to view pickup details so that I can verify the schedule.
+
+**Acceptance Criteria**
+- Displays complete pickup information.
+
+---
+
+### 4. Update Pickup
+As a staff member, I want to update pickup schedules so that changes are reflected.
+
+**Acceptance Criteria**
+- Pickup schedule can be edited.
+- Updated information is saved.
+
+---
+
+### 5. Delete Pickup
+As a staff member, I want to cancel a pickup schedule so that unnecessary schedules are removed.
+
+**Acceptance Criteria**
+- Confirmation message appears before deletion.
