@@ -2,15 +2,17 @@
 
 ## Product Backlog
 
-This backlog contains the CRUD user stories for the Laundry Pickup and Delivery Management System.
+This document contains the CRUD user stories for the Laundry Pickup and Delivery Management System.
 
-## Record Types
+## Team Members
 
-1. Customer
-2. Orders
-3. Pickup
-4. Delivery
-5. Payment
+| Module | Owner |
+|---------|-------|
+| Customer | Bretaña |
+| Orders | Plaza |
+| Pickup | Nicor |
+| Delivery | Oclarino |
+| Payment | Enoc |
    
 ## Team Assignment
 
