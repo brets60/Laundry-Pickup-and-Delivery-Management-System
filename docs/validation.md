@@ -316,3 +316,71 @@ Request:
   "payment_amount": 100,
   "payment_method": "Cash"
 }
+
+## Week 5 CRUD Route Test Evidence
+
+### DELETE Route Tests
+
+#### DELETE /customers/1
+
+Expected Result: `200`
+
+Result: Passed. The Customer DELETE endpoint returned a successful response.
+
+#### DELETE /laundry-orders/1
+
+Expected Result: `200`
+
+Result: Passed. The Laundry Order DELETE endpoint returned a successful response.
+
+#### DELETE /pickup-schedules/1
+
+Expected Result: `200`
+
+Result: Passed. The Pickup DELETE endpoint returned a successful response.
+
+#### DELETE /delivery-records/1
+
+Expected Result: `200`
+
+Result: Passed. The Delivery DELETE endpoint returned a successful response.
+
+#### DELETE /payments/1
+
+Expected Result: `200`
+
+Result: Passed. The Payment DELETE endpoint returned a successful response.
+
+---
+
+### GET Route Tests
+
+The GET list and GET details endpoints were tested for all five modules.
+
+| Module | GET List | GET Details |
+|---|---|---|
+| Customer | Passed | Passed |
+| Laundry Orders | Passed | Passed |
+| Pickup | Passed | Passed |
+| Delivery | Passed | Passed |
+| Payment | Passed | Passed |
+
+Expected Result: `200`
+
+Result: Passed. All GET list and detail endpoints returned successful responses.
+
+---
+
+### Invalid GET ID Tests
+
+The following nonexistent record IDs were tested using ID `99999`:
+
+- `GET /customers/99999`
+- `GET /laundry-orders/99999`
+- `GET /pickup-schedules/99999`
+- `GET /delivery-records/99999`
+- `GET /payments/99999`
+
+Expected Result: `404`
+
+Result: Passed. All five endpoints correctly returned a not-found response for nonexistent records.
