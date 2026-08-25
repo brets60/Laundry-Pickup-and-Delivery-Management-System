@@ -482,3 +482,71 @@ Each route must be tested with a real request.
 | DELETE | `/payments/1`         | 200             |
 
 The handout's required end result is a `routes.md` containing the **full routing table plus one example request/response per route**.
+---
+
+## Actual Week 3 Test Evidence
+
+All 25 routes were tested using `Invoke-RestMethod` against the running Flask application at `http://127.0.0.1:5000`.
+
+### Customer Module
+
+| Method | Route | Actual Status | Result |
+|---|---|---:|---|
+| POST | `/customers` | 201 | PASS |
+| GET | `/customers` | 200 | PASS |
+| GET | `/customers/1` | 200 | PASS |
+| PUT | `/customers/1` | 200 | PASS |
+| DELETE | `/customers/1` | 200 | PASS |
+
+### Laundry Orders Module
+
+| Method | Route | Actual Status | Result |
+|---|---|---:|---|
+| POST | `/laundry-orders` | 201 | PASS |
+| GET | `/laundry-orders` | 200 | PASS |
+| GET | `/laundry-orders/1` | 200 | PASS |
+| PUT | `/laundry-orders/1` | 200 | PASS |
+| DELETE | `/laundry-orders/1` | 200 | PASS |
+
+### Pickup Schedules Module
+
+| Method | Route | Actual Status | Result |
+|---|---|---:|---|
+| POST | `/pickup-schedules` | 201 | PASS |
+| GET | `/pickup-schedules` | 200 | PASS |
+| GET | `/pickup-schedules/1` | 200 | PASS |
+| PUT | `/pickup-schedules/1` | 200 | PASS |
+| DELETE | `/pickup-schedules/1` | 200 | PASS |
+
+### Delivery Records Module
+
+| Method | Route | Actual Status | Result |
+|---|---|---:|---|
+| POST | `/delivery-records` | 201 | PASS |
+| GET | `/delivery-records` | 200 | PASS |
+| GET | `/delivery-records/1` | 200 | PASS |
+| PUT | `/delivery-records/1` | 200 | PASS |
+| DELETE | `/delivery-records/1` | 200 | PASS |
+
+### Payment Module
+
+| Method | Route | Actual Status | Result |
+|---|---|---:|---|
+| POST | `/payments` | 201 | PASS |
+| GET | `/payments` | 200 | PASS |
+| GET | `/payments/1` | 200 | PASS |
+| PUT | `/payments/1` | 200 | PASS |
+| DELETE | `/payments/1` | 200 | PASS |
+
+### Testing Summary
+
+**Total routes tested:** 25
+
+**Passed:** 25
+
+**Failed:** 0
+
+**Expected successful status codes:** 201 for create operations and 200 for read, update, and delete operations.
+
+All 25 implemented routes returned the expected successful HTTP status codes during testing.
+
