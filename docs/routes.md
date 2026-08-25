@@ -559,3 +559,9 @@ The application was also tested with an invalid method/path combination.
 ```http
 DELETE /customers
 
+**Response**
+
+405 Method Not Allowed
+
+The server correctly rejected DELETE /customers because the /customers route does not support the DELETE method.
+
