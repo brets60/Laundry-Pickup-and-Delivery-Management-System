@@ -304,6 +304,18 @@ def createPickupSchedule():
         },
         "error": None
     }), 201
+
+@app.route("/pickup-schedules/<id>", methods=["DELETE"])
+def deletePickupSchedule(id):
+    return jsonify({
+        "status": 200,
+        "data": {
+            "message": "deletePickupSchedule stub",
+            "id": id
+        },
+        "error": None
+    }), 200
+
 @app.route("/delivery-records", methods=["POST"])
 def createDeliveryRecord():
     data = request.get_json(silent=True) or {}
