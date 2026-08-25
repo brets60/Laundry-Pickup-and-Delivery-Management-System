@@ -550,3 +550,12 @@ All 25 routes were tested using `Invoke-RestMethod` against the running Flask ap
 
 All 25 implemented routes returned the expected successful HTTP status codes during testing.
 
+### Wrong-Method Test
+
+The application was also tested with an invalid method/path combination.
+
+**Request**
+
+```http
+DELETE /customers
+
