@@ -1,7 +1,42 @@
 from flask import Flask, jsonify, request
+import sqlite3
 
 app = Flask(__name__)
 
+DATABASE = "laundry.db"
+
+
+# =========================
+# DATABASE
+# =========================
+
+def get_db_connection():
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def init_database():
+    conn = get_db_connection()
+
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS customers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            contact_number TEXT NOT NULL
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+
+
+init_database()
+
+
+# =========================
+# CUSTOMERS
+# =========================
 
 @app.route("/customers", methods=["POST"])
 def createCustomer():
@@ -26,33 +61,84 @@ def createCustomer():
             }
         }), 422
 
+    conn = get_db_connection()
+
+    cursor = conn.execute(
+        """
+        INSERT INTO customers (name, contact_number)
+        VALUES (?, ?)
+        """,
+        (
+            data["name"],
+            data["contact_number"]
+        )
+    )
+
+    customer_id = cursor.lastrowid
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 201,
         "data": {
-            "message": "createCustomer stub"
+            "id": customer_id,
+            "name": data["name"],
+            "contact_number": data["contact_number"]
         },
         "error": None
     }), 201
 
+
 @app.route("/customers", methods=["GET"])
 def listCustomers():
+    conn = get_db_connection()
+
+    customers = conn.execute(
+        """
+        SELECT id, name, contact_number
+        FROM customers
+        ORDER BY id
+        """
+    ).fetchall()
+
+    conn.close()
+
     return jsonify({
         "status": 200,
-        "data": {
-            "message": "listCustomers stub"
-        },
+        "data": [dict(customer) for customer in customers],
         "error": None
     }), 200
 
 
 @app.route("/customers/<id>", methods=["GET"])
 def showCustomer(id):
+    conn = get_db_connection()
+
+    customer = conn.execute(
+        """
+        SELECT id, name, contact_number
+        FROM customers
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    conn.close()
+
+    if customer is None:
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Customer not found."
+            }
+        }), 404
+
     return jsonify({
         "status": 200,
-        "data": {
-            "message": "showCustomer stub",
-            "id": id
-        },
+        "data": dict(customer),
         "error": None
     }), 200
 
@@ -80,11 +166,51 @@ def updateCustomer(id):
             }
         }), 422
 
+    conn = get_db_connection()
+
+    customer = conn.execute(
+        """
+        SELECT id
+        FROM customers
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if customer is None:
+        conn.close()
+
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Customer not found."
+            }
+        }), 404
+
+    conn.execute(
+        """
+        UPDATE customers
+        SET name = ?, contact_number = ?
+        WHERE id = ?
+        """,
+        (
+            data["name"],
+            data["contact_number"],
+            id
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 200,
         "data": {
-            "message": "updateCustomer stub",
-            "id": id
+            "id": int(id),
+            "name": data["name"],
+            "contact_number": data["contact_number"]
         },
         "error": None
     }), 200
@@ -92,14 +218,53 @@ def updateCustomer(id):
 
 @app.route("/customers/<id>", methods=["DELETE"])
 def deleteCustomer(id):
+    conn = get_db_connection()
+
+    customer = conn.execute(
+        """
+        SELECT id
+        FROM customers
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if customer is None:
+        conn.close()
+
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Customer not found."
+            }
+        }), 404
+
+    conn.execute(
+        """
+        DELETE FROM customers
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 200,
         "data": {
-            "message": "deleteCustomer stub",
-            "id": id
+            "message": "Customer deleted successfully.",
+            "id": int(id)
         },
         "error": None
     }), 200
+
+
+# =========================
+# LAUNDRY ORDERS
+# =========================
 
 @app.route("/laundry-orders", methods=["POST"])
 def createLaundryOrder():
@@ -117,7 +282,9 @@ def createLaundryOrder():
             laundry_weight = float(data["laundry_weight"])
 
             if laundry_weight <= 0:
-                errors["laundry_weight"] = "Laundry weight must be greater than zero."
+                errors["laundry_weight"] = (
+                    "Laundry weight must be greater than zero."
+                )
 
         except (TypeError, ValueError):
             errors["laundry_weight"] = "Laundry weight must be a number."
@@ -181,7 +348,9 @@ def updateLaundryOrder(id):
             laundry_weight = float(data["laundry_weight"])
 
             if laundry_weight <= 0:
-                errors["laundry_weight"] = "Laundry weight must be greater than zero."
+                errors["laundry_weight"] = (
+                    "Laundry weight must be greater than zero."
+                )
 
         except (TypeError, ValueError):
             errors["laundry_weight"] = "Laundry weight must be a number."
@@ -217,6 +386,11 @@ def deleteLaundryOrder(id):
         },
         "error": None
     }), 200
+
+
+# =========================
+# PICKUP SCHEDULES
+# =========================
 
 @app.route("/pickup-schedules", methods=["GET"])
 def listPickupSchedules():
@@ -305,6 +479,7 @@ def createPickupSchedule():
         "error": None
     }), 201
 
+
 @app.route("/pickup-schedules/<id>", methods=["DELETE"])
 def deletePickupSchedule(id):
     return jsonify({
@@ -315,6 +490,11 @@ def deletePickupSchedule(id):
         },
         "error": None
     }), 200
+
+
+# =========================
+# DELIVERY RECORDS
+# =========================
 
 @app.route("/delivery-records", methods=["POST"])
 def createDeliveryRecord():
@@ -415,6 +595,11 @@ def deleteDeliveryRecord(id):
         "error": None
     }), 200
 
+
+# =========================
+# PAYMENTS
+# =========================
+
 @app.route("/payments", methods=["POST"])
 def createPayment():
     data = request.get_json(silent=True) or {}
@@ -428,7 +613,9 @@ def createPayment():
             payment_amount = float(data["payment_amount"])
 
             if payment_amount <= 0:
-                errors["payment_amount"] = "Payment amount must be greater than zero."
+                errors["payment_amount"] = (
+                    "Payment amount must be greater than zero."
+                )
 
         except (TypeError, ValueError):
             errors["payment_amount"] = "Payment amount must be a number."
@@ -454,6 +641,7 @@ def createPayment():
         },
         "error": None
     }), 201
+
 
 @app.route("/payments", methods=["GET"])
 def listPayments():
@@ -491,7 +679,9 @@ def updatePayment(id):
             payment_amount = float(data["payment_amount"])
 
             if payment_amount <= 0:
-                errors["payment_amount"] = "Payment amount must be greater than zero."
+                errors["payment_amount"] = (
+                    "Payment amount must be greater than zero."
+                )
 
         except (TypeError, ValueError):
             errors["payment_amount"] = "Payment amount must be a number."
@@ -530,6 +720,11 @@ def deletePayment(id):
         },
         "error": None
     }), 200
+
+
+# =========================
+# RUN APPLICATION
+# =========================
 
 if __name__ == "__main__":
     app.run(debug=True)
