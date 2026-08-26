@@ -51,6 +51,14 @@ def init_database():
         )
     """)
 
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS payments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            payment_amount REAL NOT NULL,
+            payment_method TEXT NOT NULL
+        )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -1030,10 +1038,30 @@ def createPayment():
             }
         }), 422
 
+    conn = get_db_connection()
+
+    cursor = conn.execute(
+        """
+        INSERT INTO payments (payment_amount, payment_method)
+        VALUES (?, ?)
+        """,
+        (
+            payment_amount,
+            data["payment_method"]
+        )
+    )
+
+    payment_id = cursor.lastrowid
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 201,
         "data": {
-            "message": "createPayment stub"
+            "id": payment_id,
+            "payment_amount": payment_amount,
+            "payment_method": data["payment_method"]
         },
         "error": None
     }), 201
@@ -1041,23 +1069,53 @@ def createPayment():
 
 @app.route("/payments", methods=["GET"])
 def listPayments():
+    conn = get_db_connection()
+
+    payments = conn.execute(
+        """
+        SELECT id, payment_amount, payment_method
+        FROM payments
+        ORDER BY id
+        """
+    ).fetchall()
+
+    conn.close()
+
     return jsonify({
         "status": 200,
-        "data": {
-            "message": "listPayments stub"
-        },
+        "data": [dict(payment) for payment in payments],
         "error": None
     }), 200
 
 
 @app.route("/payments/<id>", methods=["GET"])
 def showPayment(id):
+    conn = get_db_connection()
+
+    payment = conn.execute(
+        """
+        SELECT id, payment_amount, payment_method
+        FROM payments
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    conn.close()
+
+    if payment is None:
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Payment not found."
+            }
+        }), 404
+
     return jsonify({
         "status": 200,
-        "data": {
-            "message": "showPayment stub",
-            "id": id
-        },
+        "data": dict(payment),
         "error": None
     }), 200
 
@@ -1096,11 +1154,51 @@ def updatePayment(id):
             }
         }), 422
 
+    conn = get_db_connection()
+
+    payment = conn.execute(
+        """
+        SELECT id
+        FROM payments
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if payment is None:
+        conn.close()
+
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Payment not found."
+            }
+        }), 404
+
+    conn.execute(
+        """
+        UPDATE payments
+        SET payment_amount = ?, payment_method = ?
+        WHERE id = ?
+        """,
+        (
+            payment_amount,
+            data["payment_method"],
+            id
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 200,
         "data": {
-            "message": "updatePayment stub",
-            "id": id
+            "id": int(id),
+            "payment_amount": payment_amount,
+            "payment_method": data["payment_method"]
         },
         "error": None
     }), 200
@@ -1108,11 +1206,45 @@ def updatePayment(id):
 
 @app.route("/payments/<id>", methods=["DELETE"])
 def deletePayment(id):
+    conn = get_db_connection()
+
+    payment = conn.execute(
+        """
+        SELECT id
+        FROM payments
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if payment is None:
+        conn.close()
+
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Payment not found."
+            }
+        }), 404
+
+    conn.execute(
+        """
+        DELETE FROM payments
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 200,
         "data": {
-            "message": "deletePayment stub",
-            "id": id
+            "message": "Payment deleted successfully.",
+            "id": int(id)
         },
         "error": None
     }), 200
