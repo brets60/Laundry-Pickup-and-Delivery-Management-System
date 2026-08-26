@@ -43,6 +43,14 @@ def init_database():
         )
     """)
 
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS delivery_records (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            customer TEXT NOT NULL,
+            delivery_date TEXT NOT NULL
+        )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -783,10 +791,30 @@ def createDeliveryRecord():
             }
         }), 422
 
+    conn = get_db_connection()
+
+    cursor = conn.execute(
+        """
+        INSERT INTO delivery_records (customer, delivery_date)
+        VALUES (?, ?)
+        """,
+        (
+            data["customer"],
+            data["delivery_date"]
+        )
+    )
+
+    delivery_id = cursor.lastrowid
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 201,
         "data": {
-            "message": "createDeliveryRecord stub"
+            "id": delivery_id,
+            "customer": data["customer"],
+            "delivery_date": data["delivery_date"]
         },
         "error": None
     }), 201
@@ -794,23 +822,53 @@ def createDeliveryRecord():
 
 @app.route("/delivery-records", methods=["GET"])
 def listDeliveryRecords():
+    conn = get_db_connection()
+
+    records = conn.execute(
+        """
+        SELECT id, customer, delivery_date
+        FROM delivery_records
+        ORDER BY id
+        """
+    ).fetchall()
+
+    conn.close()
+
     return jsonify({
         "status": 200,
-        "data": {
-            "message": "listDeliveryRecords stub"
-        },
+        "data": [dict(record) for record in records],
         "error": None
     }), 200
 
 
 @app.route("/delivery-records/<id>", methods=["GET"])
 def showDeliveryRecord(id):
+    conn = get_db_connection()
+
+    record = conn.execute(
+        """
+        SELECT id, customer, delivery_date
+        FROM delivery_records
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    conn.close()
+
+    if record is None:
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Delivery record not found."
+            }
+        }), 404
+
     return jsonify({
         "status": 200,
-        "data": {
-            "message": "showDeliveryRecord stub",
-            "id": id
-        },
+        "data": dict(record),
         "error": None
     }), 200
 
@@ -838,11 +896,51 @@ def updateDeliveryRecord(id):
             }
         }), 422
 
+    conn = get_db_connection()
+
+    record = conn.execute(
+        """
+        SELECT id
+        FROM delivery_records
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if record is None:
+        conn.close()
+
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Delivery record not found."
+            }
+        }), 404
+
+    conn.execute(
+        """
+        UPDATE delivery_records
+        SET customer = ?, delivery_date = ?
+        WHERE id = ?
+        """,
+        (
+            data["customer"],
+            data["delivery_date"],
+            id
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 200,
         "data": {
-            "message": "updateDeliveryRecord stub",
-            "id": id
+            "id": int(id),
+            "customer": data["customer"],
+            "delivery_date": data["delivery_date"]
         },
         "error": None
     }), 200
@@ -850,11 +948,45 @@ def updateDeliveryRecord(id):
 
 @app.route("/delivery-records/<id>", methods=["DELETE"])
 def deleteDeliveryRecord(id):
+    conn = get_db_connection()
+
+    record = conn.execute(
+        """
+        SELECT id
+        FROM delivery_records
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if record is None:
+        conn.close()
+
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Delivery record not found."
+            }
+        }), 404
+
+    conn.execute(
+        """
+        DELETE FROM delivery_records
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 200,
         "data": {
-            "message": "deleteDeliveryRecord stub",
-            "id": id
+            "message": "Delivery record deleted successfully.",
+            "id": int(id)
         },
         "error": None
     }), 200
