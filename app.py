@@ -35,6 +35,14 @@ def init_database():
         )
     """)
 
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS pickup_schedules (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            customer TEXT NOT NULL,
+            pickup_date TEXT NOT NULL
+        )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -526,23 +534,53 @@ def deleteLaundryOrder(id):
 
 @app.route("/pickup-schedules", methods=["GET"])
 def listPickupSchedules():
+    conn = get_db_connection()
+
+    schedules = conn.execute(
+        """
+        SELECT id, customer, pickup_date
+        FROM pickup_schedules
+        ORDER BY id
+        """
+    ).fetchall()
+
+    conn.close()
+
     return jsonify({
         "status": 200,
-        "data": {
-            "message": "listPickupSchedules stub"
-        },
+        "data": [dict(schedule) for schedule in schedules],
         "error": None
     }), 200
 
 
 @app.route("/pickup-schedules/<id>", methods=["GET"])
 def showPickupSchedule(id):
+    conn = get_db_connection()
+
+    schedule = conn.execute(
+        """
+        SELECT id, customer, pickup_date
+        FROM pickup_schedules
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    conn.close()
+
+    if schedule is None:
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Pickup schedule not found."
+            }
+        }), 404
+
     return jsonify({
         "status": 200,
-        "data": {
-            "message": "showPickupSchedule stub",
-            "id": id
-        },
+        "data": dict(schedule),
         "error": None
     }), 200
 
@@ -570,11 +608,51 @@ def updatePickupSchedule(id):
             }
         }), 422
 
+    conn = get_db_connection()
+
+    schedule = conn.execute(
+        """
+        SELECT id
+        FROM pickup_schedules
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if schedule is None:
+        conn.close()
+
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Pickup schedule not found."
+            }
+        }), 404
+
+    conn.execute(
+        """
+        UPDATE pickup_schedules
+        SET customer = ?, pickup_date = ?
+        WHERE id = ?
+        """,
+        (
+            data["customer"],
+            data["pickup_date"],
+            id
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 200,
         "data": {
-            "message": "updatePickupSchedule stub",
-            "id": id
+            "id": int(id),
+            "customer": data["customer"],
+            "pickup_date": data["pickup_date"]
         },
         "error": None
     }), 200
@@ -603,10 +681,30 @@ def createPickupSchedule():
             }
         }), 422
 
+    conn = get_db_connection()
+
+    cursor = conn.execute(
+        """
+        INSERT INTO pickup_schedules (customer, pickup_date)
+        VALUES (?, ?)
+        """,
+        (
+            data["customer"],
+            data["pickup_date"]
+        )
+    )
+
+    schedule_id = cursor.lastrowid
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 201,
         "data": {
-            "message": "createPickupSchedule stub"
+            "id": schedule_id,
+            "customer": data["customer"],
+            "pickup_date": data["pickup_date"]
         },
         "error": None
     }), 201
@@ -614,11 +712,45 @@ def createPickupSchedule():
 
 @app.route("/pickup-schedules/<id>", methods=["DELETE"])
 def deletePickupSchedule(id):
+    conn = get_db_connection()
+
+    schedule = conn.execute(
+        """
+        SELECT id
+        FROM pickup_schedules
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if schedule is None:
+        conn.close()
+
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Pickup schedule not found."
+            }
+        }), 404
+
+    conn.execute(
+        """
+        DELETE FROM pickup_schedules
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 200,
         "data": {
-            "message": "deletePickupSchedule stub",
-            "id": id
+            "message": "Pickup schedule deleted successfully.",
+            "id": int(id)
         },
         "error": None
     }), 200
