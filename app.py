@@ -27,6 +27,14 @@ def init_database():
         )
     """)
 
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS laundry_orders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            customer TEXT NOT NULL,
+            laundry_weight REAL NOT NULL
+        )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -300,10 +308,30 @@ def createLaundryOrder():
             }
         }), 422
 
+    conn = get_db_connection()
+
+    cursor = conn.execute(
+        """
+        INSERT INTO laundry_orders (customer, laundry_weight)
+        VALUES (?, ?)
+        """,
+        (
+            data["customer"],
+            laundry_weight
+        )
+    )
+
+    order_id = cursor.lastrowid
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 201,
         "data": {
-            "message": "createLaundryOrder stub"
+            "id": order_id,
+            "customer": data["customer"],
+            "laundry_weight": laundry_weight
         },
         "error": None
     }), 201
@@ -311,23 +339,53 @@ def createLaundryOrder():
 
 @app.route("/laundry-orders", methods=["GET"])
 def listLaundryOrders():
+    conn = get_db_connection()
+
+    orders = conn.execute(
+        """
+        SELECT id, customer, laundry_weight
+        FROM laundry_orders
+        ORDER BY id
+        """
+    ).fetchall()
+
+    conn.close()
+
     return jsonify({
         "status": 200,
-        "data": {
-            "message": "listLaundryOrders stub"
-        },
+        "data": [dict(order) for order in orders],
         "error": None
     }), 200
 
 
 @app.route("/laundry-orders/<id>", methods=["GET"])
 def showLaundryOrder(id):
+    conn = get_db_connection()
+
+    order = conn.execute(
+        """
+        SELECT id, customer, laundry_weight
+        FROM laundry_orders
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    conn.close()
+
+    if order is None:
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Laundry order not found."
+            }
+        }), 404
+
     return jsonify({
         "status": 200,
-        "data": {
-            "message": "showLaundryOrder stub",
-            "id": id
-        },
+        "data": dict(order),
         "error": None
     }), 200
 
@@ -366,11 +424,51 @@ def updateLaundryOrder(id):
             }
         }), 422
 
+    conn = get_db_connection()
+
+    order = conn.execute(
+        """
+        SELECT id
+        FROM laundry_orders
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if order is None:
+        conn.close()
+
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Laundry order not found."
+            }
+        }), 404
+
+    conn.execute(
+        """
+        UPDATE laundry_orders
+        SET customer = ?, laundry_weight = ?
+        WHERE id = ?
+        """,
+        (
+            data["customer"],
+            laundry_weight,
+            id
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 200,
         "data": {
-            "message": "updateLaundryOrder stub",
-            "id": id
+            "id": int(id),
+            "customer": data["customer"],
+            "laundry_weight": laundry_weight
         },
         "error": None
     }), 200
@@ -378,11 +476,45 @@ def updateLaundryOrder(id):
 
 @app.route("/laundry-orders/<id>", methods=["DELETE"])
 def deleteLaundryOrder(id):
+    conn = get_db_connection()
+
+    order = conn.execute(
+        """
+        SELECT id
+        FROM laundry_orders
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if order is None:
+        conn.close()
+
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Laundry order not found."
+            }
+        }), 404
+
+    conn.execute(
+        """
+        DELETE FROM laundry_orders
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": 200,
         "data": {
-            "message": "deleteLaundryOrder stub",
-            "id": id
+            "message": "Laundry order deleted successfully.",
+            "id": int(id)
         },
         "error": None
     }), 200
