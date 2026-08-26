@@ -384,3 +384,21 @@ The following nonexistent record IDs were tested using ID `99999`:
 Expected Result: `404`
 
 Result: Passed. All five endpoints correctly returned a not-found response for nonexistent records.
+
+## Week 5 Wrong HTTP Method Test Evidence
+
+### DELETE /customers
+
+Request:
+
+```http
+DELETE /customers
+
+DELETE /laundry-orders
+
+DELETE /pickup-schedules
+
+DELETE /delivery-records
+
+DELETE /payments
+
