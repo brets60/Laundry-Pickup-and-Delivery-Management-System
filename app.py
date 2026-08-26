@@ -65,6 +65,22 @@ def init_database():
 
 init_database()
 
+def customer_exists(customer_name):
+    conn = get_db_connection()
+
+    customer = conn.execute(
+        """
+        SELECT id
+        FROM customers
+        WHERE name = ?
+        """,
+        (customer_name,)
+    ).fetchone()
+
+    conn.close()
+
+    return customer is not None
+
 
 # =========================
 # CUSTOMERS
@@ -331,6 +347,16 @@ def createLaundryOrder():
                 "fields": errors
             }
         }), 422
+
+    if not customer_exists(data["customer"]):
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Customer not found."
+            }
+        }), 404
 
     conn = get_db_connection()
 
@@ -697,6 +723,16 @@ def createPickupSchedule():
             }
         }), 422
 
+    if not customer_exists(data["customer"]):
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Customer not found."
+            }
+        }), 404
+
     conn = get_db_connection()
 
     cursor = conn.execute(
@@ -798,6 +834,16 @@ def createDeliveryRecord():
                 "fields": errors
             }
         }), 422
+
+    if not customer_exists(data["customer"]):
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Customer not found."
+            }
+        }), 404
 
     conn = get_db_connection()
 
