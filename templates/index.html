@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Laundry Pickup & Delivery Management System</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 230px;
+            height: 100vh;
+            background: #1f2937;
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        .sidebar a:hover {
+            background: #374151;
+        }
+
+        .content {
+            margin-left: 230px;
+            padding: 30px;
+        }
+
+        .header {
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #555;
+        }
+
+        .number {
+            font-size: 32px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <h2>Laundry System</h2>
+
+    <a href="/">Dashboard</a>
+    <a href="/customers">Customers</a>
+    <a href="/laundry-orders">Laundry Orders</a>
+    <a href="/pickup-schedules">Pickup Schedules</a>
+    <a href="/delivery-records">Delivery Records</a>
+    <a href="/payments">Payments</a>
+
+</div>
+
+<div class="content">
+
+    <div class="header">
+        <h1>Dashboard</h1>
+        <p>Laundry Pickup & Delivery Management System</p>
+    </div>
+
+   <div class="cards">
+
+    <div class="card">
+        <h3>Customers</h3>
+        <div class="number">{{ customer_count }}</div>
+    </div>
+
+    <div class="card">
+        <h3>Laundry Orders</h3>
+        <div class="number">{{ order_count }}</div>
+    </div>
+
+    <div class="card">
+        <h3>Pickups</h3>
+        <div class="number">{{ pickup_count }}</div>
+    </div>
+
+    <div class="card">
+        <h3>Deliveries</h3>
+        <div class="number">{{ delivery_count }}</div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Laundry Orders - Laundry System</title>
+    <style>
+        body { margin:0; font-family:Arial,sans-serif; background:#f4f6f8; }
+        .sidebar { position:fixed; left:0; top:0; width:230px; height:100vh;
+            background:#1f2937; color:white; padding:20px; box-sizing:border-box; }
+        .sidebar a { display:block; color:white; text-decoration:none; padding:12px;
+            margin-bottom:8px; border-radius:6px; }
+        .sidebar a:hover { background:#374151; }
+        .content { margin-left:230px; padding:30px; }
+        .table-container { background:white; padding:20px; border-radius:10px;
+            box-shadow:0 2px 8px rgba(0,0,0,.08); }
+        table { width:100%; border-collapse:collapse; }
+        th,td { padding:14px; text-align:left; border-bottom:1px solid #ddd; }
+        th { background:#f1f3f5; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Laundry System</h2>
+    <a href="/">Dashboard</a>
+    <a href="/customers-page">Customers</a>
+    <a href="/laundry-orders-page">Laundry Orders</a>
+    <a href="/pickup-schedules-page">Pickup Schedules</a>
+    <a href="/delivery-records-page">Delivery Records</a>
+    <a href="/payments-page">Payments</a>
+</div>
+
+<div class="content">
+    <h1>Laundry Orders</h1>
+    <p>Registered laundry orders.</p>
+
+    <div class="table-container" style="margin-bottom: 20px;">
+
+    <h2>Add Laundry Order</h2>
+
+    <form method="POST" action="/laundry-orders-page">
+
+        <label>Customer</label><br>
+        <input
+            type="text"
+            name="customer"
+            placeholder="Customer name"
+            required
+            style="width:100%; padding:10px; margin:5px 0 12px; box-sizing:border-box;"
+        >
+
+        <label>Laundry Weight (kg)</label><br>
+        <input
+            type="number"
+            name="laundry_weight"
+            step="0.01"
+            min="0.01"
+            placeholder="Enter weight"
+            required
+            style="width:100%; padding:10px; margin:5px 0 12px; box-sizing:border-box;"
+        >
+
+        <button type="submit" style="padding:10px 18px;">
+            Add Order
+        </button>
+
+    </form>
+
+</div>
+
+    <div class="table-container">
+        {% if orders %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Laundry Weight</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order["id"] }}</td>
+                    <td>{{ order["customer"] }}</td>
+                    <td>{{ order["laundry_weight"] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No laundry orders found.</p>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>

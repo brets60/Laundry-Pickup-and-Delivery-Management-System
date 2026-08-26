@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, redirect
 import sqlite3
 
 app = Flask(__name__)
@@ -18,6 +18,7 @@ def get_db_connection():
 
 def init_database():
     conn = get_db_connection()
+
 
     conn.execute("""
         CREATE TABLE IF NOT EXISTS customers (
@@ -64,6 +65,238 @@ def init_database():
 
 
 init_database()
+
+@app.route("/")
+def dashboard():
+    conn = get_db_connection()
+
+    customer_count = conn.execute(
+        "SELECT COUNT(*) AS count FROM customers"
+    ).fetchone()["count"]
+
+    order_count = conn.execute(
+        "SELECT COUNT(*) AS count FROM laundry_orders"
+    ).fetchone()["count"]
+
+    pickup_count = conn.execute(
+        "SELECT COUNT(*) AS count FROM pickup_schedules"
+    ).fetchone()["count"]
+
+    delivery_count = conn.execute(
+        "SELECT COUNT(*) AS count FROM delivery_records"
+    ).fetchone()["count"]
+
+    conn.close()
+
+    return render_template(
+        "index.html",
+        customer_count=customer_count,
+        order_count=order_count,
+        pickup_count=pickup_count,
+        delivery_count=delivery_count
+    )
+@app.route("/customers-page", methods=["GET", "POST"])
+def customers_page():
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        contact_number = request.form.get("contact_number", "").strip()
+
+        if name and contact_number:
+            conn = get_db_connection()
+
+            conn.execute(
+                """
+                INSERT INTO customers (name, contact_number)
+                VALUES (?, ?)
+                """,
+                (name, contact_number)
+            )
+
+            conn.commit()
+            conn.close()
+
+            return redirect("/customers-page")
+
+    conn = get_db_connection()
+
+    customers = conn.execute(
+        """
+        SELECT id, name, contact_number
+        FROM customers
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "customers.html",
+        customers=customers
+    )
+
+@app.route("/laundry-orders-page", methods=["GET", "POST"])
+def laundry_orders_page():
+
+    if request.method == "POST":
+        customer = request.form.get("customer", "").strip()
+        laundry_weight = request.form.get("laundry_weight", "").strip()
+
+        if customer and laundry_weight:
+            conn = get_db_connection()
+
+            conn.execute(
+                """
+                INSERT INTO laundry_orders (customer, laundry_weight)
+                VALUES (?, ?)
+                """,
+                (customer, float(laundry_weight))
+            )
+
+            conn.commit()
+            conn.close()
+
+            return redirect("/laundry-orders-page")
+
+    conn = get_db_connection()
+
+    orders = conn.execute(
+        """
+        SELECT id, customer, laundry_weight
+        FROM laundry_orders
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "laundry_orders.html",
+        orders=orders
+    )
+
+
+@app.route("/pickup-schedules-page", methods=["GET", "POST"])
+def pickup_schedules_page():
+
+    if request.method == "POST":
+        customer = request.form.get("customer", "").strip()
+        pickup_date = request.form.get("pickup_date", "").strip()
+
+        if customer and pickup_date:
+            conn = get_db_connection()
+
+            conn.execute(
+                """
+                INSERT INTO pickup_schedules (customer, pickup_date)
+                VALUES (?, ?)
+                """,
+                (customer, pickup_date)
+            )
+
+            conn.commit()
+            conn.close()
+
+            return redirect("/pickup-schedules-page")
+
+    conn = get_db_connection()
+
+    pickups = conn.execute(
+        """
+        SELECT id, customer, pickup_date
+        FROM pickup_schedules
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "pickup_schedules.html",
+        pickups=pickups
+    )
+
+
+@app.route("/delivery-records-page", methods=["GET", "POST"])
+def delivery_records_page():
+
+    if request.method == "POST":
+        customer = request.form.get("customer", "").strip()
+        delivery_date = request.form.get("delivery_date", "").strip()
+
+        if customer and delivery_date:
+            conn = get_db_connection()
+
+            conn.execute(
+                """
+                INSERT INTO delivery_records (customer, delivery_date)
+                VALUES (?, ?)
+                """,
+                (customer, delivery_date)
+            )
+
+            conn.commit()
+            conn.close()
+
+            return redirect("/delivery-records-page")
+
+    conn = get_db_connection()
+
+    deliveries = conn.execute(
+        """
+        SELECT id, customer, delivery_date
+        FROM delivery_records
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "delivery_records.html",
+        deliveries=deliveries
+    )
+
+
+@app.route("/payments-page", methods=["GET", "POST"])
+def payments_page():
+
+    if request.method == "POST":
+        payment_amount = request.form.get("payment_amount", "").strip()
+        payment_method = request.form.get("payment_method", "").strip()
+
+        if payment_amount and payment_method:
+            conn = get_db_connection()
+
+            conn.execute(
+                """
+                INSERT INTO payments (payment_amount, payment_method)
+                VALUES (?, ?)
+                """,
+                (float(payment_amount), payment_method)
+            )
+
+            conn.commit()
+            conn.close()
+
+            return redirect("/payments-page")
+
+    conn = get_db_connection()
+
+    payments = conn.execute(
+        """
+        SELECT id, payment_amount, payment_method
+        FROM payments
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "payments.html",
+        payments=payments
+    )
 
 def customer_exists(customer_name):
     conn = get_db_connection()

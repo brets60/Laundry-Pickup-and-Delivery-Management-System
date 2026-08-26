@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payments - Laundry System</title>
+    <style>
+        body { margin:0; font-family:Arial,sans-serif; background:#f4f6f8; }
+        .sidebar { position:fixed; left:0; top:0; width:230px; height:100vh;
+            background:#1f2937; color:white; padding:20px; box-sizing:border-box; }
+        .sidebar a { display:block; color:white; text-decoration:none; padding:12px;
+            margin-bottom:8px; border-radius:6px; }
+        .sidebar a:hover { background:#374151; }
+        .content { margin-left:230px; padding:30px; }
+        .table-container { background:white; padding:20px; border-radius:10px;
+            box-shadow:0 2px 8px rgba(0,0,0,.08); }
+        table { width:100%; border-collapse:collapse; }
+        th,td { padding:14px; text-align:left; border-bottom:1px solid #ddd; }
+        th { background:#f1f3f5; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Laundry System</h2>
+    <a href="/">Dashboard</a>
+    <a href="/customers-page">Customers</a>
+    <a href="/laundry-orders-page">Laundry Orders</a>
+    <a href="/pickup-schedules-page">Pickup Schedules</a>
+    <a href="/delivery-records-page">Delivery Records</a>
+    <a href="/payments-page">Payments</a>
+</div>
+
+<div class="content">
+    <h1>Payments</h1>
+    <p>Payment records.</p>
+
+    <div class="table-container" style="margin-bottom: 20px;">
+
+    <h2>Add Payment</h2>
+
+    <form method="POST" action="/payments-page">
+
+        <label>Payment Amount</label><br>
+        <input
+            type="number"
+            name="payment_amount"
+            step="0.01"
+            min="0.01"
+            placeholder="Enter payment amount"
+            required
+            style="width:100%; padding:10px; margin:5px 0 12px; box-sizing:border-box;"
+        >
+
+        <label>Payment Method</label><br>
+        <select
+            name="payment_method"
+            required
+            style="width:100%; padding:10px; margin:5px 0 12px; box-sizing:border-box;"
+        >
+            <option value="">Select payment method</option>
+            <option value="Cash">Cash</option>
+            <option value="GCash">GCash</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+        </select>
+
+        <button type="submit" style="padding:10px 18px;">
+            Add Payment
+        </button>
+
+    </form>
+
+</div>
+
+    <div class="table-container">
+        {% if payments %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Payment Amount</th>
+                    <th>Payment Method</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td>{{ payment["id"] }}</td>
+                    <td>{{ payment["payment_amount"] }}</td>
+                    <td>{{ payment["payment_method"] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No payment records found.</p>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>
