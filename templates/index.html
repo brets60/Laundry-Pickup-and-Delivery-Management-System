@@ -7,10 +7,15 @@
     <title>Laundry Pickup & Delivery Management System</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             background: #f4f6f8;
+            color: #1f2937;
         }
 
         .sidebar {
@@ -22,7 +27,6 @@
             background: #1f2937;
             color: white;
             padding: 20px;
-            box-sizing: border-box;
         }
 
         .sidebar h2 {
@@ -43,6 +47,16 @@
             background: #374151;
         }
 
+        .logout {
+            margin-top: 30px;
+            background: #dc2626;
+            text-align: center;
+        }
+
+        .logout:hover {
+            background: #b91c1c !important;
+        }
+
         .content {
             margin-left: 230px;
             padding: 30px;
@@ -54,12 +68,22 @@
 
         .header h1 {
             margin: 0;
+            font-size: 30px;
+        }
+
+        .header p {
+            color: #6b7280;
         }
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
+        }
+
+        .card-link {
+            text-decoration: none;
+            color: inherit;
         }
 
         .card {
@@ -67,6 +91,12 @@
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.12);
         }
 
         .card h3 {
@@ -77,6 +107,69 @@
         .number {
             font-size: 32px;
             font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            margin: 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .quick-section {
+            margin-top: 30px;
+        }
+
+        .quick-section h2 {
+            margin-bottom: 15px;
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .quick-links a {
+            background: white;
+            padding: 18px;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            color: #1f2937;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            font-weight: bold;
+        }
+
+        .quick-links a:hover {
+            background: #e5e7eb;
+        }
+
+        @media (max-width: 1000px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-links {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .cards,
+            .quick-links {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -88,11 +181,16 @@
     <h2>Laundry System</h2>
 
     <a href="/">Dashboard</a>
-    <a href="/customers">Customers</a>
-    <a href="/laundry-orders">Laundry Orders</a>
-    <a href="/pickup-schedules">Pickup Schedules</a>
-    <a href="/delivery-records">Delivery Records</a>
-    <a href="/payments">Payments</a>
+    <a href="/customers-page">Customers</a>
+    <a href="/laundry-orders-page">Laundry Orders</a>
+    <a href="/pickup-schedules-page">Pickup Schedules</a>
+    <a href="/delivery-records-page">Delivery Records</a>
+    <a href="/payments-page">Payments</a>
+
+    <a href="/logout" class="logout"
+       onclick="return confirm('Are you sure you want to logout?');">
+        Logout
+    </a>
 
 </div>
 
@@ -103,26 +201,71 @@
         <p>Laundry Pickup & Delivery Management System</p>
     </div>
 
-   <div class="cards">
+    <div class="cards">
 
-    <div class="card">
-        <h3>Customers</h3>
-        <div class="number">{{ customer_count }}</div>
+        <a href="/customers-page" class="card-link">
+            <div class="card">
+                <h3>Customers</h3>
+                <div class="number">{{ customer_count }}</div>
+                <p>Registered customers</p>
+            </div>
+        </a>
+
+        <a href="/laundry-orders-page" class="card-link">
+            <div class="card">
+                <h3>Laundry Orders</h3>
+                <div class="number">{{ order_count }}</div>
+                <p>Total laundry orders</p>
+            </div>
+        </a>
+
+        <a href="/pickup-schedules-page" class="card-link">
+            <div class="card">
+                <h3>Pickups</h3>
+                <div class="number">{{ pickup_count }}</div>
+                <p>Scheduled pickups</p>
+            </div>
+        </a>
+
+        <a href="/delivery-records-page" class="card-link">
+            <div class="card">
+                <h3>Deliveries</h3>
+                <div class="number">{{ delivery_count }}</div>
+                <p>Delivery records</p>
+            </div>
+        </a>
+
+        <a href="/payments-page" class="card-link">
+            <div class="card">
+                <h3>Payments</h3>
+                <div class="number">{{ payment_count }}</div>
+                <p>Recorded payments</p>
+            </div>
+        </a>
+
+        <div class="card">
+            <h3>Total Revenue</h3>
+            <div class="number">
+                ₱{{ "%.2f"|format(total_revenue) }}
+            </div>
+            <p>Total recorded payments</p>
+        </div>
+
     </div>
 
-    <div class="card">
-        <h3>Laundry Orders</h3>
-        <div class="number">{{ order_count }}</div>
-    </div>
+    <div class="quick-section">
 
-    <div class="card">
-        <h3>Pickups</h3>
-        <div class="number">{{ pickup_count }}</div>
-    </div>
+        <h2>Quick Access</h2>
 
-    <div class="card">
-        <h3>Deliveries</h3>
-        <div class="number">{{ delivery_count }}</div>
+        <div class="quick-links">
+
+            <a href="/customers-page">Customers</a>
+            <a href="/laundry-orders-page">Laundry Orders</a>
+            <a href="/pickup-schedules-page">Pickups</a>
+            <a href="/delivery-records-page">Deliveries</a>
+
+        </div>
+
     </div>
 
 </div>

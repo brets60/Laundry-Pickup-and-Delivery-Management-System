@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, request, render_template, redirect
+from flask import Flask, jsonify, request, render_template, redirect, session
 import sqlite3
 
 app = Flask(__name__)
+app.secret_key = "laundry-system-secret-key"
 
 DATABASE = "laundry.db"
 
@@ -60,31 +61,110 @@ def init_database():
         )
     """)
 
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    """)
+
+    existing_user = conn.execute(
+        "SELECT id FROM users WHERE username = ?",
+        ("admin",)
+    ).fetchone()
+
+    if existing_user is None:
+        conn.execute(
+            """
+            INSERT INTO users (username, password)
+            VALUES (?, ?)
+            """,
+            ("admin", "admin123")
+        )
+
     conn.commit()
     conn.close()
 
 
 init_database()
 
+@app.route("/dashboard-page")
+def dashboard_page():
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    conn = get_db_connection()
+
+    customers_count = conn.execute(
+        "SELECT COUNT(*) FROM customers"
+    ).fetchone()[0]
+
+    orders_count = conn.execute(
+        "SELECT COUNT(*) FROM laundry_orders"
+    ).fetchone()[0]
+
+    pickups_count = conn.execute(
+        "SELECT COUNT(*) FROM pickup_schedules"
+    ).fetchone()[0]
+
+    deliveries_count = conn.execute(
+        "SELECT COUNT(*) FROM delivery_records"
+    ).fetchone()[0]
+
+    payments_count = conn.execute(
+        "SELECT COUNT(*) FROM payments"
+    ).fetchone()[0]
+
+    total_revenue = conn.execute(
+        "SELECT COALESCE(SUM(payment_amount), 0) FROM payments"
+    ).fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "dashboard.html",
+        customers_count=customers_count,
+        orders_count=orders_count,
+        pickups_count=pickups_count,
+        deliveries_count=deliveries_count,
+        payments_count=payments_count,
+        total_revenue=total_revenue
+    )
+
+
 @app.route("/")
 def dashboard():
+
+    if "user_id" not in session:
+        return redirect("/login")
+
     conn = get_db_connection()
 
     customer_count = conn.execute(
-        "SELECT COUNT(*) AS count FROM customers"
-    ).fetchone()["count"]
+        "SELECT COUNT(*) FROM customers"
+    ).fetchone()[0]
 
     order_count = conn.execute(
-        "SELECT COUNT(*) AS count FROM laundry_orders"
-    ).fetchone()["count"]
+        "SELECT COUNT(*) FROM laundry_orders"
+    ).fetchone()[0]
 
     pickup_count = conn.execute(
-        "SELECT COUNT(*) AS count FROM pickup_schedules"
-    ).fetchone()["count"]
+        "SELECT COUNT(*) FROM pickup_schedules"
+    ).fetchone()[0]
 
     delivery_count = conn.execute(
-        "SELECT COUNT(*) AS count FROM delivery_records"
-    ).fetchone()["count"]
+        "SELECT COUNT(*) FROM delivery_records"
+    ).fetchone()[0]
+
+    payment_count = conn.execute(
+        "SELECT COUNT(*) FROM payments"
+    ).fetchone()[0]
+
+    total_revenue = conn.execute(
+        "SELECT COALESCE(SUM(payment_amount), 0) FROM payments"
+    ).fetchone()[0]
 
     conn.close()
 
@@ -93,10 +173,57 @@ def dashboard():
         customer_count=customer_count,
         order_count=order_count,
         pickup_count=pickup_count,
-        delivery_count=delivery_count
+        delivery_count=delivery_count,
+        payment_count=payment_count,
+        total_revenue=total_revenue
     )
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+
+        conn = get_db_connection()
+
+        user = conn.execute(
+            """
+            SELECT id, username
+            FROM users
+            WHERE username = ? AND password = ?
+            """,
+            (username, password)
+        ).fetchone()
+
+        conn.close()
+
+        if user:
+            session["user_id"] = user["id"]
+            session["username"] = user["username"]
+
+            return redirect("/")
+
+        return render_template(
+            "login.html",
+            error="Invalid username or password."
+        )
+
+    return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect("/login")
+
 @app.route("/customers-page", methods=["GET", "POST"])
 def customers_page():
+    if "user_id" not in session:
+        return redirect("/login")
+
 
     if request.method == "POST":
         name = request.form.get("name", "").strip()
@@ -135,8 +262,354 @@ def customers_page():
         customers=customers
     )
 
+@app.route("/customers-page/edit/<int:id>", methods=["GET", "POST"])
+def edit_customer_page(id):
+
+    conn = get_db_connection()
+
+    customer = conn.execute(
+        """
+        SELECT id, name, contact_number
+        FROM customers
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if customer is None:
+        conn.close()
+        return "Customer not found.", 404
+
+    if request.method == "POST":
+
+        name = request.form.get("name", "").strip()
+        contact_number = request.form.get("contact_number", "").strip()
+
+        if name and contact_number:
+
+            conn.execute(
+                """
+                UPDATE customers
+                SET name = ?, contact_number = ?
+                WHERE id = ?
+                """,
+                (name, contact_number, id)
+            )
+
+            conn.commit()
+            conn.close()
+
+            return redirect("/customers-page")
+
+    conn.close()
+
+    return render_template(
+        "edit_customer.html",
+        customer=customer
+    )
+
+
+@app.route("/customers-page/delete/<int:id>", methods=["POST"])
+def delete_customer_page(id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    conn = get_db_connection()
+
+    conn.execute(
+        """
+        DELETE FROM customers
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/customers-page")
+
+# =========================
+# LAUNDRY ORDERS PAGE CRUD
+# =========================
+
+@app.route("/laundry-orders-page/edit/<int:id>", methods=["GET", "POST"])
+def edit_laundry_order_page(id):
+    if "user_id" not in session:
+        return redirect("/login")
+    conn = get_db_connection()
+
+    order = conn.execute(
+        """
+        SELECT id, customer, laundry_weight
+        FROM laundry_orders
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if order is None:
+        conn.close()
+        return "Laundry order not found.", 404
+
+    if request.method == "POST":
+        customer = request.form.get("customer", "").strip()
+        laundry_weight = request.form.get("laundry_weight", "").strip()
+
+        if customer and laundry_weight:
+            conn.execute(
+                """
+                UPDATE laundry_orders
+                SET customer = ?, laundry_weight = ?
+                WHERE id = ?
+                """,
+                (customer, float(laundry_weight), id)
+            )
+
+            conn.commit()
+            conn.close()
+
+            return redirect("/laundry-orders-page")
+
+    conn.close()
+
+    return render_template(
+        "edit_laundry_order.html",
+        order=order
+    )
+
+
+@app.route("/laundry-orders-page/delete/<int:id>", methods=["POST"])
+def delete_laundry_order_page(id):
+    if "user_id" not in session:
+        return redirect("/login")
+    conn = get_db_connection()
+
+    conn.execute(
+        """
+        DELETE FROM laundry_orders
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/laundry-orders-page")
+
+
+# =========================
+# PICKUP SCHEDULE PAGE CRUD
+# =========================
+
+@app.route("/pickup-schedules-page/edit/<int:id>", methods=["GET", "POST"])
+def edit_pickup_schedule_page(id):
+    conn = get_db_connection()
+
+    pickup = conn.execute(
+        """
+        SELECT id, customer, pickup_date
+        FROM pickup_schedules
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if pickup is None:
+        conn.close()
+        return "Pickup schedule not found.", 404
+
+    if request.method == "POST":
+        customer = request.form.get("customer", "").strip()
+        pickup_date = request.form.get("pickup_date", "").strip()
+
+        if customer and pickup_date:
+            conn.execute(
+                """
+                UPDATE pickup_schedules
+                SET customer = ?, pickup_date = ?
+                WHERE id = ?
+                """,
+                (customer, pickup_date, id)
+            )
+
+            conn.commit()
+            conn.close()
+
+            return redirect("/pickup-schedules-page")
+
+    conn.close()
+
+    return render_template(
+        "edit_pickup_schedule.html",
+        pickup=pickup
+    )
+
+
+@app.route("/pickup-schedules-page/delete/<int:id>", methods=["POST"])
+def delete_pickup_schedule_page(id):
+    if "user_id" not in session:
+        return redirect("/login")
+    conn = get_db_connection()
+
+    conn.execute(
+        """
+        DELETE FROM pickup_schedules
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/pickup-schedules-page")
+
+
+# =========================
+# DELIVERY RECORD PAGE CRUD
+# =========================
+
+@app.route("/delivery-records-page/edit/<int:id>", methods=["GET", "POST"])
+def edit_delivery_record_page(id):
+    if "user_id" not in session:
+        return redirect("/login")
+    conn = get_db_connection()
+
+    delivery = conn.execute(
+        """
+        SELECT id, customer, delivery_date
+        FROM delivery_records
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if delivery is None:
+        conn.close()
+        return "Delivery record not found.", 404
+
+    if request.method == "POST":
+        customer = request.form.get("customer", "").strip()
+        delivery_date = request.form.get("delivery_date", "").strip()
+
+        if customer and delivery_date:
+            conn.execute(
+                """
+                UPDATE delivery_records
+                SET customer = ?, delivery_date = ?
+                WHERE id = ?
+                """,
+                (customer, delivery_date, id)
+            )
+
+            conn.commit()
+            conn.close()
+
+            return redirect("/delivery-records-page")
+
+    conn.close()
+
+    return render_template(
+        "edit_delivery_record.html",
+        delivery=delivery
+    )
+
+
+@app.route("/delivery-records-page/delete/<int:id>", methods=["POST"])
+def delete_delivery_record_page(id):
+    if "user_id" not in session:
+        return redirect("/login")
+    conn = get_db_connection()
+
+    conn.execute(
+        """
+        DELETE FROM delivery_records
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/delivery-records-page")
+
+
+# =========================
+# PAYMENT PAGE CRUD
+# =========================
+
+@app.route("/payments-page/edit/<int:id>", methods=["GET", "POST"])
+def edit_payment_page(id):
+    if "user_id" not in session:
+        return redirect("/login")
+    conn = get_db_connection()
+
+    payment = conn.execute(
+        """
+        SELECT id, payment_amount, payment_method
+        FROM payments
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if payment is None:
+        conn.close()
+        return "Payment not found.", 404
+
+    if request.method == "POST":
+        payment_amount = request.form.get("payment_amount", "").strip()
+        payment_method = request.form.get("payment_method", "").strip()
+
+        if payment_amount and payment_method:
+            conn.execute(
+                """
+                UPDATE payments
+                SET payment_amount = ?, payment_method = ?
+                WHERE id = ?
+                """,
+                (float(payment_amount), payment_method, id)
+            )
+
+            conn.commit()
+            conn.close()
+
+            return redirect("/payments-page")
+
+    conn.close()
+
+    return render_template(
+        "edit_payment.html",
+        payment=payment
+    )
+
+
+@app.route("/payments-page/delete/<int:id>", methods=["POST"])
+def delete_payment_page(id):
+    if "user_id" not in session:
+        return redirect("/login")
+    conn = get_db_connection()
+
+    conn.execute(
+        """
+        DELETE FROM payments
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/payments-page")
+
 @app.route("/laundry-orders-page", methods=["GET", "POST"])
 def laundry_orders_page():
+    if "user_id" not in session:
+        return redirect("/login")
 
     if request.method == "POST":
         customer = request.form.get("customer", "").strip()
@@ -178,6 +651,8 @@ def laundry_orders_page():
 
 @app.route("/pickup-schedules-page", methods=["GET", "POST"])
 def pickup_schedules_page():
+    if "user_id" not in session:
+        return redirect("/login")
 
     if request.method == "POST":
         customer = request.form.get("customer", "").strip()
@@ -219,6 +694,8 @@ def pickup_schedules_page():
 
 @app.route("/delivery-records-page", methods=["GET", "POST"])
 def delivery_records_page():
+    if "user_id" not in session:
+        return redirect("/login")
 
     if request.method == "POST":
         customer = request.form.get("customer", "").strip()
@@ -260,6 +737,8 @@ def delivery_records_page():
 
 @app.route("/payments-page", methods=["GET", "POST"])
 def payments_page():
+    if "user_id" not in session:
+        return redirect("/login")
 
     if request.method == "POST":
         payment_amount = request.form.get("payment_amount", "").strip()

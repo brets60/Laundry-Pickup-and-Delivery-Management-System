@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Laundry Management System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #1f2937;
+            padding: 25px 15px;
+            color: white;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 13px 15px;
+            margin-bottom: 8px;
+            border-radius: 7px;
+        }
+
+        .sidebar a:hover {
+            background: #374151;
+        }
+
+        .content {
+            margin-left: 240px;
+            padding: 30px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .header p {
+            color: #6b7280;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+        }
+
+        .card h3 {
+            margin: 0 0 12px;
+            color: #6b7280;
+            font-size: 15px;
+        }
+
+        .card .number {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .quick-links a {
+            text-decoration: none;
+            background: #f3f4f6;
+            color: #1f2937;
+            padding: 18px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .quick-links a:hover {
+            background: #e5e7eb;
+        }
+
+        @media (max-width: 1100px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-links {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <h2>Laundry System</h2>
+
+    <a href="/dashboard-page">Dashboard</a>
+    <a href="/customers-page">Customers</a>
+    <a href="/laundry-orders-page">Laundry Orders</a>
+    <a href="/pickup-schedules-page">Pickup Schedules</a>
+    <a href="/delivery-records-page">Delivery Records</a>
+    <a href="/payments-page">Payments</a>
+
+</div>
+
+
+<div class="content">
+
+    <div class="header">
+
+        <h1>Dashboard</h1>
+
+        <p>
+            Laundry Pickup and Delivery Management System
+        </p>
+
+    </div>
+
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>Customers</h3>
+            <div class="number">{{ customers_count }}</div>
+        </div>
+
+        <div class="card">
+            <h3>Laundry Orders</h3>
+            <div class="number">{{ orders_count }}</div>
+        </div>
+
+        <div class="card">
+            <h3>Pickup Schedules</h3>
+            <div class="number">{{ pickups_count }}</div>
+        </div>
+
+        <div class="card">
+            <h3>Deliveries</h3>
+            <div class="number">{{ deliveries_count }}</div>
+        </div>
+
+        <div class="card">
+            <h3>Payments</h3>
+            <div class="number">{{ payments_count }}</div>
+        </div>
+
+    </div>
+
+
+    <div class="section">
+
+        <h2>Quick Access</h2>
+
+        <div class="quick-links">
+
+            <a href="/customers-page">
+                Customers
+            </a>
+
+            <a href="/laundry-orders-page">
+                Laundry Orders
+            </a>
+
+            <a href="/pickup-schedules-page">
+                Pickup Schedules
+            </a>
+
+            <a href="/delivery-records-page">
+                Delivery Records
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
