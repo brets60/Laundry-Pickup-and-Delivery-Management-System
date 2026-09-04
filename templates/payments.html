@@ -4,360 +4,2036 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Payments - Laundry System</title>
+    <title>Payments | LaundryCare</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='css/sidebar.css') }}">
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            color: #1f2937;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 230px;
-            height: 100vh;
-            background: #1f2937;
-            color: white;
-            padding: 20px;
-        }
-
-        .sidebar h2 {
-            margin-top: 0;
-            margin-bottom: 30px;
-        }
-
-        .sidebar a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 6px;
-        }
-
-        .sidebar a:hover {
-            background: #374151;
-        }
-
-        .content {
-            margin-left: 230px;
-            padding: 30px;
-        }
-
-        .header {
-            margin-bottom: 25px;
-        }
-
-        .header h1 {
-            margin: 0 0 8px;
-        }
-
-        .header p {
-            color: #6b7280;
-        }
-
-        .form-container,
-        .table-container {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 25px;
-        }
-
-        .form-container h2,
-        .table-container h2 {
-            margin-top: 0;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 11px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 15px;
-            background: white;
-        }
-
-        .add-button {
-            padding: 11px 20px;
-            background: #1f2937;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .add-button:hover {
-            background: #374151;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            padding: 14px;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        th {
-            background: #f1f3f5;
-        }
-
-        tr:hover {
-            background: #f9fafb;
-        }
-
-        .edit-button {
-            display: inline-block;
-            padding: 7px 12px;
-            background: #2563eb;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-right: 5px;
-        }
-
-        .edit-button:hover {
-            background: #1d4ed8;
-        }
-
-        .delete-button {
-            padding: 7px 12px;
-            background: #dc2626;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .delete-button:hover {
-            background: #b91c1c;
-        }
-
-        .empty {
-            color: #6b7280;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .amount {
-            font-weight: bold;
-        }
-
-        @media (max-width: 700px) {
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-            }
-
-            .content {
-                margin-left: 0;
-            }
-
-            table {
-                font-size: 13px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/payments.css') }}">
 </head>
 
 <body>
 
-<div class="sidebar">
+<!-- SIDEBAR OVERLAY -->
+<div class="lc-sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
-    <h2>Laundry System</h2>
+<!-- SIDEBAR -->
+<aside class="lc-sidebar" id="sidebar" aria-label="Main navigation">
 
-    <a href="/">Dashboard</a>
-    <a href="/customers-page">Customers</a>
-    <a href="/laundry-orders-page">Laundry Orders</a>
-    <a href="/pickup-schedules-page">Pickup Schedules</a>
-    <a href="/delivery-records-page">Delivery Records</a>
-    <a href="/payments-page">Payments</a>
+    <!-- BRAND -->
+    <div class="lc-brand">
+        <div class="lc-brand-mark">
+            <svg viewBox="0 0 48 48" aria-hidden="true">
+                <rect x="7" y="7" width="34" height="34" rx="10"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"/>
+                <path d="M16 24h16M24 16v16"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"/>
+            </svg>
+        </div>
 
-    <a href="/logout"
-       onclick="return confirm('Are you sure you want to logout?');">
-        Logout
-    </a>
-
-</div>
-
-<div class="content">
-
-    <div class="header">
-        <h1>Payments</h1>
-        <p>Record and manage laundry payments.</p>
+        <div>
+            <h1>LaundryCare</h1>
+            <p>Pickup &amp; Delivery Management</p>
+        </div>
     </div>
 
+    <!-- NAVIGATION -->
+    <nav class="lc-navigation" aria-label="Main navigation">
 
-    <!-- ADD PAYMENT -->
+        <span class="lc-nav-label">MAIN</span>
 
-    <div class="form-container">
+        <!-- DASHBOARD -->
+        <a href="/dashboard-page" class="lc-nav-item">
+            <span class="lc-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-5v-6h-5v6h-5A1.5 1.5 0 0 1 3 19.5z"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linejoin="round"/>
+                </svg>
+            </span>
+            <span>Dashboard</span>
+        </a>
 
-        <h2>Add Payment</h2>
+        <!-- CUSTOMERS -->
+        <a href="/customers-page" class="lc-nav-item">
+            <span class="lc-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="8" r="3.2"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"/>
+                    <path d="M5.5 20c.7-3.4 2.8-5.2 6.5-5.2s5.8 1.8 6.5 5.2"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"/>
+                </svg>
+            </span>
+            <span>Customers</span>
+        </a>
 
-        <form method="POST" action="/payments-page">
+        <!-- LAUNDRY ORDERS -->
+        <a href="/laundry-orders-page" class="lc-nav-item">
+            <span class="lc-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 4h12v16H6z"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linejoin="round"/>
+                    <path d="M9 8h6M9 12h6M9 16h4"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"/>
+                </svg>
+            </span>
+            <span>Laundry Orders</span>
+        </a>
 
-            <div class="form-group">
+        <!-- PICKUP SCHEDULES -->
+        <a href="/pickup-schedules-page" class="lc-nav-item">
+            <span class="lc-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="4" y="5" width="16" height="15" rx="2"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"/>
+                    <path d="M8 3v4M16 3v4M4 9h16"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"/>
+                </svg>
+            </span>
+            <span>Pickup Schedules</span>
+        </a>
 
-                <label for="payment_amount">
-                    Payment Amount (₱)
-                </label>
+        <!-- DELIVERY RECORDS -->
+        <a href="/delivery-records-page" class="lc-nav-item">
+            <span class="lc-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linejoin="round"/>
+                    <circle cx="7" cy="19" r="1.5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"/>
+                    <circle cx="18" cy="19" r="1.5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"/>
+                </svg>
+            </span>
+            <span>Delivery Records</span>
+        </a>
 
-                <input
-                    type="number"
-                    id="payment_amount"
-                    name="payment_amount"
-                    step="0.01"
-                    min="0.01"
-                    placeholder="Enter payment amount"
-                    required
-                >
+        <!-- PAYMENTS -->
+        <a href="/payments-page"
+           class="lc-nav-item active"
+           aria-current="page">
+            <span class="lc-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"/>
+                    <path d="M3 10h18M7 15h4"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"/>
+                </svg>
+            </span>
+            <span>Payments</span>
+        </a>
 
+    </nav>
+
+    <!-- ADMIN / LOGOUT -->
+    <div class="lc-sidebar-bottom">
+
+        <div class="lc-admin-profile">
+            <div class="lc-admin-avatar">A</div>
+
+            <div class="lc-admin-info">
+                <strong>Admin</strong>
+                <span>System Administrator</span>
             </div>
+        </div>
+
+        <a href="/logout"
+           class="lc-logout"
+           aria-label="Sign out">
+
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"/>
+                <path d="M14 8l4 4-4 4M18 12H9"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"/>
+            </svg>
+
+            <span>Sign Out</span>
+        </a>
+
+    </div>
+
+</aside>
 
 
-            <div class="form-group">
+<!-- =========================================================
+     MAIN CONTENT
+========================================================= -->
 
-                <label for="payment_method">
-                    Payment Method
-                </label>
+<main class="main-content">
 
-                <select
-                    id="payment_method"
-                    name="payment_method"
-                    required
-                >
-                    <option value="">Select payment method</option>
-                    <option value="Cash">Cash</option>
-                    <option value="GCash">GCash</option>
-                    <option value="Bank Transfer">Bank Transfer</option>
-                </select>
 
-            </div>
+    <!-- MOBILE HEADER -->
 
+    <header class="mobile-header">
+
+        <button
+            type="button"
+            class="mobile-menu-button"
+            id="mobileMenuButton"
+            aria-label="Open navigation menu"
+        >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+
+        <div class="mobile-brand">
+            LaundryCare
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         TOP HEADER
+    ====================================================== -->
+
+    <section class="top-header">
+
+        <div class="breadcrumb">
+
+            <span>Management</span>
+
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m9 18 6-6-6-6"/>
+            </svg>
+
+            <strong>Payments</strong>
+
+        </div>
+
+
+        <div class="header-right">
 
             <button
-                type="submit"
-                class="add-button"
+                type="button"
+                class="notification-button"
+                aria-label="Notifications"
+                title="Notifications"
             >
-                + Add Payment
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                    <path d="M10 21h4"/>
+                </svg>
+
+                <span class="notification-dot"></span>
+
             </button>
 
-        </form>
 
-    </div>
+            <div class="header-admin">
+
+                <div class="header-avatar">
+                    A
+                </div>
+
+                <div>
+                    <strong>Administrator</strong>
+                    <span>System Administrator</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
 
 
-    <!-- PAYMENT LIST -->
+    <!-- =====================================================
+         PAYMENT HERO
+    ====================================================== -->
 
-    <div class="table-container">
+    <section class="payment-hero">
 
-        <h2>Payment Records</h2>
+        <div class="hero-content">
 
-        {% if payments %}
+            <div class="hero-eyebrow">
 
-        <table>
+                <span class="hero-eyebrow-icon">
 
-            <thead>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                        <path d="M2.5 10h19"/>
+                        <path d="M7 15h3"/>
+                    </svg>
 
-                <tr>
-                    <th>ID</th>
-                    <th>Amount</th>
-                    <th>Payment Method</th>
-                    <th>Actions</th>
-                </tr>
+                </span>
 
-            </thead>
+                FINANCIAL OPERATIONS
 
-            <tbody>
+            </div>
 
-                {% for payment in payments %}
 
-                <tr>
+            <h1>
+                Payment & Transaction Center
+            </h1>
 
-                    <td>
-                        {{ payment["id"] }}
-                    </td>
 
-                    <td class="amount">
-                        ₱{{ "%.2f"|format(payment["payment_amount"]) }}
-                    </td>
+            <p>
+                Record, review, and manage customer laundry payments
+                through one organized transaction workspace.
+            </p>
 
-                    <td>
-                        {{ payment["payment_method"] }}
-                    </td>
 
-                    <td>
+            <div class="hero-actions">
 
-                        <a
-                            href="/payments-page/edit/{{ payment['id'] }}"
-                            class="edit-button"
-                        >
-                            Edit
-                        </a>
+                <button
+                    type="button"
+                    class="hero-primary-button"
+                    id="jumpToPaymentForm"
+                >
 
-                        <form
-                            method="POST"
-                            action="/payments-page/delete/{{ payment['id'] }}"
-                            style="display:inline;"
-                        >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
 
-                            <button
-                                type="submit"
-                                class="delete-button"
-                                onclick="return confirm('Are you sure you want to delete this payment?');"
-                            >
-                                Delete
-                            </button>
+                    Record Payment
 
-                        </form>
+                </button>
 
-                    </td>
 
-                </tr>
+                <div class="secure-mini">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="5" y="10" width="14" height="11" rx="2"/>
+                        <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                        <path d="M12 14v3"/>
+                    </svg>
+
+                    Secure transaction workspace
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FINANCIAL HERO VISUAL -->
+
+        <div class="hero-visual">
+
+            <div class="hero-orbit orbit-one"></div>
+            <div class="hero-orbit orbit-two"></div>
+
+            <div class="floating-card card-back">
+
+                <div class="mini-card-line"></div>
+                <div class="mini-card-line short"></div>
+
+            </div>
+
+
+            <div class="floating-card card-front">
+
+                <div class="card-top">
+
+                    <span>LAUNDRYCARE</span>
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                        <path d="M2.5 10h19"/>
+                    </svg>
+
+                </div>
+
+                <div class="card-number">
+                    PAYMENT
+                </div>
+
+                <div class="card-bottom">
+
+                    <span>TRANSACTION</span>
+                    <span>₱</span>
+
+                </div>
+
+            </div>
+
+
+            <div class="hero-arrow arrow-one">→</div>
+            <div class="hero-arrow arrow-two">→</div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SECURITY INDICATOR
+    ====================================================== -->
+
+    <section class="security-strip">
+
+        <div class="security-icon">
+
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="5" y="10" width="14" height="11" rx="2"/>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                <path d="M12 14v3"/>
+            </svg>
+
+        </div>
+
+
+        <div class="security-text">
+
+            <strong>SECURE TRANSACTION MANAGEMENT</strong>
+
+            <span>
+                Payment records are managed through the LaundryCare system.
+            </span>
+
+        </div>
+
+
+        <div class="security-status">
+
+            <span></span>
+            SYSTEM READY
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PAYMENT COMMAND CENTER
+    ====================================================== -->
+
+    <section class="command-center">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="section-kicker">
+                    FINANCIAL SNAPSHOT
+                </span>
+
+                <h2>
+                    Payment Command Center
+                </h2>
+
+                <p>
+                    A quick view of the payment records currently stored in LaundryCare.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="command-grid">
+
+
+            <!-- TOTAL PAYMENTS -->
+
+            <article class="command-card total-card">
+
+                <div class="command-card-top">
+
+                    <span class="command-icon blue">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                            <path d="M2.5 10h19"/>
+                            <path d="M7 15h3"/>
+                        </svg>
+
+                    </span>
+
+                    <span class="command-label">
+                        TRANSACTIONS
+                    </span>
+
+                </div>
+
+
+                <div class="command-number">
+                    {{ payments|length }}
+                </div>
+
+
+                <div class="command-description">
+                    Recorded payment transactions
+                </div>
+
+            </article>
+
+
+            <!-- TOTAL AMOUNT -->
+
+            <article class="command-card amount-card">
+
+                <div class="command-card-top">
+
+                    <span class="command-icon green">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M14.5 8.5c-.7-.7-1.6-1-2.7-1-1.5 0-2.6.8-2.6 2 0 1.2 1.1 1.7 2.8 2.1 1.6.4 2.6.9 2.6 2.1 0 1.2-1.1 2-2.8 2-1.1 0-2.2-.4-3-1.1"/>
+                            <path d="M12 6v12"/>
+                        </svg>
+
+                    </span>
+
+                    <span class="command-label">
+                        TOTAL AMOUNT
+                    </span>
+
+                </div>
+
+
+                <div class="command-number amount-number">
+
+                    ₱{{ "%.2f"|format(
+                        payments
+                        |map(attribute="payment_amount")
+                        |map("float")
+                        |sum
+                    ) }}
+
+                </div>
+
+
+                <div class="command-description">
+                    Combined value of recorded payments
+                </div>
+
+            </article>
+
+
+            <!-- PAYMENT METHODS -->
+
+            <article class="command-card method-card">
+
+                <div class="command-card-top">
+
+                    <span class="command-icon cyan">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="3" y="5" width="18" height="14" rx="2"/>
+                            <path d="M3 10h18"/>
+                            <path d="M7 15h3"/>
+                        </svg>
+
+                    </span>
+
+                    <span class="command-label">
+                        PAYMENT METHODS
+                    </span>
+
+                </div>
+
+
+                <div class="method-summary">
+
+                    {% set unique_methods = [] %}
+
+                    {% for payment in payments %}
+
+                        {% if payment["payment_method"] not in unique_methods %}
+
+                            {% set _ = unique_methods.append(payment["payment_method"]) %}
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    <strong>
+                        {{ unique_methods|length }}
+                    </strong>
+
+                    <span>
+                        supported methods currently represented
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <!-- RECORD STATUS -->
+
+            <article class="command-card status-card">
+
+                <div class="command-card-top">
+
+                    <span class="command-icon teal">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M7 3h10l3 3v15H4V3z"/>
+                            <path d="M7 3v5h10V3"/>
+                            <path d="M8 13h8M8 17h5"/>
+                        </svg>
+
+                    </span>
+
+                    <span class="command-label">
+                        RECORD STATUS
+                    </span>
+
+                </div>
+
+
+                <div class="record-status">
+
+                    <span class="status-check">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m5 12 4 4L19 6"/>
+                        </svg>
+
+                    </span>
+
+                    <div>
+                        <strong>System Records</strong>
+                        <span>Connected to existing payment data</span>
+                    </div>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         TRANSACTION PULSE
+    ====================================================== -->
+
+    <section class="transaction-pulse">
+
+        <div class="pulse-copy">
+
+            <div class="pulse-title-row">
+
+                <span class="pulse-icon">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 12h4l2-6 4 12 2-6h6"/>
+                    </svg>
+
+                </span>
+
+                <div>
+
+                    <span class="section-kicker">
+                        RECORD ACTIVITY
+                    </span>
+
+                    <h2>
+                        Transaction Pulse
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <p>
+                A visual representation of the payment records currently available.
+            </p>
+
+        </div>
+
+
+        <div class="pulse-track" aria-label="Payment record activity">
+
+            {% if payments %}
+
+                {% for payment in payments[:12] %}
+
+                    <span class="pulse-bar"
+                          style="--pulse-height: {{ 30 + ((loop.index * 13) % 55) }}%;"
+                          title="Payment record #{{ payment['id'] }}">
+                    </span>
 
                 {% endfor %}
 
-            </tbody>
+            {% else %}
 
-        </table>
+                <div class="pulse-empty">
+                    No transaction records available yet.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CREATE PAYMENT + RECEIPT PREVIEW
+    ====================================================== -->
+
+    <section
+        class="payment-workspace"
+        id="paymentFormSection"
+    >
+
+
+        <!-- FORM -->
+
+        <div class="create-payment-panel">
+
+            <div class="panel-heading">
+
+                <div class="panel-heading-icon">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                        <path d="M2.5 10h19"/>
+                        <path d="M7 15h3"/>
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <span class="section-kicker">
+                        NEW TRANSACTION
+                    </span>
+
+                    <h2>
+                        Create Payment
+                    </h2>
+
+                    <p>
+                        Record a customer payment in LaundryCare.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                action="/payments-page"
+                id="paymentForm"
+                novalidate
+            >
+
+                <!-- CUSTOMER -->
+
+                <div class="form-group">
+
+                    <label for="customer">
+                        Customer
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M20 21a8 8 0 0 0-16 0"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+
+                        <input
+                            type="text"
+                            id="customer"
+                            name="customer"
+                            placeholder="Enter customer name"
+                            value="{{ request.args.get('customer', '') }}"
+                            {% if request.args.get('customer') %}
+                            readonly
+                            {% endif %}
+                            required
+                            autocomplete="name"
+                            aria-describedby="customerError"
+                        >
+
+                    </div>
+
+                    <div
+                        class="field-error"
+                        id="customerError"
+                        role="alert"
+                    ></div>
+
+                </div>
+
+
+                <!-- PAYMENT AMOUNT -->
+
+                <div class="form-group">
+
+                    <label for="payment_amount">
+                        Payment Amount (₱)
+                    </label>
+
+                    <div class="input-wrapper amount-input-wrapper">
+
+                        <span class="peso-symbol">
+                            ₱
+                        </span>
+
+                        <input
+                            type="number"
+                            id="payment_amount"
+                            name="payment_amount"
+                            step="0.01"
+                            min="0.01"
+                            placeholder="Enter payment amount"
+                            required
+                            inputmode="decimal"
+                            aria-describedby="amountError"
+                        >
+
+                    </div>
+
+                    <div
+                        class="field-error"
+                        id="amountError"
+                        role="alert"
+                    ></div>
+
+                </div>
+
+
+                <!-- PAYMENT METHOD -->
+
+                <div class="form-group">
+
+                    <label for="payment_method">
+                        Payment Method
+                    </label>
+
+                    <div class="input-wrapper select-wrapper">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                            <path d="M2.5 10h19"/>
+                            <path d="M7 15h3"/>
+                        </svg>
+
+                        <select
+                            id="payment_method"
+                            name="payment_method"
+                            required
+                            aria-describedby="methodError"
+                        >
+
+                            <option value="">
+                                Select payment method
+                            </option>
+
+                            <option value="Cash">
+                                Cash
+                            </option>
+
+                            <option value="GCash">
+                                GCash
+                            </option>
+
+                            <option value="Bank Transfer">
+                                Bank Transfer
+                            </option>
+
+                        </select>
+
+                        <svg
+                            class="select-chevron"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
+
+                    </div>
+
+                    <div
+                        class="field-error"
+                        id="methodError"
+                        role="alert"
+                    ></div>
+
+                </div>
+
+
+                <!-- FORM FOOTER -->
+
+                <div class="form-footer">
+
+                    <div class="form-note">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M12 11v5"/>
+                            <path d="M12 8h.01"/>
+                        </svg>
+
+                        The receipt beside this form is only a preview.
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="record-payment-button"
+                        id="recordPaymentButton"
+                    >
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                            <path d="M2.5 10h19"/>
+                            <path d="M7 15h3"/>
+                        </svg>
+
+                        <span class="button-text">
+                            Record Payment
+                        </span>
+
+                        <span class="button-spinner"></span>
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- =================================================
+             LIVE RECEIPT PREVIEW
+        ================================================== -->
+
+        <aside class="receipt-panel">
+
+            <div class="receipt-panel-heading">
+
+                <div>
+
+                    <span class="section-kicker">
+                        LIVE PREVIEW
+                    </span>
+
+                    <h2>
+                        Payment Receipt
+                    </h2>
+
+                </div>
+
+                <span class="preview-badge">
+                    PREVIEW
+                </span>
+
+            </div>
+
+
+            <div class="receipt">
+
+                <div class="receipt-top">
+
+                    <div class="receipt-brand">
+
+                        <div class="receipt-logo">
+
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 6h16M6 6v13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6"/>
+                                <path d="M9 10h6M9 14h6"/>
+                            </svg>
+
+                        </div>
+
+                        <div>
+
+                            <strong>LAUNDRYCARE</strong>
+                            <span>PAYMENT RECEIPT</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <span class="receipt-symbol">
+                        ₱
+                    </span>
+
+                </div>
+
+
+                <div class="receipt-dashed"></div>
+
+
+                <div class="receipt-row">
+
+                    <span>
+                        Customer
+                    </span>
+
+                    <strong id="receiptCustomer">
+                        Not entered
+                    </strong>
+
+                </div>
+
+
+                <div class="receipt-row">
+
+                    <span>
+                        Payment Method
+                    </span>
+
+                    <strong id="receiptMethod">
+                        Not selected
+                    </strong>
+
+                </div>
+
+
+                <div class="receipt-divider"></div>
+
+
+                <div class="receipt-amount-label">
+                    AMOUNT
+                </div>
+
+                <div
+                    class="receipt-amount"
+                    id="receiptAmount"
+                >
+                    ₱0.00
+                </div>
+
+
+                <div class="receipt-divider"></div>
+
+
+                <div class="receipt-preview-state">
+
+                    <span class="preview-state-icon">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 3v18"/>
+                            <path d="M3 12h18"/>
+                        </svg>
+
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            PREVIEW — NOT YET RECORDED
+                        </strong>
+
+                        <span id="receiptStatusText">
+                            Complete the payment form to preview the receipt.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="receipt-barcode" aria-hidden="true">
+
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                    <i></i>
+
+                </div>
+
+                <div class="receipt-footer">
+                    LaundryCare • Transaction Preview
+                </div>
+
+            </div>
+
+        </aside>
+
+    </section>
+
+
+    <!-- =====================================================
+         TRANSACTION HISTORY
+    ====================================================== -->
+
+    <section class="transaction-section">
+
+        <div class="transaction-heading">
+
+            <div>
+
+                <span class="section-kicker">
+                    PAYMENT LEDGER
+                </span>
+
+                <h2>
+                    Transaction History
+                </h2>
+
+                <p>
+                    Review and manage recorded customer payments.
+                </p>
+
+            </div>
+
+
+            <div class="record-count">
+
+                <span>
+                    {{ payments|length }}
+                </span>
+
+                records
+
+            </div>
+
+        </div>
+
+
+        <!-- SEARCH -->
+
+        <div class="transaction-toolbar">
+
+            <div class="search-box">
+
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"/>
+                    <path d="m16 16 5 5"/>
+                </svg>
+
+                <input
+                    type="search"
+                    id="transactionSearch"
+                    placeholder="Search transactions..."
+                    aria-label="Search payment transactions"
+                >
+
+                <button
+                    type="button"
+                    class="clear-search"
+                    id="clearSearch"
+                    aria-label="Clear search"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="ledger-label">
+
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 5h16v14H4z"/>
+                    <path d="M8 9h8M8 13h8M8 17h5"/>
+                </svg>
+
+                LIVE PAYMENT LEDGER
+
+            </div>
+
+        </div>
+
+
+        {% if payments %}
+
+        <div class="transaction-table-wrapper">
+
+            <table class="transaction-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                        <th>Payment Method</th>
+                        <th>Transaction Time</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="transactionTableBody">
+
+                    {% for payment in payments %}
+
+                    <tr
+                        class="payment-row"
+                        data-search="
+                            {{ payment['id'] }}
+                            {{ payment['customer'] or '' }}
+                            {{ payment['payment_amount'] }}
+                            {{ payment['payment_method'] }}
+                            {{ payment['formatted_transaction_time'] or '' }}
+                            {{ payment['formatted_transaction_clock'] or '' }}
+                        "
+                    >
+
+                        <!-- ID -->
+
+                        <td>
+
+                            <span class="payment-id">
+                                #{{ "%03d"|format(payment["id"]) }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- CUSTOMER -->
+
+                        <td>
+
+                            <div class="customer-cell">
+
+                                <span class="customer-avatar">
+
+                                    {% set customer_name = payment["customer"] or "" %}
+                                    {% set customer_parts = customer_name.split() %}
+
+                                    {% if customer_parts|length >= 2 %}
+                                        {{ customer_parts[0][0]|upper }}{{ customer_parts[-1][0]|upper }}
+                                    {% elif customer_name %}
+                                        {{ customer_name[0]|upper }}
+                                    {% else %}
+                                        ?
+                                    {% endif %}
+
+                                </span>
+
+
+                                <div class="customer-details">
+
+                                    <strong>
+                                        {{ payment["customer"] or "—" }}
+                                    </strong>
+
+                                    <span>
+                                        Customer
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- AMOUNT -->
+
+                        <td>
+
+                            <div class="amount-cell">
+
+                                <strong>
+                                    ₱{{ "%.2f"|format(payment["payment_amount"]) }}
+                                </strong>
+
+                                <span>
+                                    Recorded
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- PAYMENT METHOD -->
+
+                        <td>
+
+                            <span
+                                class="method-badge
+                                {% if payment['payment_method'] == 'GCash' %}
+                                    method-gcash
+                                {% elif payment['payment_method'] == 'Cash' %}
+                                    method-cash
+                                {% else %}
+                                    method-bank
+                                {% endif %}"
+                            >
+
+                                <span class="method-badge-icon">
+
+                                    {% if payment['payment_method'] == 'Cash' %}
+
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <rect x="3" y="6" width="18" height="12" rx="2"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+
+                                    {% elif payment['payment_method'] == 'GCash' %}
+
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+                                            <path d="M9 8h6M10 16h4"/>
+                                        </svg>
+
+                                    {% else %}
+
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                                            <path d="M2.5 10h19"/>
+                                            <path d="M7 15h3"/>
+                                        </svg>
+
+                                    {% endif %}
+
+                                </span>
+
+                                {{ payment["payment_method"] }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- TRANSACTION TIME -->
+
+                        <td>
+
+                            <div class="transaction-time">
+
+                                {% if payment["formatted_transaction_time"] %}
+
+                                    <strong>
+                                        {{ payment["formatted_transaction_time"] }}
+                                    </strong>
+
+                                    {% if payment["formatted_transaction_clock"] %}
+
+                                        <span>
+                                            {{ payment["formatted_transaction_clock"] }}
+                                        </span>
+
+                                    {% endif %}
+
+                                {% else %}
+
+                                    <strong>—</strong>
+
+                                    <span>
+                                        Time unavailable
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- ACTIONS -->
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <a
+                                    href="/payments-page/edit/{{ payment['id'] }}"
+                                    class="edit-button"
+                                    aria-label="Edit payment #{{ payment['id'] }}"
+                                >
+
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M12 20h9"/>
+                                        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/>
+                                    </svg>
+
+                                    Edit
+
+                                </a>
+
+
+                                <form
+                                    method="POST"
+                                    action="/payments-page/delete/{{ payment['id'] }}"
+                                    class="delete-form"
+                                    data-payment-id="{{ payment['id'] }}"
+                                    data-customer="{{ payment['customer'] or '—' }}"
+                                    data-amount="₱{{ '%.2f'|format(payment['payment_amount']) }}"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="delete-button"
+                                        aria-label="Delete payment #{{ payment['id'] }}"
+                                    >
+
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M4 7h16"/>
+                                            <path d="M10 11v6M14 11v6"/>
+                                            <path d="M6 7l1 14h10l1-14"/>
+                                            <path d="M9 7V4h6v3"/>
+                                        </svg>
+
+                                        Delete
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+
+            <!-- SEARCH EMPTY -->
+
+            <div
+                class="search-empty"
+                id="searchEmpty"
+                hidden
+            >
+
+                <div class="empty-icon">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"/>
+                        <path d="m16 16 5 5"/>
+                    </svg>
+
+                </div>
+
+                <h3>
+                    No matching transactions
+                </h3>
+
+                <p>
+                    Try adjusting your search.
+                </p>
+
+            </div>
+
+        </div>
+
 
         {% else %}
 
-        <div class="empty">
-            No payment records found.
+
+        <!-- EMPTY DATABASE STATE -->
+
+        <div class="empty-state">
+
+            <div class="empty-state-icon">
+
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                    <path d="M2.5 10h19"/>
+                    <path d="M7 15h3"/>
+                </svg>
+
+            </div>
+
+            <span class="section-kicker">
+                TRANSACTION LEDGER
+            </span>
+
+            <h3>
+                No payment transactions yet
+            </h3>
+
+            <p>
+                There are currently no recorded laundry payments.
+            </p>
+
+            <button
+                type="button"
+                class="empty-action"
+                id="emptyRecordButton"
+            >
+
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+
+                Record Payment
+
+            </button>
+
         </div>
 
         {% endif %}
 
+    </section>
+
+
+    <!-- =====================================================
+         PAYMENT METHOD BREAKDOWN
+    ====================================================== -->
+
+    {% if payments %}
+
+    <section class="method-breakdown">
+
+        <div class="breakdown-intro">
+
+            <span class="section-kicker">
+                PAYMENT MIX
+            </span>
+
+            <h2>
+                Payment Method Breakdown
+            </h2>
+
+            <p>
+                Distribution of the payment methods represented in your actual transaction records.
+            </p>
+
+        </div>
+
+
+        <div class="breakdown-list">
+
+            {% set cash_count = payments|selectattr("payment_method", "equalto", "Cash")|list|length %}
+            {% set gcash_count = payments|selectattr("payment_method", "equalto", "GCash")|list|length %}
+            {% set bank_count = payments|selectattr("payment_method", "equalto", "Bank Transfer")|list|length %}
+
+
+            {% if cash_count > 0 %}
+
+            <div class="breakdown-item">
+
+                <div class="breakdown-label">
+
+                    <span class="breakdown-method-icon cash">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="3" y="6" width="18" height="12" rx="2"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+
+                    </span>
+
+                    <strong>Cash</strong>
+
+                    <span>{{ cash_count }} transaction{% if cash_count != 1 %}s{% endif %}</span>
+
+                </div>
+
+
+                <div class="breakdown-bar">
+
+                    <span
+                        style="width: {{ (cash_count / (payments|length) * 100)|round(1) }}%;"
+                    ></span>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            {% if gcash_count > 0 %}
+
+            <div class="breakdown-item">
+
+                <div class="breakdown-label">
+
+                    <span class="breakdown-method-icon gcash">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+                            <path d="M9 8h6M10 16h4"/>
+                        </svg>
+
+                    </span>
+
+                    <strong>GCash</strong>
+
+                    <span>{{ gcash_count }} transaction{% if gcash_count != 1 %}s{% endif %}</span>
+
+                </div>
+
+
+                <div class="breakdown-bar">
+
+                    <span
+                        style="width: {{ (gcash_count / (payments|length) * 100)|round(1) }}%;"
+                    ></span>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            {% if bank_count > 0 %}
+
+            <div class="breakdown-item">
+
+                <div class="breakdown-label">
+
+                    <span class="breakdown-method-icon bank">
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                            <path d="M2.5 10h19"/>
+                            <path d="M7 15h3"/>
+                        </svg>
+
+                    </span>
+
+                    <strong>Bank Transfer</strong>
+
+                    <span>{{ bank_count }} transaction{% if bank_count != 1 %}s{% endif %}</span>
+
+                </div>
+
+
+                <div class="breakdown-bar">
+
+                    <span
+                        style="width: {{ (bank_count / (payments|length) * 100)|round(1) }}%;"
+                    ></span>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         WORKFLOW
+    ====================================================== -->
+
+    <section class="payment-workflow">
+
+        <div class="workflow-heading">
+
+            <span class="section-kicker">
+                TRANSACTION FLOW
+            </span>
+
+            <h2>
+                From Delivery to Transaction
+            </h2>
+
+            <p>
+                LaundryCare keeps the payment workflow easy to understand.
+            </p>
+
+        </div>
+
+
+        <div class="workflow-line">
+
+            <div class="workflow-step">
+
+                <span class="workflow-number">
+                    01
+                </span>
+
+                <div class="workflow-icon">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 6h11v12H3z"/>
+                        <path d="M14 10h4l3 3v5h-7z"/>
+                        <circle cx="7" cy="18" r="2"/>
+                        <circle cx="18" cy="18" r="2"/>
+                    </svg>
+
+                </div>
+
+                <strong>
+                    Delivery
+                </strong>
+
+                <span>
+                    Customer handoff
+                </span>
+
+            </div>
+
+
+            <div class="workflow-connector"></div>
+
+
+            <div class="workflow-step">
+
+                <span class="workflow-number">
+                    02
+                </span>
+
+                <div class="workflow-icon">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="2.5" y="5" width="19" height="14" rx="2.5"/>
+                        <path d="M2.5 10h19"/>
+                        <path d="M7 15h3"/>
+                    </svg>
+
+                </div>
+
+                <strong>
+                    Payment
+                </strong>
+
+                <span>
+                    Record transaction
+                </span>
+
+            </div>
+
+
+            <div class="workflow-connector"></div>
+
+
+            <div class="workflow-step">
+
+                <span class="workflow-number">
+                    03
+                </span>
+
+                <div class="workflow-icon">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 3h12v18H6z"/>
+                        <path d="M9 7h6M9 11h6M9 15h3"/>
+                    </svg>
+
+                </div>
+
+                <strong>
+                    Receipt
+                </strong>
+
+                <span>
+                    Transaction record
+                </span>
+
+            </div>
+
+
+            <div class="workflow-connector"></div>
+
+
+            <div class="workflow-step">
+
+                <span class="workflow-number">
+                    04
+                </span>
+
+                <div class="workflow-icon">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="m7 12 3 3 7-7"/>
+                    </svg>
+
+                </div>
+
+                <strong>
+                    Complete
+                </strong>
+
+                <span>
+                    Stored in LaundryCare
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="footer">
+
+        <span>
+            © 2026 LaundryCare. All rights reserved.
+        </span>
+
+        <span class="footer-security">
+
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="5" y="10" width="14" height="11" rx="2"/>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+            </svg>
+
+            Secure Management System
+
+        </span>
+
+    </footer>
+
+</main>
+
+
+<!-- =========================================================
+     DELETE CONFIRMATION MODAL
+========================================================= -->
+
+<div
+    class="modal-overlay"
+    id="deleteModal"
+    aria-hidden="true"
+>
+
+    <div
+        class="delete-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="deleteModalTitle"
+    >
+
+        <button
+            type="button"
+            class="modal-close"
+            id="modalClose"
+            aria-label="Close delete confirmation"
+        >
+            ×
+        </button>
+
+
+        <div class="modal-icon">
+
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 2.5 20h19z"/>
+                <path d="M12 9v5"/>
+                <path d="M12 17h.01"/>
+            </svg>
+
+        </div>
+
+
+        <span class="modal-kicker">
+            TRANSACTION REMOVAL
+        </span>
+
+
+        <h2 id="deleteModalTitle">
+            Delete Payment Record?
+        </h2>
+
+
+        <p>
+            Are you sure you want to delete this payment transaction?
+        </p>
+
+
+        <div class="delete-summary">
+
+            <div>
+
+                <span>
+                    Payment ID
+                </span>
+
+                <strong id="modalPaymentId">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Customer
+                </span>
+
+                <strong id="modalCustomer">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Amount
+                </span>
+
+                <strong id="modalAmount">
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-warning">
+
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M12 8v5"/>
+                <path d="M12 16h.01"/>
+            </svg>
+
+            This action cannot be undone.
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                class="cancel-delete"
+                id="cancelDelete"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                type="button"
+                class="confirm-delete"
+                id="confirmDelete"
+            >
+
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 7h16"/>
+                    <path d="M10 11v6M14 11v6"/>
+                    <path d="M6 7l1 14h10l1-14"/>
+                    <path d="M9 7V4h6v3"/>
+                </svg>
+
+                Delete Payment
+
+            </button>
+
+        </div>
+
     </div>
 
 </div>
+
+
+<!-- =========================================================
+     SUCCESS POPUP
+========================================================= -->
+
+<div
+    id="paymentSuccessPopup"
+    class="popup-overlay"
+    aria-hidden="true"
+>
+
+    <div
+        class="success-popup"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="successTitle"
+    >
+
+        <div class="success-icon">
+
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="m7 12 3 3 7-7"/>
+            </svg>
+
+        </div>
+
+
+        <span class="modal-kicker">
+            TRANSACTION SAVED
+        </span>
+
+
+        <h2 id="successTitle">
+            Payment Recorded
+        </h2>
+
+
+        <p id="successMessage">
+            Payment has been successfully recorded.
+        </p>
+
+
+        <button
+            type="button"
+            class="success-done-button"
+            id="successDoneButton"
+        >
+            Done
+        </button>
+
+    </div>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='js/payments.js') }}"></script>
 
 </body>
 </html>

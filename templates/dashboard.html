@@ -1,224 +1,2956 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Laundry Management System</title>
+    <title>LaundryCare | Dashboard</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            color: #1f2937;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            height: 100vh;
-            background: #1f2937;
-            padding: 25px 15px;
-            color: white;
-        }
-
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .sidebar a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 13px 15px;
-            margin-bottom: 8px;
-            border-radius: 7px;
-        }
-
-        .sidebar a:hover {
-            background: #374151;
-        }
-
-        .content {
-            margin-left: 240px;
-            padding: 30px;
-        }
-
-        .header {
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 30px;
-        }
-
-        .header p {
-            color: #6b7280;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 18px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: white;
-            padding: 22px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.08);
-        }
-
-        .card h3 {
-            margin: 0 0 12px;
-            color: #6b7280;
-            font-size: 15px;
-        }
-
-        .card .number {
-            font-size: 30px;
-            font-weight: bold;
-        }
-
-        .section {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.08);
-        }
-
-        .section h2 {
-            margin-top: 0;
-        }
-
-        .quick-links {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-        }
-
-        .quick-links a {
-            text-decoration: none;
-            background: #f3f4f6;
-            color: #1f2937;
-            padding: 18px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .quick-links a:hover {
-            background: #e5e7eb;
-        }
-
-        @media (max-width: 1100px) {
-            .cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .quick-links {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/sidebar.css') }}">
 </head>
+
 
 <body>
 
-<div class="sidebar">
+<div class="lc-dashboard">
 
-    <h2>Laundry System</h2>
+    <!-- =====================================================
+         MOBILE OVERLAY
+    ====================================================== -->
 
-    <a href="/dashboard-page">Dashboard</a>
-    <a href="/customers-page">Customers</a>
-    <a href="/laundry-orders-page">Laundry Orders</a>
-    <a href="/pickup-schedules-page">Pickup Schedules</a>
-    <a href="/delivery-records-page">Delivery Records</a>
-    <a href="/payments-page">Payments</a>
-
-</div>
-
-
-<div class="content">
-
-    <div class="header">
-
-        <h1>Dashboard</h1>
-
-        <p>
-            Laundry Pickup and Delivery Management System
-        </p>
-
+    <div class="lc-sidebar-overlay"
+         id="sidebarOverlay">
     </div>
 
 
-    <div class="cards">
+    <!-- =====================================================
+         SIDEBAR
+         KEEPING YOUR EXISTING SIDEBAR
+    ====================================================== -->
 
-        <div class="card">
-            <h3>Customers</h3>
-            <div class="number">{{ customers_count }}</div>
+    <aside class="lc-sidebar"
+           id="sidebar">
+
+
+        <!-- BRAND -->
+
+        <div class="lc-brand">
+
+            <div class="lc-brand-mark">
+
+                <svg viewBox="0 0 48 48"
+                     aria-hidden="true">
+
+                    <path d="M10 18h28v20H10z"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linejoin="round"/>
+
+                    <path d="M14 18V11M34 18V11"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"/>
+
+                    <circle cx="24"
+                            cy="29"
+                            r="6"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"/>
+
+                    <circle cx="16"
+                            cy="8"
+                            r="1.5"
+                            fill="currentColor"/>
+
+                    <circle cx="32"
+                            cy="8"
+                            r="1.5"
+                            fill="currentColor"/>
+
+                </svg>
+
+            </div>
+
+
+            <div>
+
+                <h1>
+                    LaundryCare
+                </h1>
+
+                <p>
+                    Pickup &amp; Delivery Management
+                </p>
+
+            </div>
+
         </div>
 
-        <div class="card">
-            <h3>Laundry Orders</h3>
-            <div class="number">{{ orders_count }}</div>
+
+        <!-- NAVIGATION LABEL -->
+
+        <div class="lc-nav-label">
+            MAIN
         </div>
 
-        <div class="card">
-            <h3>Pickup Schedules</h3>
-            <div class="number">{{ pickups_count }}</div>
-        </div>
 
-        <div class="card">
-            <h3>Deliveries</h3>
-            <div class="number">{{ deliveries_count }}</div>
-        </div>
+        <!-- NAVIGATION -->
 
-        <div class="card">
-            <h3>Payments</h3>
-            <div class="number">{{ payments_count }}</div>
-        </div>
-
-    </div>
+        <nav class="lc-navigation"
+             aria-label="Main navigation">
 
 
-    <div class="section">
+            <!-- DASHBOARD -->
 
-        <h2>Quick Access</h2>
+            <a href="/dashboard-page"
+               class="lc-nav-item active"
+               aria-current="page">
 
-        <div class="quick-links">
+                <span class="lc-nav-icon">
 
-            <a href="/customers-page">
-                Customers
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+
+                        <rect x="3"
+                              y="3"
+                              width="7"
+                              height="7"
+                              rx="1"/>
+
+                        <rect x="14"
+                              y="3"
+                              width="7"
+                              height="7"
+                              rx="1"/>
+
+                        <rect x="3"
+                              y="14"
+                              width="7"
+                              height="7"
+                              rx="1"/>
+
+                        <rect x="14"
+                              y="14"
+                              width="7"
+                              height="7"
+                              rx="1"/>
+
+                    </svg>
+
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
             </a>
+
+
+            <!-- CUSTOMERS -->
+
+            <a href="/customers-page"
+               class="lc-nav-item">
+
+                <span class="lc-nav-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+
+                        <circle cx="9"
+                                cy="8"
+                                r="4"/>
+
+                        <path d="M3 21c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+
+                        <path d="M16 4.5a4 4 0 0 1 0 7.5"/>
+
+                        <path d="M18 15c2 .7 3 2.5 3 6"/>
+
+                    </svg>
+
+                </span>
+
+                <span>
+                    Customers
+                </span>
+
+            </a>
+
+
+            <!-- LAUNDRY ORDERS -->
+
+            <a href="/laundry-orders-page"
+               class="lc-nav-item">
+
+                <span class="lc-nav-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+
+                        <path d="M5 4h14"/>
+
+                        <path d="M7 4v3c0 2 2 3 5 3s5-1 5-3V4"/>
+
+                        <path d="M8 10l-2 10h12l-2-10"/>
+
+                        <path d="M9 15h6"/>
+
+                    </svg>
+
+                </span>
+
+                <span>
+                    Laundry Orders
+                </span>
+
+            </a>
+
+
+            <!-- PICKUP -->
+
+            <a href="/pickup-schedules-page"
+               class="lc-nav-item">
+
+                <span class="lc-nav-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+
+                        <rect x="3"
+                              y="5"
+                              width="18"
+                              height="16"
+                              rx="2"/>
+
+                        <path d="M7 3v4M17 3v4M3 10h18"/>
+
+                        <path d="M7 14h3M14 14h3M7 18h3"/>
+
+                    </svg>
+
+                </span>
+
+                <span>
+                    Pickup Schedules
+                </span>
+
+            </a>
+
+
+            <!-- DELIVERY -->
+
+            <a href="/delivery-records-page"
+               class="lc-nav-item">
+
+                <span class="lc-nav-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+
+                        <path d="M3 6h11v11H3z"/>
+
+                        <path d="M14 10h4l3 3v4h-7z"/>
+
+                        <circle cx="7"
+                                cy="19"
+                                r="2"/>
+
+                        <circle cx="18"
+                                cy="19"
+                                r="2"/>
+
+                    </svg>
+
+                </span>
+
+                <span>
+                    Delivery Records
+                </span>
+
+            </a>
+
+
+            <!-- PAYMENTS -->
+
+            <a href="/payments-page"
+               class="lc-nav-item">
+
+                <span class="lc-nav-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+
+                        <rect x="3"
+                              y="5"
+                              width="18"
+                              height="14"
+                              rx="2"/>
+
+                        <path d="M3 10h18"/>
+
+                        <path d="M7 15h4"/>
+
+                    </svg>
+
+                </span>
+
+                <span>
+                    Payments
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <!-- =====================================================
+             SIDEBAR BOTTOM
+        ====================================================== -->
+
+        <div class="lc-sidebar-bottom">
+
+
+            <!-- ADMIN -->
+
+            <div class="lc-admin-profile">
+
+                <div class="lc-admin-avatar">
+                    A
+                </div>
+
+
+                <div class="lc-admin-info">
+
+                    <strong>
+                        Admin
+                    </strong>
+
+                    <span>
+                        System Administrator
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOGOUT -->
+
+            <a href="/logout"
+               class="lc-logout"
+               onclick="return confirm('Are you sure you want to logout?');">
+
+                <span class="lc-nav-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+
+                        <path d="M10 17l5-5-5-5"/>
+
+                        <path d="M15 12H3"/>
+
+                        <path d="M20 4v16"/>
+
+                    </svg>
+
+                </span>
+
+                <span>
+                    Sign Out
+                </span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN AREA
+    ====================================================== -->
+
+    <main class="lc-main">
+
+
+        <!-- =================================================
+             TOP HEADER
+        ================================================== -->
+
+        <header class="lc-topbar">
+
+
+            <!-- MOBILE MENU -->
+
+            <button
+                type="button"
+                class="lc-menu-button"
+                id="menuButton"
+                aria-label="Open navigation menu"
+                aria-controls="sidebar"
+                aria-expanded="false">
+
+                <span></span>
+                <span></span>
+                <span></span>
+
+            </button>
+
+
+            <!-- TOP RIGHT -->
+
+            <div class="lc-topbar-right">
+
+
+                <!-- SYSTEM -->
+
+                <div class="lc-system-indicator">
+
+                    <span class="lc-online-dot"></span>
+
+                    <span>
+                        System Online
+                    </span>
+
+                </div>
+
+
+                <!-- ADMIN -->
+
+                <div class="lc-top-admin">
+
+                    <div class="lc-small-avatar">
+                        A
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Admin
+                        </strong>
+
+                        <span>
+                            Administrator
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             NEW DASHBOARD CONTENT
+             SIDEBAR ENDS ABOVE THIS POINT
+        ================================================== -->
+
+        <div class="lc-content new-dashboard-content">
+
+    <!-- =================================================
+         DASHBOARD HEADER
+    ================================================== -->
+
+    <section class="new-dashboard-header">
+
+        <div class="new-dashboard-heading">
+
+            <span class="new-dashboard-label">
+                LAUNDRYCARE DASHBOARD
+            </span>
+
+            <h1>
+                Welcome back, Admin
+            </h1>
+
+            <p>
+                Here's what's happening with your
+                laundry management system today.
+            </p>
+
+        </div>
+
+
+        <!-- HEADER CONTROLS -->
+
+        <div class="new-dashboard-controls">
+
+            <!-- SYSTEM STATUS -->
+
+            <div class="new-system-status">
+
+                <span class="new-status-dot"></span>
+
+                <div>
+
+                    <strong>
+                        System Online
+                    </strong>
+
+                    <small>
+                        All systems operational
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- NOTIFICATION -->
+
+            <a
+                href="#"
+                class="new-header-notification"
+                aria-label="Notifications"
+                title="Notifications"
+            >
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                    <path d="M10 21h4"></path>
+                </svg>
+
+
+            </a>
+
+
+            <!-- ADMIN PROFILE -->
+
+            <div class="new-header-admin">
+
+                <div class="new-header-admin-avatar">
+                    A
+                </div>
+
+                <div class="new-header-admin-info">
+
+                    <strong>
+                        Admin
+                    </strong>
+
+                    <small>
+                        Administrator
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+   <!-- =========================================================
+     STEP 10 — COMPACT NEON KPI CARDS
+     ========================================================= -->
+
+<section class="pro-stats-grid" aria-label="LaundryCare statistics">
+
+
+    <!-- =====================================================
+         CUSTOMERS
+         ===================================================== -->
+
+    <a href="/customers-page"
+       class="pro-stat-card customers-card">
+
+        <div class="pro-stat-header">
+
+            <div class="pro-stat-icon">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <circle cx="9" cy="8" r="4"/>
+
+                    <path d="M3 21c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+
+                    <path d="M17 11c2.2 0 4 1.8 4 4"/>
+
+                    <path d="M20 21c0-2.1-1.2-3.9-3-4.7"/>
+
+                </svg>
+
+            </div>
+
+            <span class="pro-stat-link">
+                View →
+            </span>
+
+        </div>
+
+
+        <div class="pro-stat-value">
+            {{ customers_count }}
+        </div>
+
+
+        <div class="pro-stat-title">
+            Customers
+        </div>
+
+
+        <div class="pro-stat-footer">
+
+            <span>
+                Registered customers
+            </span>
+
+            <span class="pro-stat-status">
+                ● Current
+            </span>
+
+        </div>
+
+
+        <div class="pro-stat-chart customers-chart">
+
+            <svg viewBox="0 0 180 35"
+                 preserveAspectRatio="none"
+                 aria-hidden="true">
+
+                <polyline
+                    points="0,27 12,23 24,25 36,18 48,21 60,15 72,19 84,12 96,17 108,10 120,14 132,7 144,12 156,5 168,9 180,3"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"/>
+
+            </svg>
+
+        </div>
+
+    </a>
+
+
+
+    <!-- =====================================================
+         LAUNDRY ORDERS
+         ===================================================== -->
+
+    <a href="/laundry-orders-page"
+       class="pro-stat-card orders-card">
+
+        <div class="pro-stat-header">
+
+            <div class="pro-stat-icon">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <path d="M5 4h14"/>
+
+                    <path d="M7 4v3c0 2 2 3 5 3s5-1 5-3V4"/>
+
+                    <path d="M8 10l-2 10h12l-2-10"/>
+
+                    <path d="M10 15h4"/>
+
+                </svg>
+
+            </div>
+
+            <span class="pro-stat-link">
+                View →
+            </span>
+
+        </div>
+
+
+        <div class="pro-stat-value">
+            {{ orders_count }}
+        </div>
+
+
+        <div class="pro-stat-title">
+            Laundry Orders
+        </div>
+
+
+        <div class="pro-stat-footer">
+
+            <span>
+                Total laundry orders
+            </span>
+
+            <span class="pro-stat-status">
+                ● Current
+            </span>
+
+        </div>
+
+
+        <div class="pro-stat-chart orders-chart">
+
+            <svg viewBox="0 0 180 35"
+                 preserveAspectRatio="none"
+                 aria-hidden="true">
+
+                <polyline
+                    points="0,25 12,27 24,21 36,24 48,17 60,20 72,12 84,15 96,8 108,12 120,5 132,14 144,9 156,18 168,10 180,5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"/>
+
+            </svg>
+
+        </div>
+
+    </a>
+
+
+
+    <!-- =====================================================
+         PICKUPS
+         ===================================================== -->
+
+    <a href="/pickup-schedules-page"
+       class="pro-stat-card pickups-card">
+
+        <div class="pro-stat-header">
+
+            <div class="pro-stat-icon">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <rect x="3"
+                          y="5"
+                          width="18"
+                          height="16"
+                          rx="2"/>
+
+                    <path d="M7 3v4"/>
+
+                    <path d="M17 3v4"/>
+
+                    <path d="M3 10h18"/>
+
+                    <path d="M8 14h.01"/>
+
+                    <path d="M12 14h.01"/>
+
+                    <path d="M16 14h.01"/>
+
+                    <path d="M8 18h.01"/>
+
+                    <path d="M12 18h.01"/>
+
+                </svg>
+
+            </div>
+
+            <span class="pro-stat-link">
+                View →
+            </span>
+
+        </div>
+
+
+        <div class="pro-stat-value">
+            {{ pickups_count }}
+        </div>
+
+
+        <div class="pro-stat-title">
+            Pickups
+        </div>
+
+
+        <div class="pro-stat-footer">
+
+            <span>
+                Scheduled pickups
+            </span>
+
+            <span class="pro-stat-status">
+                ● Current
+            </span>
+
+        </div>
+
+
+        <div class="pro-stat-chart pickups-chart">
+
+            <svg viewBox="0 0 180 35"
+                 preserveAspectRatio="none"
+                 aria-hidden="true">
+
+                <polyline
+                    points="0,27 12,22 24,26 36,17 48,23 60,14 72,20 84,10 96,17 108,8 120,15 132,6 144,12 156,18 168,10 180,5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"/>
+
+            </svg>
+
+        </div>
+
+    </a>
+
+
+
+    <!-- =====================================================
+         DELIVERIES
+         ===================================================== -->
+
+    <a href="/delivery-records-page"
+       class="pro-stat-card deliveries-card">
+
+        <div class="pro-stat-header">
+
+            <div class="pro-stat-icon">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <path d="M3 6h11v11H3z"/>
+
+                    <path d="M14 10h4l3 3v4h-7z"/>
+
+                    <circle cx="7" cy="19" r="2"/>
+
+                    <circle cx="18" cy="19" r="2"/>
+
+                    <path d="M15 14h3"/>
+
+                </svg>
+
+            </div>
+
+            <span class="pro-stat-link">
+                View →
+            </span>
+
+        </div>
+
+
+        <div class="pro-stat-value">
+            {{ deliveries_count }}
+        </div>
+
+
+        <div class="pro-stat-title">
+            Deliveries
+        </div>
+
+
+        <div class="pro-stat-footer">
+
+            <span>
+                Delivery records
+            </span>
+
+            <span class="pro-stat-status">
+                ● Current
+            </span>
+
+        </div>
+
+
+        <div class="pro-stat-chart deliveries-chart">
+
+            <svg viewBox="0 0 180 35"
+                 preserveAspectRatio="none"
+                 aria-hidden="true">
+
+                <polyline
+                    points="0,22 12,17 24,21 36,13 48,19 60,11 72,16 84,8 96,14 108,7 120,17 132,10 144,15 156,7 168,11 180,4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"/>
+
+            </svg>
+
+        </div>
+
+    </a>
+
+
+
+    <!-- =====================================================
+         PAYMENTS
+         ===================================================== -->
+
+    <a href="/payments-page"
+       class="pro-stat-card payments-card">
+
+        <div class="pro-stat-header">
+
+            <div class="pro-stat-icon">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <rect x="3"
+                          y="5"
+                          width="18"
+                          height="14"
+                          rx="2"/>
+
+                    <path d="M3 10h18"/>
+
+                    <path d="M7 15h4"/>
+
+                    <circle cx="17" cy="15" r="1"/>
+
+                </svg>
+
+            </div>
+
+            <span class="pro-stat-link">
+                View →
+            </span>
+
+        </div>
+
+
+        <div class="pro-stat-value">
+            {{ payments_count }}
+        </div>
+
+
+        <div class="pro-stat-title">
+            Payments
+        </div>
+
+
+        <div class="pro-stat-footer">
+
+            <span>
+                Recorded transactions
+            </span>
+
+            <span class="pro-stat-status">
+                ● Current
+            </span>
+
+        </div>
+
+
+        <div class="pro-stat-chart payments-chart">
+
+            <svg viewBox="0 0 180 35"
+                 preserveAspectRatio="none"
+                 aria-hidden="true">
+
+                <polyline
+                    points="0,25 12,19 24,24 36,15 48,20 60,13 72,18 84,10 96,16 108,8 120,13 132,9 144,15 156,6 168,11 180,4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"/>
+
+            </svg>
+
+        </div>
+
+    </a>
+
+
+
+    <!-- =====================================================
+         REVENUE
+         ===================================================== -->
+
+    <a href="/payments-page"
+       class="pro-stat-card revenue-card">
+
+        <div class="pro-stat-header">
+
+            <div class="pro-stat-icon">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <circle cx="12" cy="12" r="9"/>
+
+                    <path d="M12 7v10"/>
+
+                    <path d="M15 9c0-1.2-1.2-2-3-2s-3 .8-3 2 1.2 2 3 2 3 1.2 3 2-1.2 2-3 2-3-.8-3-2"/>
+
+                </svg>
+
+            </div>
+
+            <span class="pro-stat-link">
+                View →
+            </span>
+
+        </div>
+
+
+        <div class="pro-stat-value revenue-value">
+
+            ₱{{ "{:,.2f}".format(total_revenue) }}
+
+        </div>
+
+
+        <div class="pro-stat-title">
+            Revenue
+        </div>
+
+
+        <div class="pro-stat-footer">
+
+            <span>
+                Total recorded payments
+            </span>
+
+            <span class="pro-stat-status">
+                ● Current
+            </span>
+
+        </div>
+
+
+        <div class="pro-stat-chart revenue-chart">
+
+            <svg viewBox="0 0 180 35"
+                 preserveAspectRatio="none"
+                 aria-hidden="true">
+
+                <polyline
+                    points="0,27 12,24 24,25 36,18 48,20 60,13 72,17 84,8 96,12 108,16 120,7 132,11 144,4 156,9 168,5 180,2"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"/>
+
+            </svg>
+
+        </div>
+
+    </a>
+
+</section>
+
+
+
+<!-- =========================================================
+     STEP 11 — BUSINESS ANALYTICS
+     ========================================================= -->
+
+<section class="pro-analytics-grid">
+
+
+    <!-- =====================================================
+         REVENUE OVERVIEW
+         ===================================================== -->
+
+    <article class="pro-panel revenue-panel">
+
+        <div class="pro-panel-header">
+
+            <div>
+
+                <span class="pro-panel-label">
+                    FINANCIAL OVERVIEW
+                </span>
+
+                <h3>
+                    Revenue Overview
+                </h3>
+
+                <p>
+                    Total recorded payment revenue.
+                </p>
+
+            </div>
+
+            <a href="/payments-page"
+               class="pro-panel-action">
+                View Payments →
+            </a>
+
+        </div>
+
+
+        <div class="revenue-highlight">
+
+            <div>
+
+                <span class="revenue-caption">
+                    TOTAL REVENUE
+                </span>
+
+                <strong>
+                    ₱{{ "{:,.2f}".format(total_revenue) }}
+                </strong>
+
+            </div>
+
+            <div class="revenue-badge">
+                <span></span>
+                Recorded
+            </div>
+
+        </div>
+
+
+        <div class="revenue-chart">
+
+            <div class="chart-y-axis">
+
+                <span>100%</span>
+                <span>75%</span>
+                <span>50%</span>
+                <span>25%</span>
+                <span>0%</span>
+
+            </div>
+
+
+            <div class="chart-area">
+
+                <div class="chart-grid-line line-1"></div>
+                <div class="chart-grid-line line-2"></div>
+                <div class="chart-grid-line line-3"></div>
+                <div class="chart-grid-line line-4"></div>
+
+
+                <svg
+                    class="revenue-line-chart"
+                    viewBox="0 0 700 220"
+                    preserveAspectRatio="none"
+                    aria-label="Revenue overview visualization"
+                    role="img"
+                >
+
+                    <defs>
+
+                        <linearGradient
+                            id="revenueGradient"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                        >
+
+                            <stop
+                                offset="0%"
+                                stop-color="#38bdf8"
+                                stop-opacity="0.20"
+                            />
+
+                            <stop
+                                offset="100%"
+                                stop-color="#38bdf8"
+                                stop-opacity="0"
+                            />
+
+                        </linearGradient>
+
+                    </defs>
+
+
+                    <path
+                        class="chart-fill"
+                        d="M0 180
+                           C70 165 85 175 130 145
+                           S190 135 230 150
+                           S290 100 340 125
+                           S405 95 450 110
+                           S515 65 560 90
+                           S625 55 700 70
+                           L700 220
+                           L0 220 Z"
+                    />
+
+
+                    <path
+                        class="chart-line"
+                        pathLength="1"
+                        d="M0 180
+                           C70 165 85 175 130 145
+                           S190 135 230 150
+                           S290 100 340 125
+                           S405 95 450 110
+                           S515 65 560 90
+                           S625 55 700 70"
+                    />
+
+
+                    <circle
+                        class="chart-point point-one"
+                        cx="130"
+                        cy="145"
+                        r="4"
+                    />
+
+                    <circle
+                        class="chart-point point-two"
+                        cx="230"
+                        cy="150"
+                        r="4"
+                    />
+
+                    <circle
+                        class="chart-point point-three"
+                        cx="340"
+                        cy="125"
+                        r="4"
+                    />
+
+                    <circle
+                        class="chart-point point-four"
+                        cx="450"
+                        cy="110"
+                        r="4"
+                    />
+
+                    <circle
+                        class="chart-point point-five"
+                        cx="560"
+                        cy="90"
+                        r="4"
+                    />
+
+                    <circle
+                        class="chart-point point-six"
+                        cx="700"
+                        cy="70"
+                        r="4"
+                    />
+
+                </svg>
+
+
+                <div class="chart-months">
+
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                    <span>Sun</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="analytics-footer">
+
+            <span>
+                Current database total
+            </span>
+
+            <a href="/payments-page">
+                Open Financial Records →
+            </a>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- =====================================================
+         LAUNDRY ORDER PIPELINE
+         ===================================================== -->
+
+    <article class="pro-panel pipeline-panel">
+
+        <div class="pro-panel-header">
+
+            <div>
+
+                <span class="pro-panel-label">
+                    ORDER MANAGEMENT
+                </span>
+
+                <h3>
+                    Laundry Order Pipeline
+                </h3>
+
+                <p>
+                    Current order record overview.
+                </p>
+
+            </div>
+
+            <a href="/laundry-orders-page"
+               class="pro-panel-action">
+                Manage Orders →
+            </a>
+
+        </div>
+
+
+        <div class="pipeline">
+
+
+            <!-- NEW -->
+
+            <div class="pipeline-stage">
+
+                <div class="pipeline-icon new">
+                    <span>01</span>
+                </div>
+
+                <div class="pipeline-info">
+
+                    <strong>
+                        Recorded Orders
+                    </strong>
+
+                    <span>
+                        Orders currently in system
+                    </span>
+
+                </div>
+
+                <b>
+                    {{ orders_count }}
+                </b>
+
+            </div>
+
+
+            <div class="pipeline-connector">
+                <span></span>
+            </div>
+
+
+            <!-- PROCESSING -->
+
+            <div class="pipeline-stage">
+
+                <div class="pipeline-icon processing">
+                    <span>02</span>
+                </div>
+
+                <div class="pipeline-info">
+
+                    <strong>
+                        Processing
+                    </strong>
+
+                    <span>
+                        Status data not available
+                    </span>
+
+                </div>
+
+                <b>
+                    —
+                </b>
+
+            </div>
+
+
+            <div class="pipeline-connector">
+                <span></span>
+            </div>
+
+
+            <!-- READY -->
+
+            <div class="pipeline-stage">
+
+                <div class="pipeline-icon ready">
+                    <span>03</span>
+                </div>
+
+                <div class="pipeline-info">
+
+                    <strong>
+                        Ready
+                    </strong>
+
+                    <span>
+                        Status data not available
+                    </span>
+
+                </div>
+
+                <b>
+                    —
+                </b>
+
+            </div>
+
+
+            <div class="pipeline-connector">
+                <span></span>
+            </div>
+
+
+            <!-- COMPLETED -->
+
+            <div class="pipeline-stage">
+
+                <div class="pipeline-icon completed">
+                    <span>04</span>
+                </div>
+
+                <div class="pipeline-info">
+
+                    <strong>
+                        Completed
+                    </strong>
+
+                    <span>
+                        Status data not available
+                    </span>
+
+                </div>
+
+                <b>
+                    —
+                </b>
+
+            </div>
+
+        </div>
+
+
+        <div class="pipeline-footer">
+
+            <span>
+
+                <i></i>
+
+                Order system operational
+
+            </span>
 
             <a href="/laundry-orders-page">
-                Laundry Orders
+                Open Order Management →
             </a>
 
-            <a href="/pickup-schedules-page">
-                Pickup Schedules
+        </div>
+
+    </article>
+
+</section>
+
+            <!-- =========================================================
+     NOTIFICATIONS + ADMIN LOG
+     ========================================================= -->
+
+<section class="notification-log-grid">
+
+    <!-- NOTIFICATIONS -->
+    <article class="notification-panel">
+
+        <div class="notification-header">
+
+            <div>
+                <span class="operations-label">
+                    ATTENTION CENTER
+                </span>
+
+                <h3>Notifications</h3>
+
+                <p>
+                    Important system information and shortcuts.
+                </p>
+            </div>
+
+            <span class="notification-count">
+                {{ orders_count + pickups_count }}
+            </span>
+
+        </div>
+
+
+        <div class="notification-list">
+
+            <!-- ORDERS -->
+            <a href="/laundry-orders-page"
+               class="notification-item">
+
+                <div class="notification-icon order-notification">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+
+                        <path d="M5 4h14"/>
+                        <path d="M7 4v3c0 2 2 3 5 3s5-1 5-3V4"/>
+                        <path d="M8 10l-2 10h12l-2-10"/>
+
+                    </svg>
+
+                </div>
+
+                <div class="notification-content">
+
+                    <strong>
+                        Laundry Orders
+                    </strong>
+
+                    <span>
+                        {{ orders_count }}
+                        order records are currently available.
+                    </span>
+
+                </div>
+
+                <span class="notification-arrow">
+                    →
+                </span>
+
             </a>
 
-            <a href="/delivery-records-page">
-                Delivery Records
+
+            <!-- PICKUPS -->
+            <a href="/pickup-schedules-page"
+               class="notification-item">
+
+                <div class="notification-icon pickup-notification">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+
+                        <rect x="3"
+                              y="5"
+                              width="18"
+                              height="16"
+                              rx="2"/>
+
+                        <path d="M7 3v4"/>
+                        <path d="M17 3v4"/>
+                        <path d="M3 10h18"/>
+
+                    </svg>
+
+                </div>
+
+                <div class="notification-content">
+
+                    <strong>
+                        Pickup Schedule
+                    </strong>
+
+                    <span>
+                        {{ pickups_count }}
+                        pickup records are available.
+                    </span>
+
+                </div>
+
+                <span class="notification-arrow">
+                    →
+                </span>
+
             </a>
+
+
+            <!-- PAYMENTS -->
+            <a href="/payments-page"
+               class="notification-item">
+
+                <div class="notification-icon payment-notification">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+
+                        <rect x="3"
+                              y="5"
+                              width="18"
+                              height="14"
+                              rx="2"/>
+
+                        <path d="M3 10h18"/>
+                        <path d="M7 15h4"/>
+
+                    </svg>
+
+                </div>
+
+                <div class="notification-content">
+
+                    <strong>
+                        Payment Records
+                    </strong>
+
+                    <span>
+                        {{ payments_count }}
+                        payment transactions recorded.
+                    </span>
+
+                </div>
+
+                <span class="notification-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+            <!-- SYSTEM -->
+            <div class="notification-item system-notification-item">
+
+                <div class="notification-icon system-notification">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+
+                        <path d="M12 3l8 4v5c0 4.8-3.4 8-8 9-4.6-1-8-4.2-8-9V7l8-4z"/>
+                        <path d="M9 12l2 2 4-4"/>
+
+                    </svg>
+
+                </div>
+
+                <div class="notification-content">
+
+                    <strong>
+                        System Status
+                    </strong>
+
+                    <span>
+                        LaundryCare services are operational.
+                    </span>
+
+                </div>
+
+                <span class="notification-live">
+                    ONLINE
+                </span>
+
+            </div>
+
+        </div>
+
+    </article>
+
+
+    <!-- ADMIN ACTIVITY LOG -->
+    <article class="admin-log-panel">
+
+        <div class="admin-log-header">
+
+            <div>
+                <span class="operations-label">
+                    ADMINISTRATION
+                </span>
+
+                <h3>Admin Activity Log</h3>
+
+                <p>
+                    Current system activity overview.
+                </p>
+            </div>
+
+            <div class="admin-log-indicator">
+                <i></i>
+                Monitoring
+            </div>
+
+        </div>
+
+
+        <div class="admin-log-list">
+
+            <a href="/customers-page"
+               class="admin-log-item">
+
+                <div class="admin-log-number">
+                    01
+                </div>
+
+                <div class="admin-log-content">
+
+                    <strong>
+                        Customer Directory
+                    </strong>
+
+                    <span>
+                        {{ customers_count }}
+                        customer records available
+                    </span>
+
+                </div>
+
+                <span class="admin-log-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+            <a href="/laundry-orders-page"
+               class="admin-log-item">
+
+                <div class="admin-log-number">
+                    02
+                </div>
+
+                <div class="admin-log-content">
+
+                    <strong>
+                        Order Management
+                    </strong>
+
+                    <span>
+                        {{ orders_count }}
+                        laundry orders recorded
+                    </span>
+
+                </div>
+
+                <span class="admin-log-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+            <a href="/pickup-schedules-page"
+               class="admin-log-item">
+
+                <div class="admin-log-number">
+                    03
+                </div>
+
+                <div class="admin-log-content">
+
+                    <strong>
+                        Pickup Scheduling
+                    </strong>
+
+                    <span>
+                        {{ pickups_count }}
+                        pickup schedules available
+                    </span>
+
+                </div>
+
+                <span class="admin-log-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+            <a href="/delivery-records-page"
+               class="admin-log-item">
+
+                <div class="admin-log-number">
+                    04
+                </div>
+
+                <div class="admin-log-content">
+
+                    <strong>
+                        Delivery Records
+                    </strong>
+
+                    <span>
+                        {{ deliveries_count }}
+                        delivery records available
+                    </span>
+
+                </div>
+
+                <span class="admin-log-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+            <a href="/payments-page"
+               class="admin-log-item">
+
+                <div class="admin-log-number">
+                    05
+                </div>
+
+                <div class="admin-log-content">
+
+                    <strong>
+                        Financial Records
+                    </strong>
+
+                    <span>
+                        {{ payments_count }}
+                        payment transactions available
+                    </span>
+
+                </div>
+
+                <span class="admin-log-arrow">
+                    →
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="admin-log-footer">
+
+            <span>
+                <i></i>
+                Dashboard monitoring active
+            </span>
+
+            <a href="/dashboard-page">
+                Refresh Dashboard
+            </a>
+
+        </div>
+
+    </article>
+
+</section>
+
+            <!-- =========================================================
+     STEP 11B — TODAY'S OPERATIONS + SYSTEM OVERVIEW
+     ========================================================= -->
+
+<section class="operations-dashboard-grid">
+
+
+    <!-- =====================================================
+         TODAY'S OPERATIONS
+         ===================================================== -->
+
+    <article class="operations-panel">
+
+        <div class="operations-panel-header">
+
+            <div>
+
+                <span class="operations-label">
+                    DAILY OPERATIONS
+                </span>
+
+                <h3>
+                    Today's Operations
+                </h3>
+
+                <p>
+                    Current activity across LaundryCare.
+                </p>
+
+            </div>
+
+            <span class="operations-live">
+
+                <i></i>
+
+                Live
+
+            </span>
+
+        </div>
+
+
+        <div class="operations-list">
+
+
+            <!-- CUSTOMER MANAGEMENT -->
+
+            <a href="/customers-page"
+               class="operation-item">
+
+                <div class="operation-icon customer-operation">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <circle cx="12" cy="8" r="4"/>
+
+                        <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>
+
+                    </svg>
+
+                </div>
+
+                <div class="operation-content">
+
+                    <strong>
+                        Customer Management
+                    </strong>
+
+                    <span>
+                        {{ customers_count }}
+                        registered customers
+                    </span>
+
+                </div>
+
+                <span class="operation-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+
+            <!-- LAUNDRY ORDERS -->
+
+            <a href="/laundry-orders-page"
+               class="operation-item">
+
+                <div class="operation-icon order-operation">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <path d="M5 4h14"/>
+
+                        <path d="M7 4v3c0 2 2 3 5 3s5-1 5-3V4"/>
+
+                        <path d="M8 10l-2 10h12l-2-10"/>
+
+                    </svg>
+
+                </div>
+
+                <div class="operation-content">
+
+                    <strong>
+                        Laundry Orders
+                    </strong>
+
+                    <span>
+                        {{ orders_count }}
+                        recorded orders
+                    </span>
+
+                </div>
+
+                <span class="operation-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+
+            <!-- PICKUP SCHEDULING -->
+
+            <a href="/pickup-schedules-page"
+               class="operation-item">
+
+                <div class="operation-icon pickup-operation">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <rect x="3"
+                              y="5"
+                              width="18"
+                              height="16"
+                              rx="2"/>
+
+                        <path d="M7 3v4"/>
+
+                        <path d="M17 3v4"/>
+
+                        <path d="M3 10h18"/>
+
+                    </svg>
+
+                </div>
+
+                <div class="operation-content">
+
+                    <strong>
+                        Pickup Scheduling
+                    </strong>
+
+                    <span>
+                        {{ pickups_count }}
+                        scheduled pickups
+                    </span>
+
+                </div>
+
+                <span class="operation-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+
+            <!-- DELIVERY MANAGEMENT -->
+
+            <a href="/delivery-records-page"
+               class="operation-item">
+
+                <div class="operation-icon delivery-operation">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <path d="M3 6h11v11H3z"/>
+
+                        <path d="M14 10h4l3 3v4h-7z"/>
+
+                        <circle cx="7" cy="19" r="2"/>
+
+                        <circle cx="18" cy="19" r="2"/>
+
+                    </svg>
+
+                </div>
+
+                <div class="operation-content">
+
+                    <strong>
+                        Delivery Management
+                    </strong>
+
+                    <span>
+                        {{ deliveries_count }}
+                        recorded deliveries
+                    </span>
+
+                </div>
+
+                <span class="operation-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+
+            <!-- PAYMENT MANAGEMENT -->
+
+            <a href="/payments-page"
+               class="operation-item">
+
+                <div class="operation-icon payment-operation">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <rect x="3"
+                              y="5"
+                              width="18"
+                              height="14"
+                              rx="2"/>
+
+                        <path d="M3 10h18"/>
+
+                        <path d="M7 15h4"/>
+
+                    </svg>
+
+                </div>
+
+                <div class="operation-content">
+
+                    <strong>
+                        Payment Management
+                    </strong>
+
+                    <span>
+                        {{ payments_count }}
+                        recorded transactions
+                    </span>
+
+                </div>
+
+                <span class="operation-arrow">
+                    →
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="operations-panel-footer">
+
+            <span>
+                All management modules are accessible.
+            </span>
+
+            <a href="/dashboard-page">
+                Dashboard Home →
+            </a>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- =====================================================
+         SYSTEM RECORDS
+         ===================================================== -->
+
+    <article class="activity-panel system-overview-panel">
+
+        <div class="activity-panel-header">
+
+            <div>
+
+                <span class="operations-label">
+                    SYSTEM OVERVIEW
+                </span>
+
+                <h3>
+                    System Records
+                </h3>
+
+                <p>
+                    Current records available across LaundryCare.
+                </p>
+
+            </div>
+
+            <span class="activity-status">
+
+                <span class="activity-status-dot"></span>
+
+                System Online
+
+            </span>
+
+        </div>
+
+
+        <div class="activity-list">
+
+
+            <!-- CUSTOMERS -->
+
+            <a href="/customers-page"
+               class="activity-item activity-link">
+
+                <div class="activity-dot customer-dot">
+                    <span></span>
+                </div>
+
+                <div class="activity-text">
+
+                    <strong>
+                        Customer Records
+                    </strong>
+
+                    <span>
+                        {{ customers_count }}
+                        customers currently registered
+                    </span>
+
+                </div>
+
+                <div class="activity-value">
+
+                    <strong>
+                        {{ customers_count }}
+                    </strong>
+
+                    <span>
+                        Records
+                    </span>
+
+                </div>
+
+                <span class="activity-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+
+            <!-- LAUNDRY ORDERS -->
+
+            <a href="/laundry-orders-page"
+               class="activity-item activity-link">
+
+                <div class="activity-dot order-dot">
+                    <span></span>
+                </div>
+
+                <div class="activity-text">
+
+                    <strong>
+                        Laundry Orders
+                    </strong>
+
+                    <span>
+                        {{ orders_count }}
+                        orders currently recorded
+                    </span>
+
+                </div>
+
+                <div class="activity-value">
+
+                    <strong>
+                        {{ orders_count }}
+                    </strong>
+
+                    <span>
+                        Records
+                    </span>
+
+                </div>
+
+                <span class="activity-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+
+            <!-- PICKUPS -->
+
+            <a href="/pickup-schedules-page"
+               class="activity-item activity-link">
+
+                <div class="activity-dot pickup-dot">
+                    <span></span>
+                </div>
+
+                <div class="activity-text">
+
+                    <strong>
+                        Pickup Schedules
+                    </strong>
+
+                    <span>
+                        {{ pickups_count }}
+                        pickup schedules recorded
+                    </span>
+
+                </div>
+
+                <div class="activity-value">
+
+                    <strong>
+                        {{ pickups_count }}
+                    </strong>
+
+                    <span>
+                        Records
+                    </span>
+
+                </div>
+
+                <span class="activity-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+
+            <!-- DELIVERIES -->
+
+            <a href="/delivery-records-page"
+               class="activity-item activity-link">
+
+                <div class="activity-dot delivery-dot">
+                    <span></span>
+                </div>
+
+                <div class="activity-text">
+
+                    <strong>
+                        Delivery Records
+                    </strong>
+
+                    <span>
+                        {{ deliveries_count }}
+                        delivery records available
+                    </span>
+
+                </div>
+
+                <div class="activity-value">
+
+                    <strong>
+                        {{ deliveries_count }}
+                    </strong>
+
+                    <span>
+                        Records
+                    </span>
+
+                </div>
+
+                <span class="activity-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+
+            <!-- PAYMENTS -->
+
+            <a href="/payments-page"
+               class="activity-item activity-link">
+
+                <div class="activity-dot payment-dot">
+                    <span></span>
+                </div>
+
+                <div class="activity-text">
+
+                    <strong>
+                        Payment Records
+                    </strong>
+
+                    <span>
+                        {{ payments_count }}
+                        payment transactions recorded
+                    </span>
+
+                </div>
+
+                <div class="activity-value">
+
+                    <strong>
+                        {{ payments_count }}
+                    </strong>
+
+                    <span>
+                        Records
+                    </span>
+
+                </div>
+
+                <span class="activity-arrow">
+                    →
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="system-overview-footer">
+
+            <span>
+                Dashboard data reflects current database records.
+            </span>
+
+            <a href="/dashboard-page">
+                Refresh Dashboard →
+            </a>
+
+        </div>
+
+    </article>
+
+</section>
+
+
+
+<!-- =========================================================
+     COMMAND CENTER QUICK ACTIONS
+     ========================================================= -->
+
+<section class="quick-actions-panel">
+
+    <div class="quick-actions-header">
+
+        <div>
+
+            <span class="quick-actions-label">
+                COMMAND CENTER
+            </span>
+
+            <h3>
+                Quick Actions
+            </h3>
+
+            <p>
+                Frequently used management operations.
+            </p>
+
+        </div>
+
+        <div class="quick-actions-status">
+
+            <span></span>
+
+            Ready
 
         </div>
 
     </div>
 
+
+    <div class="quick-actions-grid">
+
+
+        <!-- ADD CUSTOMER -->
+
+        <a href="/customers-page"
+           class="neon-action-button customer-action">
+
+            <div class="neon-action-icon">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <circle cx="9" cy="8" r="4"/>
+
+                    <path d="M3 21c0-3.3 2.7-6 6-6"/>
+
+                    <path d="M17 11v6"/>
+
+                    <path d="M14 14h6"/>
+
+                </svg>
+
+            </div>
+
+            <div class="neon-action-text">
+
+                <strong>
+                    Add Customer
+                </strong>
+
+                <span>
+                    Create customer record
+                </span>
+
+            </div>
+
+            <div class="neon-action-arrow">
+                →
+            </div>
+
+        </a>
+
+
+
+        <!-- NEW ORDER -->
+
+        <a href="/laundry-orders-page"
+           class="neon-action-button order-action">
+
+            <div class="neon-action-icon">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <path d="M5 4h14"/>
+
+                    <path d="M7 4v3c0 2 2 3 5 3s5-1 5-3V4"/>
+
+                    <path d="M8 10l-2 10h12l-2-10"/>
+
+                    <path d="M10 15h4"/>
+
+                </svg>
+
+            </div>
+
+            <div class="neon-action-text">
+
+                <strong>
+                    New Laundry Order
+                </strong>
+
+                <span>
+                    Create a new order
+                </span>
+
+            </div>
+
+            <div class="neon-action-arrow">
+                →
+            </div>
+
+        </a>
+
+
+
+        <!-- SCHEDULE PICKUP -->
+
+        <a href="/pickup-schedules-page"
+           class="neon-action-button pickup-action">
+
+            <div class="neon-action-icon">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <rect x="3"
+                          y="5"
+                          width="18"
+                          height="16"
+                          rx="2"/>
+
+                    <path d="M7 3v4"/>
+
+                    <path d="M17 3v4"/>
+
+                    <path d="M3 10h18"/>
+
+                    <path d="M12 13v4"/>
+
+                    <path d="M10 15h4"/>
+
+                </svg>
+
+            </div>
+
+            <div class="neon-action-text">
+
+                <strong>
+                    Schedule Pickup
+                </strong>
+
+                <span>
+                    Create pickup schedule
+                </span>
+
+            </div>
+
+            <div class="neon-action-arrow">
+                →
+            </div>
+
+        </a>
+
+
+
+        <!-- RECORD DELIVERY -->
+
+        <a href="/delivery-records-page"
+           class="neon-action-button delivery-action">
+
+            <div class="neon-action-icon">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <path d="M3 6h11v11H3z"/>
+
+                    <path d="M14 10h4l3 3v4h-7z"/>
+
+                    <circle cx="7" cy="19" r="2"/>
+
+                    <circle cx="18" cy="19" r="2"/>
+
+                    <path d="M15 14h3"/>
+
+                </svg>
+
+            </div>
+
+            <div class="neon-action-text">
+
+                <strong>
+                    Record Delivery
+                </strong>
+
+                <span>
+                    Add delivery record
+                </span>
+
+            </div>
+
+            <div class="neon-action-arrow">
+                →
+            </div>
+
+        </a>
+
+
+
+        <!-- RECORD PAYMENT -->
+
+        <a href="/payments-page"
+           class="neon-action-button payment-action">
+
+            <div class="neon-action-icon">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <rect x="3"
+                          y="5"
+                          width="18"
+                          height="14"
+                          rx="2"/>
+
+                    <path d="M3 10h18"/>
+
+                    <path d="M7 15h4"/>
+
+                    <circle cx="17" cy="15" r="1"/>
+
+                </svg>
+
+            </div>
+
+            <div class="neon-action-text">
+
+                <strong>
+                    Record Payment
+                </strong>
+
+                <span>
+                    Add payment transaction
+                </span>
+
+            </div>
+
+            <div class="neon-action-arrow">
+                →
+            </div>
+
+        </a>
+
+    </div>
+
+</section>
+
+
+
+
+
+                <!-- SECURE MANAGEMENT -->
+
+                <div class="new-panel new-security-panel">
+
+
+                    <div class="new-panel-header">
+
+
+                        <div>
+
+                            <span class="new-panel-label">
+                                SYSTEM
+                            </span>
+
+                            <h2>
+                                Secure Management
+                            </h2>
+
+                        </div>
+
+
+                        <span class="new-panel-icon security-icon">
+
+                            <svg viewBox="0 0 24 24"
+                                 aria-hidden="true">
+
+                                <path d="M12 3l8 3v5c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-3z"/>
+
+                                <path d="M9 12l2 2 4-4"/>
+
+                            </svg>
+
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="new-security-content">
+
+
+                        <div class="new-security-item">
+
+                            <span class="new-check-icon">
+                                ✓
+                            </span>
+
+
+                            <div>
+
+                                <strong>
+                                    Protected Access
+                                </strong>
+
+                                <small>
+                                    Administrator authentication is enabled.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="new-security-item">
+
+                            <span class="new-check-icon">
+                                ✓
+                            </span>
+
+
+                            <div>
+
+                                <strong>
+                                    Organized Records
+                                </strong>
+
+                                <small>
+                                    Laundry records are managed centrally.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="new-security-item">
+
+                            <span class="new-check-icon">
+                                ✓
+                            </span>
+
+
+                            <div>
+
+                                <strong>
+                                    Centralized Management
+                                </strong>
+
+                                <small>
+                                    All major modules are connected.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+
+
+
+
+            <!-- =================================================
+                 ZERO DATA
+            ================================================== -->
+
+            {% if customers_count == 0
+                  and orders_count == 0
+                  and pickups_count == 0
+                  and deliveries_count == 0
+                  and payments_count == 0 %}
+
+
+            <section class="new-empty-state">
+
+
+                <div class="new-empty-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+
+                        <path d="M4 7h16"/>
+
+                        <path d="M6 7v12h12V7"/>
+
+                        <path d="M9 7V4h6v3"/>
+
+                    </svg>
+
+                </div>
+
+
+                <div>
+
+                    <span class="new-panel-label">
+                        GET STARTED
+                    </span>
+
+                    <h2>
+                        Start building your LaundryCare records
+                    </h2>
+
+                    <p>
+                        Register your first customer to begin
+                        using the LaundryCare management modules.
+                    </p>
+
+                </div>
+
+
+                <a href="/customers-page"
+                   class="new-primary-button">
+
+                    <span>
+                        Add Customer
+                    </span>
+
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+
+                        <path d="M5 12h14"/>
+
+                        <path d="M13 6l6 6-6 6"/>
+
+                    </svg>
+
+                </a>
+
+            </section>
+
+            {% endif %}
+
+
+
+            <!-- =================================================
+                 FOOTER
+            ================================================== -->
+
+            <footer class="new-dashboard-footer">
+
+                <span>
+                    © 2026 LaundryCare. All rights reserved.
+                </span>
+
+                <span>
+                    Laundry Pickup &amp; Delivery Management System
+                </span>
+
+            </footer>
+
+
+        </div>
+
+    </main>
+
 </div>
 
+
+
+<!-- =========================================================
+     DASHBOARD JAVASCRIPT
+========================================================= -->
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
 </body>
+
 </html>

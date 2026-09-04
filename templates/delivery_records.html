@@ -4,345 +4,1827 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Delivery Records - Laundry System</title>
+    <title>Delivery Records - LaundryCare</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='css/sidebar.css') }}">
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            color: #1f2937;
-        }
+    <meta
+        name="description"
+        content="LaundryCare Delivery Control Center"
+    >
 
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 230px;
-            height: 100vh;
-            background: #1f2937;
-            color: white;
-            padding: 20px;
-        }
-
-        .sidebar h2 {
-            margin-top: 0;
-            margin-bottom: 30px;
-        }
-
-        .sidebar a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 6px;
-        }
-
-        .sidebar a:hover {
-            background: #374151;
-        }
-
-        .content {
-            margin-left: 230px;
-            padding: 30px;
-        }
-
-        .header {
-            margin-bottom: 25px;
-        }
-
-        .header h1 {
-            margin: 0 0 8px;
-        }
-
-        .header p {
-            color: #6b7280;
-        }
-
-        .form-container,
-        .table-container {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 25px;
-        }
-
-        .form-container h2,
-        .table-container h2 {
-            margin-top: 0;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 11px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 15px;
-        }
-
-        .add-button {
-            padding: 11px 20px;
-            background: #1f2937;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .add-button:hover {
-            background: #374151;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            padding: 14px;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        th {
-            background: #f1f3f5;
-        }
-
-        tr:hover {
-            background: #f9fafb;
-        }
-
-        .edit-button {
-            display: inline-block;
-            padding: 7px 12px;
-            background: #2563eb;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-right: 5px;
-        }
-
-        .edit-button:hover {
-            background: #1d4ed8;
-        }
-
-        .delete-button {
-            padding: 7px 12px;
-            background: #dc2626;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .delete-button:hover {
-            background: #b91c1c;
-        }
-
-        .empty {
-            color: #6b7280;
-            text-align: center;
-            padding: 20px;
-        }
-
-        @media (max-width: 700px) {
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-            }
-
-            .content {
-                margin-left: 0;
-            }
-
-            table {
-                font-size: 13px;
-            }
-        }
-    </style>
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/delivery_records.css') }}"
+    >
 </head>
 
 <body>
 
-<div class="sidebar">
+<!-- SIDEBAR OVERLAY -->
+<div class="lc-sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
-    <h2>Laundry System</h2>
+<!-- SIDEBAR -->
+<aside class="lc-sidebar" id="sidebar" aria-label="Main navigation">
 
-    <a href="/">Dashboard</a>
-    <a href="/customers-page">Customers</a>
-    <a href="/laundry-orders-page">Laundry Orders</a>
-    <a href="/pickup-schedules-page">Pickup Schedules</a>
-    <a href="/delivery-records-page">Delivery Records</a>
-    <a href="/payments-page">Payments</a>
-
-    <a href="/logout"
-       onclick="return confirm('Are you sure you want to logout?');">
-        Logout
-    </a>
-
-</div>
-
-<div class="content">
-
-    <div class="header">
-        <h1>Delivery Records</h1>
-        <p>Create and manage completed laundry deliveries.</p>
-    </div>
-
-    <!-- ADD DELIVERY -->
-
-    <div class="form-container">
-
-        <h2>Add Delivery Record</h2>
-
-        <form method="POST" action="/delivery-records-page">
-
-            <div class="form-group">
-
-                <label for="customer">
-                    Customer
-                </label>
-
-                <input
-                    type="text"
-                    id="customer"
-                    name="customer"
-                    placeholder="Enter customer name"
-                    required
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label for="delivery_date">
-                    Delivery Date
-                </label>
-
-                <input
-                    type="date"
-                    id="delivery_date"
-                    name="delivery_date"
-                    required
-                >
-
-            </div>
-
-            <button
-                type="submit"
-                class="add-button"
-            >
-                + Add Delivery Record
-            </button>
-
-        </form>
-
-    </div>
-
-
-    <!-- DELIVERY LIST -->
-
-    <div class="table-container">
-
-        <h2>Delivery Records</h2>
-
-        {% if deliveries %}
-
-        <table>
-
-            <thead>
-
-                <tr>
-                    <th>ID</th>
-                    <th>Customer</th>
-                    <th>Delivery Date</th>
-                    <th>Actions</th>
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                {% for delivery in deliveries %}
-
-                <tr>
-
-                    <td>
-                        {{ delivery["id"] }}
-                    </td>
-
-                    <td>
-                        {{ delivery["customer"] }}
-                    </td>
-
-                    <td>
-                        {{ delivery["delivery_date"] }}
-                    </td>
-
-                    <td>
-
-                        <a
-                            href="/delivery-records-page/edit/{{ delivery['id'] }}"
-                            class="edit-button"
-                        >
-                            Edit
-                        </a>
-
-                        <form
-                            method="POST"
-                            action="/delivery-records-page/delete/{{ delivery['id'] }}"
-                            style="display:inline;"
-                        >
-
-                            <button
-                                type="submit"
-                                class="delete-button"
-                                onclick="return confirm('Are you sure you want to delete this delivery record?');"
-                            >
-                                Delete
-                            </button>
-
-                        </form>
-
-                    </td>
-
-                </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-        </table>
-
-        {% else %}
-
-        <div class="empty">
-            No delivery records found.
+    <!-- BRAND -->
+    <div class="lc-brand">
+        <div class="lc-brand-mark">
+            <svg viewBox="0 0 48 48" aria-hidden="true">
+                <rect x="7" y="7" width="34" height="34" rx="10"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"/>
+                <path d="M16 24h16M24 16v16"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"/>
+            </svg>
         </div>
 
-        {% endif %}
+        <div>
+            <h1>LaundryCare</h1>
+            <p>Pickup &amp; Delivery Management</p>
+        </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="lc-navigation" aria-label="Main navigation">
+
+        <span class="lc-nav-label">MAIN</span>
+
+        <!-- DASHBOARD -->
+        <a href="/dashboard-page" class="lc-nav-item">
+            <span class="lc-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-5v-6h-5v6h-5A1.5 1.5 0 0 1 3 19.5z"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linejoin="round"/>
+                </svg>
+            </span>
+            <span>Dashboard</span>
+        </a>
+
+        <!-- CUSTOMERS -->
+        <a href="/customers-page" class="lc-nav-item">
+            <span class="lc-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="8" r="3.2"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"/>
+                    <path d="M5.5 20c.7-3.4 2.8-5.2 6.5-5.2s5.8 1.8 6.5 5.2"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"/>
+                </svg>
+            </span>
+            <span>Customers</span>
+        </a>
+
+        <!-- LAUNDRY ORDERS -->
+        <a href="/laundry-orders-page" class="lc-nav-item">
+            <span class="lc-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 4h12v16H6z"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linejoin="round"/>
+                    <path d="M9 8h6M9 12h6M9 16h4"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"/>
+                </svg>
+            </span>
+            <span>Laundry Orders</span>
+        </a>
+
+        <!-- PICKUP SCHEDULES -->
+        <a href="/pickup-schedules-page" class="lc-nav-item">
+            <span class="lc-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="4" y="5" width="16" height="15" rx="2"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"/>
+                    <path d="M8 3v4M16 3v4M4 9h16"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"/>
+                </svg>
+            </span>
+            <span>Pickup Schedules</span>
+        </a>
+
+        <!-- DELIVERY RECORDS -->
+        <a href="/delivery-records-page"
+           class="lc-nav-item active"
+           aria-current="page">
+            <span class="lc-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linejoin="round"/>
+                    <circle cx="7" cy="19" r="1.5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"/>
+                    <circle cx="18" cy="19" r="1.5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"/>
+                </svg>
+            </span>
+            <span>Delivery Records</span>
+        </a>
+
+        <!-- PAYMENTS -->
+        <a href="/payments-page" class="lc-nav-item">
+            <span class="lc-nav-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"/>
+                    <path d="M3 10h18M7 15h4"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"/>
+                </svg>
+            </span>
+            <span>Payments</span>
+        </a>
+
+    </nav>
+
+    <!-- ADMIN / LOGOUT -->
+    <div class="lc-sidebar-bottom">
+
+        <div class="lc-admin-profile">
+            <div class="lc-admin-avatar">A</div>
+
+            <div class="lc-admin-info">
+                <strong>Admin</strong>
+                <span>System Administrator</span>
+            </div>
+        </div>
+
+        <a href="/logout"
+           class="lc-logout"
+           aria-label="Sign out">
+
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"/>
+                <path d="M14 8l4 4-4 4M18 12H9"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"/>
+            </svg>
+
+            <span>Sign Out</span>
+        </a>
+
+    </div>
+
+</aside>
+
+
+<!-- =========================================================
+     MAIN APPLICATION
+========================================================= -->
+
+<main class="app-shell">
+
+    <!-- MOBILE TOP BAR -->
+
+    <div class="mobile-topbar">
+
+        <button
+            type="button"
+            class="mobile-menu-button"
+            id="mobileMenuButton"
+            aria-label="Open navigation menu"
+            aria-controls="sidebar"
+            aria-expanded="false"
+        >
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+            >
+                <path d="M4 6h16"></path>
+                <path d="M4 12h16"></path>
+                <path d="M4 18h16"></path>
+            </svg>
+        </button>
+
+        <div class="mobile-brand">
+            LaundryCare
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TOP HEADER
+    ====================================================== -->
+
+    <header class="top-header">
+
+        <div class="header-context">
+
+            <span class="header-kicker">
+                DELIVERY OPERATIONS
+            </span>
+
+            <span class="header-divider"></span>
+
+            <span class="header-status">
+                <span class="status-dot"></span>
+                Control Center
+            </span>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <button
+                type="button"
+                class="icon-button"
+                aria-label="Notifications"
+            >
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                    <path d="M10 21h4"></path>
+                </svg>
+
+                <span class="notification-dot"></span>
+            </button>
+
+
+            <div class="header-user">
+
+                <div class="avatar">
+                    SA
+                </div>
+
+                <div class="header-user-info">
+
+                    <strong>
+                        Administrator
+                    </strong>
+
+                    <span>
+                        System Administrator
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         PAGE CONTENT
+    ====================================================== -->
+
+    <section class="page-content">
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="delivery-hero">
+
+            <div class="hero-main">
+
+                <div class="hero-label">
+
+                    <span class="hero-label-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M3 7h11v10H3z"></path>
+                            <path d="M14 10h4l3 3v4h-7z"></path>
+                            <circle cx="7" cy="19" r="2"></circle>
+                            <circle cx="18" cy="19" r="2"></circle>
+                        </svg>
+
+                    </span>
+
+                    DELIVERY CONTROL CENTER
+
+                </div>
+
+
+                <h1>
+                    Delivery Records
+                </h1>
+
+                <p>
+                    Manage completed laundry deliveries and keep every
+                    customer handoff organized.
+                </p>
+
+
+                <div class="hero-meta">
+
+                    <div class="hero-meta-item">
+
+                        <span class="meta-icon">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M5 12h14"></path>
+                                <path d="m13 6 6 6-6 6"></path>
+                            </svg>
+                        </span>
+
+                        <span>
+                            Delivery-to-payment workflow
+                        </span>
+
+                    </div>
+
+
+                    <div class="hero-meta-item">
+
+                        <span class="meta-icon">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M12 3v18"></path>
+                                <path d="M3 12h18"></path>
+                            </svg>
+                        </span>
+
+                        <span>
+                            Operational record management
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DECORATIVE DELIVERY ROUTE -->
+
+            <div
+                class="hero-route"
+                aria-hidden="true"
+            >
+
+                <div class="route-node route-node-start">
+                    <span></span>
+                </div>
+
+                <div class="route-line">
+                    <span class="route-pulse"></span>
+                </div>
+
+                <div class="route-node route-node-mid">
+                    <span></span>
+                </div>
+
+                <div class="route-line">
+                    <span class="route-pulse"></span>
+                </div>
+
+                <div class="route-node route-node-end">
+                    <span></span>
+                </div>
+
+                <div class="route-truck">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M3 7h11v10H3z"></path>
+                        <path d="M14 10h4l3 3v4h-7z"></path>
+                        <circle cx="7" cy="19" r="2"></circle>
+                        <circle cx="18" cy="19" r="2"></circle>
+                    </svg>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="hero-action"
+                id="newDeliveryButton"
+            >
+
+                <span>
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    >
+                        <path d="M12 5v14"></path>
+                        <path d="M5 12h14"></path>
+                    </svg>
+                </span>
+
+                New Delivery Record
+
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             WORKFLOW TRACKER
+        ================================================== -->
+
+        <section class="workflow-panel">
+
+            <div class="section-heading workflow-heading">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        SYSTEM WORKFLOW
+                    </span>
+
+                    <h2>
+                        Delivery Progress Tracker
+                    </h2>
+
+                    <p>
+                        LaundryCare's standard order-to-payment workflow.
+                    </p>
+
+                </div>
+
+                <div class="workflow-badge">
+                    Informational
+                </div>
+
+            </div>
+
+
+            <div class="workflow-rail">
+
+                <div class="workflow-step">
+
+                    <div class="step-circle">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M6 3h12"></path>
+                            <path d="M6 21h12"></path>
+                            <path d="M6 3c0 4 3 5 6 6 3-1 6-2 6-6"></path>
+                            <path d="M6 21c0-4 3-5 6-6 3 1 6 2 6 6"></path>
+                        </svg>
+
+                    </div>
+
+                    <div class="step-number">
+                        01
+                    </div>
+
+                    <strong>
+                        Laundry Order
+                    </strong>
+
+                    <span>
+                        Order registered
+                    </span>
+
+                </div>
+
+
+                <div class="workflow-connector">
+                    <span></span>
+                </div>
+
+
+                <div class="workflow-step">
+
+                    <div class="step-circle">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+                            <path d="M16 2v4"></path>
+                            <path d="M8 2v4"></path>
+                            <path d="M3 10h18"></path>
+                            <path d="M8 14h.01"></path>
+                            <path d="M12 14h.01"></path>
+                        </svg>
+
+                    </div>
+
+                    <div class="step-number">
+                        02
+                    </div>
+
+                    <strong>
+                        Pickup
+                    </strong>
+
+                    <span>
+                        Laundry collected
+                    </span>
+
+                </div>
+
+
+                <div class="workflow-connector">
+                    <span></span>
+                </div>
+
+
+                <div class="workflow-step">
+
+                    <div class="step-circle">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <circle cx="12" cy="12" r="8"></circle>
+                            <path d="M12 8v8"></path>
+                            <path d="M9 10h5a2 2 0 0 1 0 4H9"></path>
+                        </svg>
+
+                    </div>
+
+                    <div class="step-number">
+                        03
+                    </div>
+
+                    <strong>
+                        Processing
+                    </strong>
+
+                    <span>
+                        Laundry prepared
+                    </span>
+
+                </div>
+
+
+                <div class="workflow-connector">
+                    <span></span>
+                </div>
+
+
+                <div class="workflow-step workflow-step-delivery">
+
+                    <div class="step-circle">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M3 7h11v10H3z"></path>
+                            <path d="M14 10h4l3 3v4h-7z"></path>
+                            <circle cx="7" cy="19" r="2"></circle>
+                            <circle cx="18" cy="19" r="2"></circle>
+                        </svg>
+
+                    </div>
+
+                    <div class="step-number">
+                        04
+                    </div>
+
+                    <strong>
+                        Delivery
+                    </strong>
+
+                    <span>
+                        Customer handoff
+                    </span>
+
+                </div>
+
+
+                <div class="workflow-connector">
+                    <span></span>
+                </div>
+
+
+                <div class="workflow-step workflow-step-payment">
+
+                    <div class="step-circle">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <rect x="2.5" y="5" width="19" height="14" rx="2"></rect>
+                            <path d="M2.5 10h19"></path>
+                            <path d="M7 15h3"></path>
+                        </svg>
+
+                    </div>
+
+                    <div class="step-number">
+                        05
+                    </div>
+
+                    <strong>
+                        Payment
+                    </strong>
+
+                    <span>
+                        Payment record
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             COMMAND CENTER
+        ================================================== -->
+
+        <section class="command-center">
+
+            <div class="command-main">
+
+                <div class="command-header">
+
+                    <div class="command-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M4 19V9"></path>
+                            <path d="M10 19V5"></path>
+                            <path d="M16 19v-7"></path>
+                            <path d="M22 19V3"></path>
+                        </svg>
+
+                    </div>
+
+                    <div>
+
+                        <span class="section-eyebrow">
+                            OPERATIONS
+                        </span>
+
+                        <h2>
+                            Delivery Command Center
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <p class="command-description">
+                    Keep delivery operations organized using the records
+                    currently stored in LaundryCare.
+                </p>
+
+
+                <div class="command-stats">
+
+                    <div class="command-stat">
+
+                        <span class="command-stat-label">
+                            Total Deliveries
+                        </span>
+
+                        <strong id="totalDeliveries">
+                            {{ deliveries|length }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="command-stat">
+
+                        <span class="command-stat-label">
+                            Today's Deliveries
+                        </span>
+
+                        <strong id="todayDeliveries">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="command-stat">
+
+                        <span class="command-stat-label">
+                            Upcoming Deliveries
+                        </span>
+
+                        <strong id="upcomingDeliveries">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="command-side">
+
+                <div class="command-orbit">
+
+                    <div class="orbit-ring orbit-ring-one"></div>
+                    <div class="orbit-ring orbit-ring-two"></div>
+
+                    <div class="orbit-core">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M3 7h11v10H3z"></path>
+                            <path d="M14 10h4l3 3v4h-7z"></path>
+                            <circle cx="7" cy="19" r="2"></circle>
+                            <circle cx="18" cy="19" r="2"></circle>
+                        </svg>
+
+                    </div>
+
+                </div>
+
+
+                <div class="command-side-text">
+
+                    <span>
+                        DELIVERY
+                    </span>
+
+                    <strong>
+                        Control
+                    </strong>
+
+                    <small>
+                        Operational view
+                    </small>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             ADD DELIVERY
+        ================================================== -->
+
+        <section
+            class="create-card"
+            id="createDeliverySection"
+        >
+
+            <div class="create-card-header">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        NEW RECORD
+                    </span>
+
+                    <h2>
+                        Create Delivery Record
+                    </h2>
+
+                    <p>
+                        Record a completed laundry delivery for a customer.
+                    </p>
+
+                </div>
+
+
+                <div class="create-number">
+                    01
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                action="/delivery-records-page"
+                id="deliveryForm"
+                novalidate
+            >
+
+                <div class="form-grid">
+
+                    <!-- CUSTOMER -->
+
+                    <div class="form-field">
+
+                        <label for="customer">
+                            Customer
+                            <span class="required">*</span>
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M20 21a8 8 0 0 0-16 0"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+
+                            </span>
+
+                            <input
+                                type="text"
+                                id="customer"
+                                name="customer"
+                                placeholder="Enter customer name"
+                                value="{{ request.args.get('customer', '') }}"
+                                {% if request.args.get('customer') %}
+                                readonly
+                                {% endif %}
+                                autocomplete="name"
+                                required
+                                aria-describedby="customerError"
+                            >
+
+                        </div>
+
+                        <div
+                            class="field-error"
+                            id="customerError"
+                            role="alert"
+                        ></div>
+
+                    </div>
+
+
+                    <!-- DELIVERY DATE -->
+
+                    <div class="form-field">
+
+                        <label for="delivery_date">
+                            Delivery Date
+                            <span class="required">*</span>
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+                                    <path d="M16 2v4"></path>
+                                    <path d="M8 2v4"></path>
+                                    <path d="M3 10h18"></path>
+                                    <path d="M8 14h2"></path>
+                                    <path d="M14 14h2"></path>
+                                </svg>
+
+                            </span>
+
+                            <input
+                                type="date"
+                                id="delivery_date"
+                                name="delivery_date"
+                                required
+                                aria-describedby="deliveryDateError"
+                            >
+
+                        </div>
+
+                        <div
+                            class="field-error"
+                            id="deliveryDateError"
+                            role="alert"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-footer">
+
+                    <div class="form-note">
+
+                        <span class="form-note-icon">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <circle cx="12" cy="12" r="9"></circle>
+                                <path d="M12 10v6"></path>
+                                <path d="M12 7h.01"></path>
+                            </svg>
+
+                        </span>
+
+                        Delivery records are stored through the existing
+                        LaundryCare Flask system.
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                        id="submitDeliveryButton"
+                    >
+
+                        <span class="button-icon">
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                            >
+                                <path d="M12 5v14"></path>
+                                <path d="M5 12h14"></path>
+                            </svg>
+
+                        </span>
+
+                        <span class="button-text">
+                            Add Delivery Record
+                        </span>
+
+                        <span
+                            class="button-spinner"
+                            aria-hidden="true"
+                        ></span>
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             PAYMENT HANDOFF
+        ================================================== -->
+
+        <section class="handoff-strip">
+
+            <div class="handoff-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <rect x="2.5" y="5" width="19" height="14" rx="2"></rect>
+                    <path d="M2.5 10h19"></path>
+                    <path d="M7 15h3"></path>
+                </svg>
+
+            </div>
+
+
+            <div class="handoff-content">
+
+                <span class="handoff-eyebrow">
+                    PAYMENT HANDOFF
+                </span>
+
+                <strong>
+                    Delivery Complete → Payment Record
+                </strong>
+
+                <span>
+                    Use the payment action on a delivery record to continue
+                    the existing customer handoff workflow.
+                </span>
+
+            </div>
+
+
+            <div class="handoff-arrow">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M5 12h14"></path>
+                    <path d="m13 6 6 6-6 6"></path>
+                </svg>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             RECORDS
+        ================================================== -->
+
+        <section class="records-card">
+
+            <div class="records-header">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        DELIVERY LOG
+                    </span>
+
+                    <h2>
+                        Delivery Records
+                    </h2>
+
+                    <p>
+                        Track and manage customer delivery records.
+                    </p>
+
+                </div>
+
+
+                <div class="records-tools">
+
+                    <div class="search-box">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <circle cx="11" cy="11" r="7"></circle>
+                            <path d="m20 20-4-4"></path>
+                        </svg>
+
+                        <input
+                            type="search"
+                            id="deliverySearch"
+                            placeholder="Search delivery records..."
+                            autocomplete="off"
+                            aria-label="Search delivery records"
+                        >
+
+                        <button
+                            type="button"
+                            class="search-clear"
+                            id="clearSearch"
+                            aria-label="Clear search"
+                            hidden
+                        >
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                            >
+                                <path d="M6 6l12 12"></path>
+                                <path d="M18 6 6 18"></path>
+                            </svg>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% if deliveries %}
+
+            <div
+                class="records-table-wrapper"
+                id="recordsTableWrapper"
+            >
+
+                <table class="records-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th scope="col">
+                                ID
+                            </th>
+
+                            <th scope="col">
+                                Customer
+                            </th>
+
+                            <th scope="col">
+                                Delivery Date
+                            </th>
+
+                            <th scope="col">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="deliveryTableBody">
+
+                        {% for delivery in deliveries %}
+
+                        <tr
+                            class="delivery-row"
+                            data-id="{{ delivery['id'] }}"
+                            data-customer="{{ delivery['customer']|e }}"
+                            data-date="{{ delivery['delivery_date']|e }}"
+                        >
+
+                            <!-- ID -->
+
+                            <td
+                                data-label="ID"
+                                class="id-cell"
+                            >
+
+                                <span class="delivery-id">
+                                    #{{ "%03d"|format(delivery["id"]) }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- CUSTOMER -->
+
+                            <td
+                                data-label="Customer"
+                                class="customer-cell"
+                            >
+
+                                <div class="customer-profile">
+
+                                    <div
+                                        class="customer-avatar"
+                                        data-initials
+                                    >
+                                    </div>
+
+                                    <div class="customer-info">
+
+                                        <strong class="customer-name">
+                                            {{ delivery["customer"] }}
+                                        </strong>
+
+                                        <span class="customer-caption">
+                                            Delivery recipient
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- DATE -->
+
+                            <td
+                                data-label="Delivery Date"
+                                class="date-cell"
+                            >
+
+                                <div class="delivery-date">
+
+                                    <span class="date-icon">
+
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.8"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+                                            <path d="M16 2v4"></path>
+                                            <path d="M8 2v4"></path>
+                                            <path d="M3 10h18"></path>
+                                        </svg>
+
+                                    </span>
+
+                                    <span
+                                        class="formatted-date"
+                                        data-date="{{ delivery['delivery_date']|e }}"
+                                    >
+                                        {{ delivery["delivery_date"] }}
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- ACTIONS -->
+
+                            <td
+                                data-label="Actions"
+                                class="actions-cell"
+                            >
+
+                                <div class="action-group">
+
+                                    <!-- EDIT -->
+
+                                    <a
+                                        href="/delivery-records-page/edit/{{ delivery['id'] }}"
+                                        class="action-button action-edit"
+                                        aria-label="Edit delivery record #{{ delivery['id'] }}"
+                                    >
+
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.8"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            aria-hidden="true"
+                                        >
+                                            <path d="M12 20h9"></path>
+                                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
+                                        </svg>
+
+                                        <span>
+                                            Edit
+                                        </span>
+
+                                    </a>
+
+
+                                    <!-- PROCEED TO PAYMENT -->
+
+                                    <a
+                                        href="/payments-page?customer={{ delivery['customer']|urlencode }}"
+                                        class="action-button action-payment"
+                                        aria-label="Proceed to payment for {{ delivery['customer']|e }}"
+                                    >
+
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.8"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            aria-hidden="true"
+                                        >
+                                            <rect x="2.5" y="5" width="19" height="14" rx="2"></rect>
+                                            <path d="M2.5 10h19"></path>
+                                            <path d="M7 15h3"></path>
+                                            <path d="M17 14v4"></path>
+                                            <path d="m15 16 2 2 2-2"></path>
+                                        </svg>
+
+                                        <span>
+                                            Proceed to Payment
+                                        </span>
+
+                                    </a>
+
+
+                                    <!-- DELETE -->
+
+                                    <form
+                                        method="POST"
+                                        action="/delivery-records-page/delete/{{ delivery['id'] }}"
+                                        class="delete-form"
+                                    >
+
+                                        <button
+                                            type="button"
+                                            class="action-button action-delete"
+                                            data-delete-button
+                                            data-id="{{ delivery['id'] }}"
+                                            data-customer="{{ delivery['customer']|e }}"
+                                            data-date="{{ delivery['delivery_date']|e }}"
+                                            aria-label="Delete delivery record #{{ delivery['id'] }}"
+                                        >
+
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.8"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                aria-hidden="true"
+                                            >
+                                                <path d="M4 7h16"></path>
+                                                <path d="M10 11v6"></path>
+                                                <path d="M14 11v6"></path>
+                                                <path d="M6 7l1 14h10l1-14"></path>
+                                                <path d="M9 7V4h6v3"></path>
+                                            </svg>
+
+                                            <span>
+                                                Delete
+                                            </span>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- SEARCH EMPTY -->
+
+            <div
+                class="search-empty"
+                id="searchEmpty"
+                hidden
+            >
+
+                <div class="search-empty-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="m20 20-4-4"></path>
+                    </svg>
+
+                </div>
+
+                <h3>
+                    No delivery records found
+                </h3>
+
+                <p>
+                    Try adjusting your search.
+                </p>
+
+            </div>
+
+            {% else %}
+
+            <!-- EMPTY STATE -->
+
+            <div class="empty-state">
+
+                <div class="empty-illustration">
+
+                    <div class="empty-ring"></div>
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M3 7h11v10H3z"></path>
+                        <path d="M14 10h4l3 3v4h-7z"></path>
+                        <circle cx="7" cy="19" r="2"></circle>
+                        <circle cx="18" cy="19" r="2"></circle>
+                    </svg>
+
+                </div>
+
+
+                <h3>
+                    No delivery records yet
+                </h3>
+
+                <p>
+                    There are currently no completed laundry deliveries.
+                </p>
+
+
+                <button
+                    type="button"
+                    class="empty-action"
+                    id="emptyCreateButton"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    >
+                        <path d="M12 5v14"></path>
+                        <path d="M5 12h14"></path>
+                    </svg>
+
+                    Create Delivery Record
+
+                </button>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =================================================
+             DELIVERY TIP
+        ================================================== -->
+
+        <section class="delivery-tip">
+
+            <div class="tip-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M9 18h6"></path>
+                    <path d="M10 22h4"></path>
+                    <path d="M8.5 14.5A6 6 0 1 1 15.5 14.5c-.8.7-1.5 1.6-1.5 2.5h-4c0-.9-.7-1.8-1.5-2.5Z"></path>
+                </svg>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    DELIVERY TIP
+                </span>
+
+                <p>
+                    Confirm the customer's delivery details before completing
+                    the handoff and moving to payment.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <footer class="page-footer">
+
+            <span>
+                © 2026 LaundryCare. All rights reserved.
+            </span>
+
+            <span class="footer-security">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+                    <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                </svg>
+
+                Secure Management System
+
+            </span>
+
+        </footer>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================================
+     DELETE MODAL
+========================================================= -->
+
+<div
+    class="modal-overlay"
+    id="deleteModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="deleteModalTitle"
+    aria-describedby="deleteModalDescription"
+    hidden
+>
+
+    <div class="delete-modal">
+
+        <button
+            type="button"
+            class="modal-close"
+            id="closeDeleteModal"
+            aria-label="Close delete confirmation"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+            >
+                <path d="M6 6l12 12"></path>
+                <path d="M18 6 6 18"></path>
+            </svg>
+
+        </button>
+
+
+        <div class="modal-danger-icon">
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M4 7h16"></path>
+                <path d="M10 11v6"></path>
+                <path d="M14 11v6"></path>
+                <path d="M6 7l1 14h10l1-14"></path>
+                <path d="M9 7V4h6v3"></path>
+            </svg>
+
+        </div>
+
+
+        <span class="modal-eyebrow">
+            PERMANENT ACTION
+        </span>
+
+
+        <h2 id="deleteModalTitle">
+            Delete Delivery Record?
+        </h2>
+
+
+        <p id="deleteModalDescription">
+            Are you sure you want to delete this delivery record?
+        </p>
+
+
+        <div class="delete-preview">
+
+            <div class="preview-row">
+
+                <span>
+                    Delivery
+                </span>
+
+                <strong id="deleteDeliveryId">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="preview-row">
+
+                <span>
+                    Customer
+                </span>
+
+                <strong id="deleteCustomer">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="preview-row">
+
+                <span>
+                    Delivery Date
+                </span>
+
+                <strong id="deleteDate">
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-warning">
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M12 3 2.5 20h19L12 3Z"></path>
+                <path d="M12 9v5"></path>
+                <path d="M12 17h.01"></path>
+            </svg>
+
+            This action cannot be undone.
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                class="modal-button modal-cancel"
+                id="cancelDelete"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                type="button"
+                class="modal-button modal-confirm-delete"
+                id="confirmDelete"
+            >
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <path d="M4 7h16"></path>
+                    <path d="M10 11v6"></path>
+                    <path d="M14 11v6"></path>
+                    <path d="M6 7l1 14h10l1-14"></path>
+                </svg>
+
+                Delete Record
+
+            </button>
+
+        </div>
 
     </div>
 
 </div>
+
+
+<script
+    src="{{ url_for('static', filename='js/delivery_records.js') }}"
+    defer
+></script>
 
 </body>
 </html>
