@@ -1,0 +1,370 @@
+/* =========================================================
+   LAUNDRYCARE — CUSTOMER MANAGEMENT
+   TEXT VISIBILITY & DARK THEME
+   ========================================================= */
+
+body {
+    background: red !important;
+}
+
+/* Main page */
+body {
+    color: #eaf2ff;
+}
+
+/* =========================================================
+   TOP PAGE HEADER
+   ========================================================= */
+
+.content-heading h1,
+.content-heading .section-title {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+}
+
+.content-heading p,
+.content-heading .section-description {
+    color: #a9bdd4 !important;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    color: #8fa8c4 !important;
+}
+
+.breadcrumb a {
+    color: #6f8eae !important;
+}
+
+.breadcrumb span {
+    color: #a9bdd4 !important;
+}
+
+/* =========================================================
+   CUSTOMER MANAGEMENT HEADER
+   ========================================================= */
+
+.section-label {
+    color: #19d3d8 !important;
+    font-weight: 800 !important;
+    letter-spacing: 2px;
+}
+
+.customer-management h2,
+.customer-management-card h2,
+.management-header h2 {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+}
+
+/* Registered Customers */
+.customer-management p,
+.customer-management-card p,
+.management-header p {
+    color: #a9bdd4 !important;
+}
+
+/* =========================================================
+   STATISTICS CARDS
+   ========================================================= */
+
+.stat-card {
+    color: #eaf2ff !important;
+}
+
+.stat-label,
+.stat-title {
+    color: #dce8f5 !important;
+    font-weight: 700 !important;
+}
+
+.stat-value {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+}
+
+.stat-description {
+    color: #91a9c2 !important;
+}
+
+/* =========================================================
+   ADD CUSTOMER FORM
+   ========================================================= */
+
+.form-title {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+}
+
+.form-description {
+    color: #9fb4cf !important;
+}
+
+.field-label,
+.form-card label,
+form label {
+    color: #e4edf8 !important;
+    font-weight: 700 !important;
+}
+
+/* Input */
+.form-input,
+.form-card input,
+form input {
+    color: #edf5ff !important;
+}
+
+/* Placeholder */
+.form-input::placeholder,
+.form-card input::placeholder,
+form input::placeholder {
+    color: #7892ad !important;
+    opacity: 1 !important;
+}
+
+/* =========================================================
+   CUSTOMER RECORDS
+   ========================================================= */
+
+.records-title {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+}
+
+.records-description {
+    color: #9fb4cf !important;
+}
+
+/* Search */
+.search-input {
+    color: #edf5ff !important;
+}
+
+.search-input::placeholder {
+    color: #7892ad !important;
+    opacity: 1 !important;
+}
+
+/* =========================================================
+   CUSTOMER TABLE
+   ========================================================= */
+
+#customerTable {
+    color: #dce8f5 !important;
+}
+
+/* Table headings */
+#customerTable thead th {
+    color: #9bb2ca !important;
+    font-weight: 800 !important;
+}
+
+/* Table content */
+#customerTable tbody td {
+    color: #dce8f5 !important;
+}
+
+/* Customer name */
+#customerTable .customer-name {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+/* Customer ID */
+#customerTable .customer-id {
+    color: #8faaca !important;
+}
+
+/* Contact */
+#customerTable .contact-info,
+#customerTable .contact-info span {
+    color: #b4c7db !important;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.primary-button,
+.action-button,
+.edit-button {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+/* =========================================================
+   GENERAL TEXT PROTECTION
+   ========================================================= */
+
+.main-content {
+    color: #dce8f5;
+}
+
+.main-content h1,
+.main-content h2,
+.main-content h3,
+.main-content h4 {
+    color: #ffffff !important;
+}
+
+.main-content p {
+    color: #9fb4cf;
+}
+
+.main-content strong {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   CUSTOMER PAGE — HEADING VISIBILITY
+   ========================================================= */
+
+.content-heading .section-label {
+    color: #22d3ee !important;
+    opacity: 1 !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: 1.5px !important;
+}
+
+.content-heading .section-title {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    font-size: 25px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+}
+
+.content-heading .section-description {
+    color: #a9bdd4 !important;
+    opacity: 1 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1.5 !important;
+}
+
+/* =========================================================
+   CUSTOMER MANAGEMENT — EXACT PAGE HEADING
+   ========================================================= */
+
+.content-heading {
+    position: relative;
+
+    background: linear-gradient(
+        145deg,
+        rgba(8, 27, 50, 0.98),
+        rgba(4, 17, 34, 0.98)
+    ) !important;
+
+    border: 1px solid rgba(72, 128, 184, 0.22) !important;
+
+    border-radius: 16px !important;
+
+    padding: 24px 26px !important;
+
+    margin-bottom: 16px !important;
+
+    box-shadow:
+        0 15px 30px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
+}
+
+
+/* CUSTOMER MANAGEMENT */
+
+.content-heading .section-label {
+    display: block !important;
+
+    margin: 0 0 7px 0 !important;
+
+    color: #22d3ee !important;
+
+    font-size: 11px !important;
+    font-weight: 800 !important;
+
+    line-height: 1.3 !important;
+
+    letter-spacing: 1.5px !important;
+
+    text-transform: uppercase !important;
+
+    opacity: 1 !important;
+}
+
+
+/* REGISTERED CUSTOMERS */
+
+.content-heading .section-title {
+    display: block !important;
+
+    margin: 0 !important;
+
+    color: #ffffff !important;
+
+    font-size: 27px !important;
+    font-weight: 800 !important;
+
+    line-height: 1.25 !important;
+
+    letter-spacing: -0.3px !important;
+
+    opacity: 1 !important;
+}
+
+
+/* DESCRIPTION */
+
+.content-heading .section-description {
+    display: block !important;
+
+    margin: 7px 0 0 0 !important;
+
+    color: #a9bdd4 !important;
+
+    font-size: 12px !important;
+    font-weight: 500 !important;
+
+    line-height: 1.5 !important;
+
+    opacity: 1 !important;
+}
+
+/* =========================================================
+   CUSTOMER PAGE — TOP HEADER
+   ========================================================= */
+
+.top-header {
+    background: transparent !important;
+    color: #ffffff !important;
+}
+
+.page-title {
+    color: #ffffff !important;
+    font-size: 34px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    opacity: 1 !important;
+}
+
+.page-subtitle {
+    color: #9fb3c8 !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    line-height: 1.5 !important;
+    opacity: 1 !important;
+}
+
+/* Breadcrumb */
+
+.breadcrumb {
+    color: #8fb2d3 !important;
+}
+
+.breadcrumb a {
+    color: #66a8df !important;
+}
+
+.breadcrumb span {
+    color: #ffffff !important;
+}

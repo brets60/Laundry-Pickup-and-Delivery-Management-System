@@ -2,130 +2,2187 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Login - Laundry System</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="LaundryCare - Laundry Pickup & Delivery Management System"
+    >
+
+    <title>Sign In | LaundryCare</title>
 
     <style>
+        /* =========================================================
+           ROOT / THEME
+        ========================================================= */
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+
+            --navy: #0f172a;
+            --navy-light: #1e293b;
+
+            --background: #f4f7fb;
+            --surface: #ffffff;
+
+            --text: #172033;
+            --text-muted: #64748b;
+
+            --border: #e2e8f0;
+
+            --success: #16a34a;
+            --danger: #dc2626;
+            --danger-bg: #fef2f2;
+
+            --white: #ffffff;
+
+            --shadow-lg:
+                0 25px 60px rgba(15, 23, 42, 0.12);
+
+            --radius-lg: 24px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+        }
+
+
+        /* =========================================================
+           RESET
+        ========================================================= */
+
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
             min-height: 100vh;
+            font-family:
+                Inter,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+
+            background: var(--background);
+            color: var(--text);
+
+            overflow-x: hidden;
         }
 
-        .login-box {
-            width: 380px;
-            background: white;
-            padding: 35px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.10);
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #777;
-            margin-bottom: 30px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
-        }
-
+        button,
         input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 18px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 15px;
+            font: inherit;
         }
 
         button {
-            width: 100%;
-            padding: 12px;
             border: none;
-            border-radius: 6px;
-            background: #1f2937;
-            color: white;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =========================================================
+           PAGE
+        ========================================================= */
+
+        .login-page {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 30px;
+
+            position: relative;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(37, 99, 235, 0.08),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(14, 165, 233, 0.08),
+                    transparent 30%
+                ),
+                var(--background);
+        }
+
+
+        /* =========================================================
+           MAIN AUTH CONTAINER
+        ========================================================= */
+
+        .auth-container {
+            width: 100%;
+            max-width: 1180px;
+            min-height: 700px;
+
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+
+            background: var(--surface);
+
+            border-radius: var(--radius-lg);
+
+            overflow: hidden;
+
+            box-shadow: var(--shadow-lg);
+
+            animation: pageEnter 0.7s ease both;
+        }
+
+
+        /* =========================================================
+           LEFT BRAND PANEL
+        ========================================================= */
+
+        .brand-panel {
+            position: relative;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            padding: 55px;
+
+            color: var(--white);
+
+            overflow: hidden;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #0f3b8f 0%,
+                    #2563eb 48%,
+                    #0284c7 100%
+                );
+        }
+
+
+        /* Decorative background */
+
+        .brand-panel::before {
+            content: "";
+
+            position: absolute;
+
+            width: 420px;
+            height: 420px;
+
+            border-radius: 50%;
+
+            background: rgba(255, 255, 255, 0.08);
+
+            top: -170px;
+            right: -130px;
+        }
+
+        .brand-panel::after {
+            content: "";
+
+            position: absolute;
+
+            width: 300px;
+            height: 300px;
+
+            border-radius: 50%;
+
+            background: rgba(255, 255, 255, 0.06);
+
+            bottom: -130px;
+            left: -100px;
+        }
+
+
+        /* =========================================================
+           BRAND
+        ========================================================= */
+
+        .brand {
+            position: relative;
+            z-index: 2;
+
+            display: flex;
+            align-items: center;
+
+            gap: 13px;
+        }
+
+        .brand-logo {
+            width: 52px;
+            height: 52px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 15px;
+
+            background: rgba(255, 255, 255, 0.15);
+
+            border: 1px solid rgba(255, 255, 255, 0.2);
+
+            backdrop-filter: blur(10px);
+
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .brand-logo svg {
+            width: 29px;
+            height: 29px;
+        }
+
+        .brand-name {
+            font-size: 22px;
+            font-weight: 800;
+
+            letter-spacing: -0.4px;
+        }
+
+        .brand-name span {
+            font-weight: 400;
+            opacity: 0.85;
+        }
+
+
+        /* =========================================================
+           HERO CONTENT
+        ========================================================= */
+
+        .brand-content {
+            position: relative;
+            z-index: 2;
+
+            max-width: 500px;
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 8px 13px;
+
+            margin-bottom: 22px;
+
+            border-radius: 999px;
+
+            background: rgba(255, 255, 255, 0.12);
+
+            border: 1px solid rgba(255, 255, 255, 0.16);
+
+            font-size: 12px;
+            font-weight: 700;
+
+            letter-spacing: 0.4px;
+
+            text-transform: uppercase;
+        }
+
+        .brand-badge-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #bfdbfe;
+
+            box-shadow:
+                0 0 0 5px rgba(191, 219, 254, 0.12);
+        }
+
+        .brand-content h1 {
+            font-size: clamp(36px, 4vw, 55px);
+
+            line-height: 1.08;
+
+            letter-spacing: -1.8px;
+
+            margin-bottom: 20px;
+        }
+
+        .brand-content h1 span {
+            color: #bfdbfe;
+        }
+
+        .brand-description {
+            max-width: 450px;
+
             font-size: 16px;
+
+            line-height: 1.8;
+
+            color: rgba(255, 255, 255, 0.82);
+        }
+
+
+        /* =========================================================
+           LAUNDRY ILLUSTRATION
+        ========================================================= */
+
+        .laundry-visual {
+            position: relative;
+
+            width: 100%;
+            max-width: 430px;
+
+            margin-top: 38px;
+            margin-left: auto;
+            margin-right: auto;
+
+            height: 170px;
+        }
+
+        .washing-machine {
+            position: absolute;
+
+            left: 50%;
+            bottom: 0;
+
+            transform: translateX(-50%);
+
+            width: 185px;
+            height: 145px;
+
+            border-radius: 20px;
+
+            background: rgba(255, 255, 255, 0.96);
+
+            box-shadow:
+                0 25px 40px rgba(4, 20, 60, 0.22);
+        }
+
+        .machine-top {
+            height: 30px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 14px;
+
+            gap: 7px;
+        }
+
+        .machine-button {
+            width: 8px;
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: #cbd5e1;
+        }
+
+        .machine-display {
+            width: 55px;
+            height: 8px;
+
+            margin-left: auto;
+
+            border-radius: 20px;
+
+            background: #dbeafe;
+        }
+
+        .machine-door {
+            position: absolute;
+
+            width: 90px;
+            height: 90px;
+
+            left: 50%;
+            top: 43px;
+
+            transform: translateX(-50%);
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle at 40% 35%,
+                    #dbeafe,
+                    #93c5fd 42%,
+                    #2563eb 100%
+                );
+
+            border: 7px solid #e2e8f0;
+
+            box-shadow:
+                inset 0 0 0 5px rgba(255,255,255,0.18);
+        }
+
+        .bubble {
+            position: absolute;
+
+            border-radius: 50%;
+
+            background: rgba(255,255,255,0.7);
+
+            border: 1px solid rgba(255,255,255,0.45);
+        }
+
+        .bubble-1 {
+            width: 18px;
+            height: 18px;
+
+            top: 12px;
+            left: 35px;
+        }
+
+        .bubble-2 {
+            width: 10px;
+            height: 10px;
+
+            top: 65px;
+            right: 45px;
+        }
+
+        .bubble-3 {
+            width: 13px;
+            height: 13px;
+
+            bottom: 40px;
+            left: 55px;
+        }
+
+        .shirt {
+            position: absolute;
+
+            right: 20px;
+            bottom: 18px;
+
+            width: 95px;
+            height: 85px;
+
+            background: #bfdbfe;
+
+            clip-path: polygon(
+                20% 0,
+                37% 12%,
+                50% 20%,
+                63% 12%,
+                80% 0,
+                100% 25%,
+                82% 40%,
+                75% 30%,
+                75% 100%,
+                25% 100%,
+                25% 30%,
+                18% 40%,
+                0 25%
+            );
+
+            filter:
+                drop-shadow(
+                    0 14px 15px rgba(0,0,0,0.12)
+                );
+        }
+
+        .towel {
+            position: absolute;
+
+            left: 15px;
+            bottom: 18px;
+
+            width: 100px;
+            height: 58px;
+
+            border-radius: 13px;
+
+            background: #e0f2fe;
+
+            transform: rotate(-7deg);
+
+            box-shadow:
+                0 15px 20px rgba(0,0,0,0.12);
+        }
+
+        .towel::after {
+            content: "";
+
+            position: absolute;
+
+            left: 12px;
+            right: 12px;
+            top: 15px;
+
+            height: 4px;
+
+            border-radius: 20px;
+
+            background: rgba(37, 99, 235, 0.15);
+
+            box-shadow:
+                0 12px rgba(37,99,235,0.15),
+                0 24px rgba(37,99,235,0.15);
+        }
+
+
+        /* =========================================================
+           BRAND FOOTER
+        ========================================================= */
+
+        .brand-footer {
+            position: relative;
+            z-index: 2;
+
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            font-size: 12px;
+
+            color: rgba(255, 255, 255, 0.68);
+        }
+
+        .brand-footer svg {
+            width: 16px;
+            height: 16px;
+        }
+
+
+        /* =========================================================
+           RIGHT LOGIN PANEL
+        ========================================================= */
+
+        .login-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 55px;
+        }
+
+        .login-content {
+            width: 100%;
+            max-width: 410px;
+
+            animation: contentEnter 0.75s 0.1s ease both;
+        }
+
+
+        /* =========================================================
+           LOGIN HEADER
+        ========================================================= */
+
+        .login-icon {
+            width: 58px;
+            height: 58px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 25px;
+
+            border-radius: 16px;
+
+            background: var(--primary-light);
+
+            color: var(--primary);
+        }
+
+        .login-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .login-heading h2 {
+            font-size: 32px;
+
+            line-height: 1.2;
+
+            letter-spacing: -1px;
+
+            margin-bottom: 9px;
+        }
+
+        .login-heading p {
+            color: var(--text-muted);
+
+            font-size: 14px;
+
+            line-height: 1.7;
+
+            margin-bottom: 30px;
+        }
+
+
+        /* =========================================================
+           ERROR MESSAGE
+        ========================================================= */
+
+        .error-alert {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 11px;
+
+            padding: 13px 14px;
+
+            margin-bottom: 22px;
+
+            border-radius: var(--radius-sm);
+
+            background: var(--danger-bg);
+
+            border: 1px solid #fecaca;
+
+            color: #991b1b;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+
+            animation: alertEnter 0.35s ease both;
+        }
+
+        .error-alert svg {
+            width: 18px;
+            height: 18px;
+
+            flex-shrink: 0;
+
+            margin-top: 1px;
+        }
+
+
+        /* =========================================================
+           FORM
+        ========================================================= */
+
+        .form-group {
+            margin-bottom: 21px;
+        }
+
+        .form-label {
+            display: block;
+
+            margin-bottom: 9px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            color: var(--text);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+
+            left: 15px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 19px;
+            height: 19px;
+
+            color: #94a3b8;
+
+            pointer-events: none;
+
+            transition: color 0.2s ease;
+        }
+
+        .form-input {
+            width: 100%;
+
+            height: 53px;
+
+            padding:
+                0 48px
+                0 47px;
+
+            border: 1px solid var(--border);
+
+            border-radius: var(--radius-sm);
+
+            background: #f8fafc;
+
+            color: var(--text);
+
+            outline: none;
+
+            font-size: 14px;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .form-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .form-input:hover {
+            background: #ffffff;
+
+            border-color: #cbd5e1;
+        }
+
+        .form-input:focus {
+            background: #ffffff;
+
+            border-color: var(--primary);
+
+            box-shadow:
+                0 0 0 4px rgba(37, 99, 235, 0.10);
+        }
+
+        .input-wrapper:focus-within .input-icon {
+            color: var(--primary);
+        }
+
+
+        /* =========================================================
+           PASSWORD BUTTON
+        ========================================================= */
+
+        .password-toggle {
+            position: absolute;
+
+            right: 13px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 34px;
+            height: 34px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            cursor: pointer;
+
+            color: #94a3b8;
+
+            background: transparent;
+
+            border-radius: 8px;
+
+            transition:
+                color 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+
+            background: var(--primary-light);
+        }
+
+        .password-toggle svg {
+            width: 19px;
+            height: 19px;
+        }
+
+
+        /* =========================================================
+           FORM OPTIONS
+        ========================================================= */
+
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 10px;
+
+            margin-bottom: 24px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+
+            cursor: pointer;
+
+            color: var(--text-muted);
+
+            font-size: 13px;
+        }
+
+        .remember-me input {
+            width: 16px;
+            height: 16px;
+
+            accent-color: var(--primary);
+
             cursor: pointer;
         }
 
-        button:hover {
-            background: #374151;
+        .forgot-link {
+            color: var(--primary);
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            cursor: pointer;
         }
 
-        .error {
-            background: #fee2e2;
-            color: #b91c1c;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 18px;
+        .forgot-link:hover {
+            color: var(--primary-dark);
+
+            text-decoration: underline;
+        }
+
+
+        /* =========================================================
+           SIGN IN BUTTON
+        ========================================================= */
+
+        .sign-in-button {
+            position: relative;
+
+            width: 100%;
+            height: 54px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 10px;
+
+            border-radius: var(--radius-sm);
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    #1d4ed8
+                );
+
+            color: var(--white);
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 10px 20px rgba(37, 99, 235, 0.20);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                filter 0.2s ease;
+        }
+
+        .sign-in-button:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 14px 26px rgba(37, 99, 235, 0.27);
+
+            filter: brightness(1.03);
+        }
+
+        .sign-in-button:active {
+            transform: translateY(0);
+        }
+
+        .sign-in-button:focus-visible {
+            outline: 3px solid rgba(37, 99, 235, 0.25);
+
+            outline-offset: 3px;
+        }
+
+        .sign-in-button.loading {
+            pointer-events: none;
+
+            opacity: 0.85;
+        }
+
+        .button-arrow {
+            width: 18px;
+            height: 18px;
+
+            transition:
+                transform 0.2s ease;
+        }
+
+        .sign-in-button:hover .button-arrow {
+            transform: translateX(3px);
+        }
+
+
+        /* =========================================================
+           SPINNER
+        ========================================================= */
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+
+            border-radius: 50%;
+
+            border:
+                2px solid rgba(255,255,255,0.35);
+
+            border-top-color: white;
+
+            animation: spin 0.7s linear infinite;
+        }
+
+
+        /* =========================================================
+           SECURITY MESSAGE
+        ========================================================= */
+
+        .security-message {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            margin-top: 25px;
+
+            color: var(--text-muted);
+
+            font-size: 12px;
+        }
+
+        .security-message svg {
+            width: 15px;
+            height: 15px;
+
+            color: var(--success);
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        .login-footer {
+            margin-top: 38px;
+
+            padding-top: 20px;
+
+            border-top: 1px solid var(--border);
+
             text-align: center;
+
+            color: #94a3b8;
+
+            font-size: 11px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =========================================================
+           TOAST
+        ========================================================= */
+
+        .toast {
+            position: fixed;
+
+            right: 25px;
+            bottom: 25px;
+
+            max-width: 320px;
+
+            padding: 14px 17px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            background: #0f172a;
+
+            color: white;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 15px 40px rgba(15,23,42,0.2);
+
+            font-size: 13px;
+
+            transform: translateY(30px);
+
+            opacity: 0;
+
+            pointer-events: none;
+
+            transition:
+                opacity 0.25s ease,
+                transform 0.25s ease;
+
+            z-index: 999;
+        }
+
+        .toast.show {
+            opacity: 1;
+
+            transform: translateY(0);
+        }
+
+
+        /* =========================================================
+           ANIMATIONS
+        ========================================================= */
+
+        @keyframes pageEnter {
+            from {
+                opacity: 0;
+
+                transform:
+                    translateY(18px)
+                    scale(0.985);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateY(0)
+                    scale(1);
+            }
+        }
+
+        @keyframes contentEnter {
+            from {
+                opacity: 0;
+
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes alertEnter {
+            from {
+                opacity: 0;
+
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+
+        /* =========================================================
+           TABLET
+        ========================================================= */
+
+        @media (max-width: 950px) {
+
+            .login-page {
+                padding: 20px;
+            }
+
+            .auth-container {
+                max-width: 800px;
+
+                grid-template-columns: 0.9fr 1.1fr;
+
+                min-height: 620px;
+            }
+
+            .brand-panel {
+                padding: 40px;
+            }
+
+            .login-panel {
+                padding: 40px;
+            }
+
+            .brand-content h1 {
+                font-size: 39px;
+            }
+
+            .laundry-visual {
+                transform: scale(0.9);
+
+                transform-origin: center;
+            }
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 720px) {
+
+            .login-page {
+                min-height: 100vh;
+
+                padding: 0;
+            }
+
+            .auth-container {
+                min-height: 100vh;
+
+                display: block;
+
+                border-radius: 0;
+
+                box-shadow: none;
+            }
+
+            .brand-panel {
+                min-height: 260px;
+
+                padding: 30px;
+
+                justify-content: center;
+
+                text-align: center;
+            }
+
+            .brand {
+                justify-content: center;
+            }
+
+            .brand-content {
+                margin-top: 35px;
+            }
+
+            .brand-content h1 {
+                font-size: 32px;
+
+                letter-spacing: -1px;
+            }
+
+            .brand-description {
+                margin: auto;
+
+                font-size: 14px;
+            }
+
+            .brand-badge {
+                margin-bottom: 15px;
+            }
+
+            .laundry-visual {
+                display: none;
+            }
+
+            .brand-footer {
+                display: none;
+            }
+
+            .login-panel {
+                padding: 38px 25px 30px;
+            }
+
+            .login-content {
+                max-width: 450px;
+            }
+
+            .login-icon {
+                width: 52px;
+                height: 52px;
+
+                margin-bottom: 20px;
+            }
+
+            .login-heading h2 {
+                font-size: 28px;
+            }
+
+            .login-footer {
+                margin-top: 30px;
+            }
+        }
+
+
+        /* =========================================================
+           SMALL MOBILE
+        ========================================================= */
+
+        @media (max-width: 420px) {
+
+            .brand-panel {
+                min-height: 235px;
+
+                padding: 25px 20px;
+            }
+
+            .brand-name {
+                font-size: 19px;
+            }
+
+            .brand-logo {
+                width: 45px;
+                height: 45px;
+            }
+
+            .brand-content {
+                margin-top: 25px;
+            }
+
+            .brand-content h1 {
+                font-size: 28px;
+            }
+
+            .login-panel {
+                padding:
+                    30px 20px 25px;
+            }
+
+            .form-options {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .forgot-link {
+                margin-left: 24px;
+            }
+        }
+
+
+        /* =========================================================
+           REDUCED MOTION
+        ========================================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+
+                animation-duration: 0.01ms !important;
+
+                animation-iteration-count: 1 !important;
+
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
 
+
 <body>
 
-<div class="login-box">
+<div class="login-page">
 
-    <h1>Laundry System</h1>
+    <main class="auth-container">
 
-    <div class="subtitle">
-        Pickup & Delivery Management System
-    </div>
 
-    {% if error %}
-        <div class="error">
-            {{ error }}
-        </div>
-    {% endif %}
+        <!-- =====================================================
+             LEFT BRAND PANEL
+        ====================================================== -->
 
-    <form method="POST">
+        <section class="brand-panel">
 
-        <label>Username</label>
+            <!-- BRAND -->
+            <div class="brand">
 
-        <input
-            type="text"
-            name="username"
-            placeholder="Enter username"
-            required
-        >
+                <div class="brand-logo">
 
-        <label>Password</label>
+                    <!-- Laundry / washing icon -->
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <rect
+                            x="4"
+                            y="3"
+                            width="16"
+                            height="18"
+                            rx="2"
+                        />
 
-        <input
-            type="password"
-            name="password"
-            placeholder="Enter password"
-            required
-        >
+                        <circle
+                            cx="12"
+                            cy="13"
+                            r="4"
+                        />
 
-        <button type="submit">
-            Login
-        </button>
+                        <path d="M8 6h.01"/>
+                        <path d="M11 6h.01"/>
+                    </svg>
 
-    </form>
+                </div>
+
+                <div class="brand-name">
+                    Laundry<span>Care</span>
+                </div>
+
+            </div>
+
+
+            <!-- HERO -->
+            <div class="brand-content">
+
+                <div class="brand-badge">
+
+                    <span class="brand-badge-dot"></span>
+
+                    Smart Laundry Management
+
+                </div>
+
+
+                <h1>
+                    Laundry management,
+                    <span>made simple.</span>
+                </h1>
+
+
+                <p class="brand-description">
+
+                    Manage laundry orders, customer information,
+                    pickup schedules, deliveries, and payments
+                    from one organized system.
+
+                </p>
+
+
+                <!-- LAUNDRY VISUAL -->
+
+                <div
+                    class="laundry-visual"
+                    aria-hidden="true"
+                >
+
+                    <div class="bubble bubble-1"></div>
+
+                    <div class="bubble bubble-2"></div>
+
+                    <div class="bubble bubble-3"></div>
+
+
+                    <div class="towel"></div>
+
+                    <div class="shirt"></div>
+
+
+                    <div class="washing-machine">
+
+                        <div class="machine-top">
+
+                            <span class="machine-button"></span>
+                            <span class="machine-button"></span>
+
+                            <span class="machine-display"></span>
+
+                        </div>
+
+                        <div class="machine-door"></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BRAND FOOTER -->
+
+            <div class="brand-footer">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                    />
+
+                    <path d="m9 12 2 2 4-4"/>
+                </svg>
+
+                Reliable. Organized. Efficient.
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             RIGHT LOGIN PANEL
+        ====================================================== -->
+
+        <section class="login-panel">
+
+            <div class="login-content">
+
+
+                <!-- LOGIN ICON -->
+
+                <div
+                    class="login-icon"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+
+                        <path
+                            d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"
+                        />
+
+                        <polyline
+                            points="10 17 15 12 10 7"
+                        />
+
+                        <line
+                            x1="15"
+                            y1="12"
+                            x2="3"
+                            y2="12"
+                        />
+
+                    </svg>
+
+                </div>
+
+
+                <!-- HEADING -->
+
+                <div class="login-heading">
+
+                    <h2>
+                        Welcome back
+                    </h2>
+
+                    <p>
+                        Sign in to continue to your
+                        LaundryCare dashboard.
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     FLASK ERROR
+                ================================================== -->
+
+                {% if error %}
+
+                <div
+                    class="error-alert"
+                    role="alert"
+                    aria-live="polite"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                        />
+
+                        <line
+                            x1="12"
+                            y1="8"
+                            x2="12"
+                            y2="12"
+                        />
+
+                        <line
+                            x1="12"
+                            y1="16"
+                            x2="12.01"
+                            y2="16"
+                        />
+
+                    </svg>
+
+                    <span>
+                        {{ error }}
+                    </span>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- =================================================
+                     LOGIN FORM
+                ================================================== -->
+
+                <form
+                    id="loginForm"
+                    action="{{ url_for('login') }}"
+                    method="POST"
+                    novalidate
+                >
+
+
+                    <!-- USERNAME -->
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="username"
+                        >
+                            Username
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <svg
+                                class="input-icon"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+
+                                <path
+                                    d="M20 21a8 8 0 0 0-16 0"
+                                />
+
+                                <circle
+                                    cx="12"
+                                    cy="7"
+                                    r="4"
+                                />
+
+                            </svg>
+
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                class="form-input"
+                                placeholder="Enter your username"
+                                autocomplete="username"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="password"
+                        >
+                            Password
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <svg
+                                class="input-icon"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+
+                                <rect
+                                    x="3"
+                                    y="11"
+                                    width="18"
+                                    height="10"
+                                    rx="2"
+                                />
+
+                                <path
+                                    d="M7 11V7a5 5 0 0 1 10 0v4"
+                                />
+
+                            </svg>
+
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="form-input"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="passwordToggle"
+                                aria-label="Show password"
+                            >
+
+                                <!-- Eye -->
+
+                                <svg
+                                    id="eyeOpen"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+
+                                    <path
+                                        d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"
+                                    />
+
+                                    <circle
+                                        cx="12"
+                                        cy="12"
+                                        r="2.5"
+                                    />
+
+                                </svg>
+
+
+                                <!-- Eye Off -->
+
+                                <svg
+                                    id="eyeClosed"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                    style="display:none;"
+                                >
+
+                                    <path
+                                        d="M3 3l18 18"
+                                    />
+
+                                    <path
+                                        d="M10.6 10.6a2 2 0 0 0 2.8 2.8"
+                                    />
+
+                                    <path
+                                        d="M9.9 4.2A10.8 10.8 0 0 1 12 4c6.5 0 10 8 10 8a17.7 17.7 0 0 1-3.1 4.1"
+                                    />
+
+                                    <path
+                                        d="M6.6 6.6C3.6 8.5 2 12 2 12s3.5 8 10 8a9.8 9.8 0 0 0 3.4-.6"
+                                    />
+
+                                </svg>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OPTIONS -->
+
+                    <div class="form-options">
+
+                        <label class="remember-me">
+
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                            >
+
+                            <span>
+                                Remember me
+                            </span>
+
+                        </label>
+
+
+                        <a
+                            href="#"
+                            class="forgot-link"
+                            id="forgotPassword"
+                        >
+                            Forgot Password?
+                        </a>
+
+                    </div>
+
+
+                    <!-- SIGN IN -->
+
+                    <button
+                        type="submit"
+                        class="sign-in-button"
+                        id="signInButton"
+                    >
+
+                        <span id="buttonText">
+                            Sign In
+                        </span>
+
+                        <svg
+                            class="button-arrow"
+                            id="buttonArrow"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+
+                            <line
+                                x1="5"
+                                y1="12"
+                                x2="19"
+                                y2="12"
+                            />
+
+                            <polyline
+                                points="12 5 19 12 12 19"
+                            />
+
+                        </svg>
+
+                    </button>
+
+                </form>
+
+
+                <!-- SECURITY -->
+
+                <div class="security-message">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+
+                        <rect
+                            x="3"
+                            y="11"
+                            width="18"
+                            height="10"
+                            rx="2"
+                        />
+
+                        <path
+                            d="M7 11V7a5 5 0 0 1 10 0v4"
+                        />
+
+                    </svg>
+
+                    Secure staff access
+
+                </div>
+
+
+                <!-- FOOTER -->
+
+                <div class="login-footer">
+
+                    © 2026 LaundryCare.
+                    All rights reserved.
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
 
 </div>
+
+
+<!-- =============================================================
+     TOAST
+============================================================== -->
+
+<div
+    class="toast"
+    id="toast"
+    role="status"
+    aria-live="polite"
+>
+    <span id="toastMessage"></span>
+</div>
+
+
+<!-- =============================================================
+     JAVASCRIPT
+============================================================== -->
+
+<script>
+
+    /* =========================================================
+       ELEMENTS
+    ========================================================= */
+
+    const loginForm =
+        document.getElementById("loginForm");
+
+    const usernameInput =
+        document.getElementById("username");
+
+    const passwordInput =
+        document.getElementById("password");
+
+    const passwordToggle =
+        document.getElementById("passwordToggle");
+
+    const eyeOpen =
+        document.getElementById("eyeOpen");
+
+    const eyeClosed =
+        document.getElementById("eyeClosed");
+
+    const signInButton =
+        document.getElementById("signInButton");
+
+    const buttonText =
+        document.getElementById("buttonText");
+
+    const buttonArrow =
+        document.getElementById("buttonArrow");
+
+    const forgotPassword =
+        document.getElementById("forgotPassword");
+
+    const toast =
+        document.getElementById("toast");
+
+    const toastMessage =
+        document.getElementById("toastMessage");
+
+
+    /* =========================================================
+       PASSWORD SHOW / HIDE
+    ========================================================= */
+
+    passwordToggle.addEventListener(
+        "click",
+        function () {
+
+            const isPassword =
+                passwordInput.type === "password";
+
+
+            if (isPassword) {
+
+                passwordInput.type = "text";
+
+                eyeOpen.style.display = "none";
+
+                eyeClosed.style.display = "block";
+
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    "Hide password"
+                );
+
+            } else {
+
+                passwordInput.type = "password";
+
+                eyeOpen.style.display = "block";
+
+                eyeClosed.style.display = "none";
+
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    "Show password"
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       TOAST FUNCTION
+    ========================================================= */
+
+    let toastTimer;
+
+    function showToast(message) {
+
+        toastMessage.textContent = message;
+
+        toast.classList.add("show");
+
+        clearTimeout(toastTimer);
+
+        toastTimer = setTimeout(
+            function () {
+                toast.classList.remove("show");
+            },
+            3500
+        );
+    }
+
+
+    /* =========================================================
+       FORGOT PASSWORD
+    ========================================================= */
+
+    forgotPassword.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+            showToast(
+                "Please contact the system administrator to reset your password."
+            );
+
+        }
+    );
+
+
+    /* =========================================================
+       FORM VALIDATION
+    ========================================================= */
+
+    loginForm.addEventListener(
+        "submit",
+        function (event) {
+
+            const username =
+                usernameInput.value.trim();
+
+            const password =
+                passwordInput.value;
+
+
+            /* Username */
+
+            if (!username) {
+
+                event.preventDefault();
+
+                usernameInput.focus();
+
+                showToast(
+                    "Please enter your username."
+                );
+
+                return;
+            }
+
+
+            /* Password */
+
+            if (!password) {
+
+                event.preventDefault();
+
+                passwordInput.focus();
+
+                showToast(
+                    "Please enter your password."
+                );
+
+                return;
+            }
+
+
+            /* =================================================
+               LOADING STATE
+            ================================================= */
+
+            signInButton.classList.add("loading");
+
+            signInButton.disabled = true;
+
+            buttonText.textContent =
+                "Signing in...";
+
+            buttonArrow.style.display =
+                "none";
+
+
+            const spinner =
+                document.createElement("span");
+
+            spinner.className =
+                "spinner";
+
+            signInButton.insertBefore(
+                spinner,
+                buttonText
+            );
+
+        }
+    );
+
+
+    /* =========================================================
+       INPUT INTERACTION
+    ========================================================= */
+
+    usernameInput.addEventListener(
+        "input",
+        function () {
+
+            if (
+                usernameInput.value.trim()
+            ) {
+
+                usernameInput.removeAttribute(
+                    "aria-invalid"
+                );
+
+            }
+
+        }
+    );
+
+
+    passwordInput.addEventListener(
+        "input",
+        function () {
+
+            if (passwordInput.value) {
+
+                passwordInput.removeAttribute(
+                    "aria-invalid"
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       REMEMBER ME
+
+       NOTE:
+       This does not change Flask authentication.
+       It only stores the username locally if selected.
+    ========================================================= */
+
+    const rememberMe =
+        document.getElementById("rememberMe");
+
+    const savedUsername =
+        localStorage.getItem(
+            "laundrycare_username"
+        );
+
+
+    if (savedUsername) {
+
+        usernameInput.value =
+            savedUsername;
+
+        rememberMe.checked = true;
+
+    }
+
+
+    loginForm.addEventListener(
+        "submit",
+        function () {
+
+            if (rememberMe.checked) {
+
+                localStorage.setItem(
+                    "laundrycare_username",
+                    usernameInput.value.trim()
+                );
+
+            } else {
+
+                localStorage.removeItem(
+                    "laundrycare_username"
+                );
+
+            }
+
+        }
+    );
+
+</script>
 
 </body>
 </html>

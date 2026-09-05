@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, request, render_template, redirect, session
+from flask import Flask, render_template, request, redirect, session, jsonify
+from datetime import datetime
 import sqlite3
 
 app = Flask(__name__)
@@ -7,9 +8,9 @@ app.secret_key = "laundry-system-secret-key"
 DATABASE = "laundry.db"
 
 
-# =========================
-# DATABASE
-# =========================
+# ============================================================
+# DATABASE CONNECTION
+# ============================================================
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
@@ -17,10 +18,17 @@ def get_db_connection():
     return conn
 
 
+# ============================================================
+# DATABASE INITIALIZATION
+# ============================================================
+
 def init_database():
+
     conn = get_db_connection()
 
-
+    # -------------------------
+    # CUSTOMERS
+    # -------------------------
     conn.execute("""
         CREATE TABLE IF NOT EXISTS customers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,6 +37,9 @@ def init_database():
         )
     """)
 
+    # -------------------------
+    # LAUNDRY ORDERS
+    # -------------------------
     conn.execute("""
         CREATE TABLE IF NOT EXISTS laundry_orders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,6 +48,9 @@ def init_database():
         )
     """)
 
+    # -------------------------
+    # PICKUP SCHEDULES
+    # -------------------------
     conn.execute("""
         CREATE TABLE IF NOT EXISTS pickup_schedules (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,6 +59,9 @@ def init_database():
         )
     """)
 
+    # -------------------------
+    # DELIVERY RECORDS
+    # -------------------------
     conn.execute("""
         CREATE TABLE IF NOT EXISTS delivery_records (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,14 +70,22 @@ def init_database():
         )
     """)
 
+    # -------------------------
+    # PAYMENTS
+    # -------------------------
     conn.execute("""
         CREATE TABLE IF NOT EXISTS payments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            customer TEXT NOT NULL,
             payment_amount REAL NOT NULL,
-            payment_method TEXT NOT NULL
+            payment_method TEXT NOT NULL,
+            transaction_time TEXT
         )
     """)
 
+    # -------------------------
+    # USERS
+    # -------------------------
     conn.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -69,6 +94,9 @@ def init_database():
         )
     """)
 
+    # -------------------------
+    # CREATE DEFAULT ADMIN
+    # -------------------------
     existing_user = conn.execute(
         "SELECT id FROM users WHERE username = ?",
         ("admin",)
@@ -89,55 +117,24 @@ def init_database():
 
 init_database()
 
-@app.route("/dashboard-page")
-def dashboard_page():
 
-    if "user_id" not in session:
-        return redirect("/login")
+# ============================================================
+# LOGIN REQUIRED HELPER
+# ============================================================
 
-    conn = get_db_connection()
+def login_required():
+    return "user_id" in session
 
-    customers_count = conn.execute(
-        "SELECT COUNT(*) FROM customers"
-    ).fetchone()[0]
 
-    orders_count = conn.execute(
-        "SELECT COUNT(*) FROM laundry_orders"
-    ).fetchone()[0]
-
-    pickups_count = conn.execute(
-        "SELECT COUNT(*) FROM pickup_schedules"
-    ).fetchone()[0]
-
-    deliveries_count = conn.execute(
-        "SELECT COUNT(*) FROM delivery_records"
-    ).fetchone()[0]
-
-    payments_count = conn.execute(
-        "SELECT COUNT(*) FROM payments"
-    ).fetchone()[0]
-
-    total_revenue = conn.execute(
-        "SELECT COALESCE(SUM(payment_amount), 0) FROM payments"
-    ).fetchone()[0]
-
-    conn.close()
-
-    return render_template(
-        "dashboard.html",
-        customers_count=customers_count,
-        orders_count=orders_count,
-        pickups_count=pickups_count,
-        deliveries_count=deliveries_count,
-        payments_count=payments_count,
-        total_revenue=total_revenue
-    )
-
+# ============================================================
+# DASHBOARD
+# ============================================================
 
 @app.route("/")
 def dashboard():
+    return redirect("/dashboard-page")
 
-    if "user_id" not in session:
+    if not login_required():
         return redirect("/login")
 
     conn = get_db_connection()
@@ -178,6 +175,77 @@ def dashboard():
         total_revenue=total_revenue
     )
 
+
+@app.route("/dashboard-page")
+def dashboard_page():
+
+    if not login_required():
+        return redirect("/login")
+
+    conn = get_db_connection()
+
+    try:
+        # ==========================================
+        # DASHBOARD COUNTS
+        # ==========================================
+
+        customers_count = conn.execute(
+            "SELECT COUNT(*) FROM customers"
+        ).fetchone()[0]
+
+        orders_count = conn.execute(
+            "SELECT COUNT(*) FROM laundry_orders"
+        ).fetchone()[0]
+
+        pickups_count = conn.execute(
+            "SELECT COUNT(*) FROM pickup_schedules"
+        ).fetchone()[0]
+
+        deliveries_count = conn.execute(
+            "SELECT COUNT(*) FROM delivery_records"
+        ).fetchone()[0]
+
+        payments_count = conn.execute(
+            "SELECT COUNT(*) FROM payments"
+        ).fetchone()[0]
+
+
+        # ==========================================
+        # TOTAL REVENUE
+        # ==========================================
+
+        total_revenue = conn.execute(
+            """
+            SELECT COALESCE(SUM(payment_amount), 0)
+            FROM payments
+            """
+        ).fetchone()[0]
+
+
+        # ==========================================
+        # DASHBOARD
+        # ==========================================
+
+        return render_template(
+            "dashboard.html",
+
+            customers_count=customers_count,
+            orders_count=orders_count,
+            pickups_count=pickups_count,
+            deliveries_count=deliveries_count,
+            payments_count=payments_count,
+
+            total_revenue=total_revenue
+        )
+
+    finally:
+        conn.close()
+
+
+# ============================================================
+# LOGIN
+# ============================================================
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
@@ -200,6 +268,7 @@ def login():
         conn.close()
 
         if user:
+
             session["user_id"] = user["id"]
             session["username"] = user["username"]
 
@@ -212,6 +281,11 @@ def login():
 
     return render_template("login.html")
 
+
+# ============================================================
+# LOGOUT
+# ============================================================
+
 @app.route("/logout")
 def logout():
 
@@ -219,25 +293,39 @@ def logout():
 
     return redirect("/login")
 
+
+# ============================================================
+# CUSTOMERS PAGE
+# ============================================================
+
 @app.route("/customers-page", methods=["GET", "POST"])
 def customers_page():
-    if "user_id" not in session:
+
+    if not login_required():
         return redirect("/login")
 
-
     if request.method == "POST":
+
         name = request.form.get("name", "").strip()
-        contact_number = request.form.get("contact_number", "").strip()
+        contact_number = request.form.get(
+            "contact_number",
+            ""
+        ).strip()
 
         if name and contact_number:
+
             conn = get_db_connection()
 
             conn.execute(
                 """
-                INSERT INTO customers (name, contact_number)
+                INSERT INTO customers
+                (name, contact_number)
                 VALUES (?, ?)
                 """,
-                (name, contact_number)
+                (
+                    name,
+                    contact_number
+                )
             )
 
             conn.commit()
@@ -262,8 +350,19 @@ def customers_page():
         customers=customers
     )
 
-@app.route("/customers-page/edit/<int:id>", methods=["GET", "POST"])
+
+# ============================================================
+# EDIT CUSTOMER
+# ============================================================
+
+@app.route(
+    "/customers-page/edit/<int:id>",
+    methods=["GET", "POST"]
+)
 def edit_customer_page(id):
+
+    if not login_required():
+        return redirect("/login")
 
     conn = get_db_connection()
 
@@ -277,13 +376,22 @@ def edit_customer_page(id):
     ).fetchone()
 
     if customer is None:
+
         conn.close()
+
         return "Customer not found.", 404
 
     if request.method == "POST":
 
-        name = request.form.get("name", "").strip()
-        contact_number = request.form.get("contact_number", "").strip()
+        name = request.form.get(
+            "name",
+            ""
+        ).strip()
+
+        contact_number = request.form.get(
+            "contact_number",
+            ""
+        ).strip()
 
         if name and contact_number:
 
@@ -293,7 +401,11 @@ def edit_customer_page(id):
                 SET name = ?, contact_number = ?
                 WHERE id = ?
                 """,
-                (name, contact_number, id)
+                (
+                    name,
+                    contact_number,
+                    id
+                )
             )
 
             conn.commit()
@@ -309,9 +421,17 @@ def edit_customer_page(id):
     )
 
 
-@app.route("/customers-page/delete/<int:id>", methods=["POST"])
+# ============================================================
+# DELETE CUSTOMER
+# ============================================================
+
+@app.route(
+    "/customers-page/delete/<int:id>",
+    methods=["POST"]
+)
 def delete_customer_page(id):
-    if "user_id" not in session:
+
+    if not login_required():
         return redirect("/login")
 
     conn = get_db_connection()
@@ -329,308 +449,73 @@ def delete_customer_page(id):
 
     return redirect("/customers-page")
 
-# =========================
-# LAUNDRY ORDERS PAGE CRUD
-# =========================
 
-@app.route("/laundry-orders-page/edit/<int:id>", methods=["GET", "POST"])
-def edit_laundry_order_page(id):
-    if "user_id" not in session:
-        return redirect("/login")
-    conn = get_db_connection()
+# ============================================================
+# LAUNDRY ORDERS PAGE
+# ============================================================
 
-    order = conn.execute(
-        """
-        SELECT id, customer, laundry_weight
-        FROM laundry_orders
-        WHERE id = ?
-        """,
-        (id,)
-    ).fetchone()
-
-    if order is None:
-        conn.close()
-        return "Laundry order not found.", 404
-
-    if request.method == "POST":
-        customer = request.form.get("customer", "").strip()
-        laundry_weight = request.form.get("laundry_weight", "").strip()
-
-        if customer and laundry_weight:
-            conn.execute(
-                """
-                UPDATE laundry_orders
-                SET customer = ?, laundry_weight = ?
-                WHERE id = ?
-                """,
-                (customer, float(laundry_weight), id)
-            )
-
-            conn.commit()
-            conn.close()
-
-            return redirect("/laundry-orders-page")
-
-    conn.close()
-
-    return render_template(
-        "edit_laundry_order.html",
-        order=order
-    )
-
-
-@app.route("/laundry-orders-page/delete/<int:id>", methods=["POST"])
-def delete_laundry_order_page(id):
-    if "user_id" not in session:
-        return redirect("/login")
-    conn = get_db_connection()
-
-    conn.execute(
-        """
-        DELETE FROM laundry_orders
-        WHERE id = ?
-        """,
-        (id,)
-    )
-
-    conn.commit()
-    conn.close()
-
-    return redirect("/laundry-orders-page")
-
-
-# =========================
-# PICKUP SCHEDULE PAGE CRUD
-# =========================
-
-@app.route("/pickup-schedules-page/edit/<int:id>", methods=["GET", "POST"])
-def edit_pickup_schedule_page(id):
-    conn = get_db_connection()
-
-    pickup = conn.execute(
-        """
-        SELECT id, customer, pickup_date
-        FROM pickup_schedules
-        WHERE id = ?
-        """,
-        (id,)
-    ).fetchone()
-
-    if pickup is None:
-        conn.close()
-        return "Pickup schedule not found.", 404
-
-    if request.method == "POST":
-        customer = request.form.get("customer", "").strip()
-        pickup_date = request.form.get("pickup_date", "").strip()
-
-        if customer and pickup_date:
-            conn.execute(
-                """
-                UPDATE pickup_schedules
-                SET customer = ?, pickup_date = ?
-                WHERE id = ?
-                """,
-                (customer, pickup_date, id)
-            )
-
-            conn.commit()
-            conn.close()
-
-            return redirect("/pickup-schedules-page")
-
-    conn.close()
-
-    return render_template(
-        "edit_pickup_schedule.html",
-        pickup=pickup
-    )
-
-
-@app.route("/pickup-schedules-page/delete/<int:id>", methods=["POST"])
-def delete_pickup_schedule_page(id):
-    if "user_id" not in session:
-        return redirect("/login")
-    conn = get_db_connection()
-
-    conn.execute(
-        """
-        DELETE FROM pickup_schedules
-        WHERE id = ?
-        """,
-        (id,)
-    )
-
-    conn.commit()
-    conn.close()
-
-    return redirect("/pickup-schedules-page")
-
-
-# =========================
-# DELIVERY RECORD PAGE CRUD
-# =========================
-
-@app.route("/delivery-records-page/edit/<int:id>", methods=["GET", "POST"])
-def edit_delivery_record_page(id):
-    if "user_id" not in session:
-        return redirect("/login")
-    conn = get_db_connection()
-
-    delivery = conn.execute(
-        """
-        SELECT id, customer, delivery_date
-        FROM delivery_records
-        WHERE id = ?
-        """,
-        (id,)
-    ).fetchone()
-
-    if delivery is None:
-        conn.close()
-        return "Delivery record not found.", 404
-
-    if request.method == "POST":
-        customer = request.form.get("customer", "").strip()
-        delivery_date = request.form.get("delivery_date", "").strip()
-
-        if customer and delivery_date:
-            conn.execute(
-                """
-                UPDATE delivery_records
-                SET customer = ?, delivery_date = ?
-                WHERE id = ?
-                """,
-                (customer, delivery_date, id)
-            )
-
-            conn.commit()
-            conn.close()
-
-            return redirect("/delivery-records-page")
-
-    conn.close()
-
-    return render_template(
-        "edit_delivery_record.html",
-        delivery=delivery
-    )
-
-
-@app.route("/delivery-records-page/delete/<int:id>", methods=["POST"])
-def delete_delivery_record_page(id):
-    if "user_id" not in session:
-        return redirect("/login")
-    conn = get_db_connection()
-
-    conn.execute(
-        """
-        DELETE FROM delivery_records
-        WHERE id = ?
-        """,
-        (id,)
-    )
-
-    conn.commit()
-    conn.close()
-
-    return redirect("/delivery-records-page")
-
-
-# =========================
-# PAYMENT PAGE CRUD
-# =========================
-
-@app.route("/payments-page/edit/<int:id>", methods=["GET", "POST"])
-def edit_payment_page(id):
-    if "user_id" not in session:
-        return redirect("/login")
-    conn = get_db_connection()
-
-    payment = conn.execute(
-        """
-        SELECT id, payment_amount, payment_method
-        FROM payments
-        WHERE id = ?
-        """,
-        (id,)
-    ).fetchone()
-
-    if payment is None:
-        conn.close()
-        return "Payment not found.", 404
-
-    if request.method == "POST":
-        payment_amount = request.form.get("payment_amount", "").strip()
-        payment_method = request.form.get("payment_method", "").strip()
-
-        if payment_amount and payment_method:
-            conn.execute(
-                """
-                UPDATE payments
-                SET payment_amount = ?, payment_method = ?
-                WHERE id = ?
-                """,
-                (float(payment_amount), payment_method, id)
-            )
-
-            conn.commit()
-            conn.close()
-
-            return redirect("/payments-page")
-
-    conn.close()
-
-    return render_template(
-        "edit_payment.html",
-        payment=payment
-    )
-
-
-@app.route("/payments-page/delete/<int:id>", methods=["POST"])
-def delete_payment_page(id):
-    if "user_id" not in session:
-        return redirect("/login")
-    conn = get_db_connection()
-
-    conn.execute(
-        """
-        DELETE FROM payments
-        WHERE id = ?
-        """,
-        (id,)
-    )
-
-    conn.commit()
-    conn.close()
-
-    return redirect("/payments-page")
-
-@app.route("/laundry-orders-page", methods=["GET", "POST"])
+@app.route(
+    "/laundry-orders-page",
+    methods=["GET", "POST"]
+)
 def laundry_orders_page():
-    if "user_id" not in session:
+
+    if not login_required():
         return redirect("/login")
 
+    # ADD ORDER
     if request.method == "POST":
-        customer = request.form.get("customer", "").strip()
-        laundry_weight = request.form.get("laundry_weight", "").strip()
+
+        customer = request.form.get(
+            "customer",
+            ""
+        ).strip()
+
+        laundry_weight = request.form.get(
+            "laundry_weight",
+            ""
+        ).strip()
 
         if customer and laundry_weight:
+
+            try:
+                laundry_weight = float(
+                    laundry_weight
+                )
+
+                if laundry_weight <= 0:
+                    return redirect(
+                        "/laundry-orders-page"
+                    )
+
+            except ValueError:
+
+                return redirect(
+                    "/laundry-orders-page"
+                )
+
             conn = get_db_connection()
 
             conn.execute(
                 """
-                INSERT INTO laundry_orders (customer, laundry_weight)
+                INSERT INTO laundry_orders
+                (customer, laundry_weight)
                 VALUES (?, ?)
                 """,
-                (customer, float(laundry_weight))
+                (
+                    customer,
+                    laundry_weight
+                )
             )
 
             conn.commit()
             conn.close()
 
-            return redirect("/laundry-orders-page")
+            return redirect(
+                "/laundry-orders-page"
+            )
 
+    # GET ORDERS
     conn = get_db_connection()
 
     orders = conn.execute(
@@ -649,30 +534,167 @@ def laundry_orders_page():
     )
 
 
-@app.route("/pickup-schedules-page", methods=["GET", "POST"])
-def pickup_schedules_page():
-    if "user_id" not in session:
+# ============================================================
+# EDIT LAUNDRY ORDER
+# ============================================================
+
+@app.route(
+    "/laundry-orders-page/edit/<int:id>",
+    methods=["GET", "POST"]
+)
+def edit_laundry_order_page(id):
+
+    if not login_required():
         return redirect("/login")
 
+    conn = get_db_connection()
+
+    order = conn.execute(
+        """
+        SELECT id, customer, laundry_weight
+        FROM laundry_orders
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if order is None:
+
+        conn.close()
+
+        return "Laundry order not found.", 404
+
     if request.method == "POST":
-        customer = request.form.get("customer", "").strip()
-        pickup_date = request.form.get("pickup_date", "").strip()
+
+        customer = request.form.get(
+            "customer",
+            ""
+        ).strip()
+
+        laundry_weight = request.form.get(
+            "laundry_weight",
+            ""
+        ).strip()
+
+        if customer and laundry_weight:
+
+            try:
+
+                laundry_weight = float(
+                    laundry_weight
+                )
+
+                conn.execute(
+                    """
+                    UPDATE laundry_orders
+                    SET customer = ?,
+                        laundry_weight = ?
+                    WHERE id = ?
+                    """,
+                    (
+                        customer,
+                        laundry_weight,
+                        id
+                    )
+                )
+
+                conn.commit()
+                conn.close()
+
+                return redirect(
+                    "/laundry-orders-page"
+                )
+
+            except ValueError:
+                pass
+
+    conn.close()
+
+    return render_template(
+        "edit_laundry_order.html",
+        order=order
+    )
+
+
+# ============================================================
+# DELETE LAUNDRY ORDER
+# ============================================================
+
+@app.route(
+    "/laundry-orders-page/delete/<int:id>",
+    methods=["POST"]
+)
+def delete_laundry_order_page(id):
+
+    if not login_required():
+        return redirect("/login")
+
+    conn = get_db_connection()
+
+    conn.execute(
+        """
+        DELETE FROM laundry_orders
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(
+        "/laundry-orders-page"
+    )
+
+
+# ============================================================
+# PICKUP SCHEDULE PAGE
+# ============================================================
+
+@app.route(
+    "/pickup-schedules-page",
+    methods=["GET", "POST"]
+)
+def pickup_schedules_page():
+
+    if not login_required():
+        return redirect("/login")
+
+    # ADD PICKUP
+    if request.method == "POST":
+
+        customer = request.form.get(
+            "customer",
+            ""
+        ).strip()
+
+        pickup_date = request.form.get(
+            "pickup_date",
+            ""
+        ).strip()
 
         if customer and pickup_date:
+
             conn = get_db_connection()
 
             conn.execute(
                 """
-                INSERT INTO pickup_schedules (customer, pickup_date)
+                INSERT INTO pickup_schedules
+                (customer, pickup_date)
                 VALUES (?, ?)
                 """,
-                (customer, pickup_date)
+                (
+                    customer,
+                    pickup_date
+                )
             )
 
             conn.commit()
             conn.close()
 
-            return redirect("/pickup-schedules-page")
+            return redirect(
+                "/pickup-schedules-page"
+            )
 
     conn = get_db_connection()
 
@@ -692,30 +714,158 @@ def pickup_schedules_page():
     )
 
 
-@app.route("/delivery-records-page", methods=["GET", "POST"])
-def delivery_records_page():
-    if "user_id" not in session:
+# ============================================================
+# EDIT PICKUP SCHEDULE
+# ============================================================
+
+@app.route(
+    "/pickup-schedules-page/edit/<int:id>",
+    methods=["GET", "POST"]
+)
+def edit_pickup_schedule_page(id):
+
+    if not login_required():
         return redirect("/login")
 
-    if request.method == "POST":
-        customer = request.form.get("customer", "").strip()
-        delivery_date = request.form.get("delivery_date", "").strip()
+    conn = get_db_connection()
 
-        if customer and delivery_date:
-            conn = get_db_connection()
+    pickup = conn.execute(
+        """
+        SELECT id, customer, pickup_date
+        FROM pickup_schedules
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if pickup is None:
+
+        conn.close()
+
+        return "Pickup schedule not found.", 404
+
+    if request.method == "POST":
+
+        customer = request.form.get(
+            "customer",
+            ""
+        ).strip()
+
+        pickup_date = request.form.get(
+            "pickup_date",
+            ""
+        ).strip()
+
+        if customer and pickup_date:
 
             conn.execute(
                 """
-                INSERT INTO delivery_records (customer, delivery_date)
-                VALUES (?, ?)
+                UPDATE pickup_schedules
+                SET customer = ?,
+                    pickup_date = ?
+                WHERE id = ?
                 """,
-                (customer, delivery_date)
+                (
+                    customer,
+                    pickup_date,
+                    id
+                )
             )
 
             conn.commit()
             conn.close()
 
-            return redirect("/delivery-records-page")
+            return redirect(
+                "/pickup-schedules-page"
+            )
+
+    conn.close()
+
+    return render_template(
+        "edit_pickup_schedule.html",
+        pickup=pickup
+    )
+
+
+# ============================================================
+# DELETE PICKUP SCHEDULE
+# ============================================================
+
+@app.route(
+    "/pickup-schedules-page/delete/<int:id>",
+    methods=["POST"]
+)
+def delete_pickup_schedule_page(id):
+
+    if not login_required():
+        return redirect("/login")
+
+    conn = get_db_connection()
+
+    conn.execute(
+        """
+        DELETE FROM pickup_schedules
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(
+        "/pickup-schedules-page"
+    )
+
+
+# ============================================================
+# DELIVERY RECORDS PAGE
+# ============================================================
+
+@app.route(
+    "/delivery-records-page",
+    methods=["GET", "POST"]
+)
+def delivery_records_page():
+
+    if not login_required():
+        return redirect("/login")
+
+    # ADD DELIVERY
+    if request.method == "POST":
+
+        customer = request.form.get(
+            "customer",
+            ""
+        ).strip()
+
+        delivery_date = request.form.get(
+            "delivery_date",
+            ""
+        ).strip()
+
+        if customer and delivery_date:
+
+            conn = get_db_connection()
+
+            conn.execute(
+                """
+                INSERT INTO delivery_records
+                (customer, delivery_date)
+                VALUES (?, ?)
+                """,
+                (
+                    customer,
+                    delivery_date
+                )
+            )
+
+            conn.commit()
+            conn.close()
+
+            return redirect(
+                "/delivery-records-page"
+            )
 
     conn = get_db_connection()
 
@@ -735,36 +885,205 @@ def delivery_records_page():
     )
 
 
-@app.route("/payments-page", methods=["GET", "POST"])
-def payments_page():
-    if "user_id" not in session:
+# ============================================================
+# EDIT DELIVERY RECORD
+# ============================================================
+
+@app.route(
+    "/delivery-records-page/edit/<int:id>",
+    methods=["GET", "POST"]
+)
+def edit_delivery_record_page(id):
+
+    if not login_required():
         return redirect("/login")
 
-    if request.method == "POST":
-        payment_amount = request.form.get("payment_amount", "").strip()
-        payment_method = request.form.get("payment_method", "").strip()
+    conn = get_db_connection()
 
-        if payment_amount and payment_method:
-            conn = get_db_connection()
+    delivery = conn.execute(
+        """
+        SELECT id, customer, delivery_date
+        FROM delivery_records
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if delivery is None:
+
+        conn.close()
+
+        return "Delivery record not found.", 404
+
+    if request.method == "POST":
+
+        customer = request.form.get(
+            "customer",
+            ""
+        ).strip()
+
+        delivery_date = request.form.get(
+            "delivery_date",
+            ""
+        ).strip()
+
+        if customer and delivery_date:
 
             conn.execute(
                 """
-                INSERT INTO payments (payment_amount, payment_method)
-                VALUES (?, ?)
+                UPDATE delivery_records
+                SET customer = ?,
+                    delivery_date = ?
+                WHERE id = ?
                 """,
-                (float(payment_amount), payment_method)
+                (
+                    customer,
+                    delivery_date,
+                    id
+                )
             )
 
             conn.commit()
             conn.close()
 
+            return redirect(
+                "/delivery-records-page"
+            )
+
+    conn.close()
+
+    return render_template(
+        "edit_delivery_record.html",
+        delivery=delivery
+    )
+
+
+# ============================================================
+# DELETE DELIVERY RECORD
+# ============================================================
+
+@app.route(
+    "/delivery-records-page/delete/<int:id>",
+    methods=["POST"]
+)
+def delete_delivery_record_page(id):
+
+    if not login_required():
+        return redirect("/login")
+
+    conn = get_db_connection()
+
+    conn.execute(
+        """
+        DELETE FROM delivery_records
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(
+        "/delivery-records-page"
+    )
+
+
+# ============================================================
+# PAYMENTS PAGE
+# ============================================================
+
+# ============================================================
+# PAYMENTS PAGE
+# ============================================================
+
+@app.route(
+    "/payments-page",
+    methods=["GET", "POST"]
+)
+def payments_page():
+
+    if not login_required():
+        return redirect("/login")
+
+    # -------------------------
+    # ADD PAYMENT
+    # -------------------------
+
+    if request.method == "POST":
+
+        customer = request.form.get(
+            "customer",
+            ""
+        ).strip()
+
+        payment_amount = request.form.get(
+            "payment_amount",
+            ""
+        ).strip()
+
+        payment_method = request.form.get(
+            "payment_method",
+            ""
+        ).strip()
+
+        if not customer:
             return redirect("/payments-page")
+
+        if not payment_amount:
+            return redirect("/payments-page")
+
+        if not payment_method:
+            return redirect("/payments-page")
+
+        try:
+            payment_amount = float(payment_amount)
+
+            if payment_amount <= 0:
+                return redirect("/payments-page")
+
+        except ValueError:
+            return redirect("/payments-page")
+
+        transaction_time = datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+
+        conn = get_db_connection()
+
+        conn.execute(
+            """
+            INSERT INTO payments
+            (
+                customer,
+                payment_amount,
+                payment_method,
+                transaction_time
+            )
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                customer,
+                payment_amount,
+                payment_method,
+                transaction_time
+            )
+        )
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/payments-page?success=1")
+
+    # -------------------------
+    # GET PAYMENTS
+    # -------------------------
 
     conn = get_db_connection()
 
     payments = conn.execute(
         """
-        SELECT id, payment_amount, payment_method
+        SELECT *
         FROM payments
         ORDER BY id DESC
         """
@@ -772,12 +1091,191 @@ def payments_page():
 
     conn.close()
 
+    formatted_payments = []
+
+    for payment in payments:
+
+        payment_data = dict(payment)
+
+        transaction_time = payment_data.get(
+            "transaction_time"
+        )
+
+        if transaction_time:
+
+            try:
+
+                dt = datetime.strptime(
+                    transaction_time,
+                    "%Y-%m-%d %H:%M:%S"
+                )
+
+                payment_data[
+                    "formatted_transaction_time"
+                ] = dt.strftime("%B %d, %Y")
+
+                payment_data[
+                    "formatted_transaction_clock"
+                ] = dt.strftime("%I:%M %p").lstrip("0")
+
+            except ValueError:
+
+                payment_data[
+                    "formatted_transaction_time"
+                ] = transaction_time
+
+                payment_data[
+                    "formatted_transaction_clock"
+                ] = ""
+
+        else:
+
+            payment_data[
+                "formatted_transaction_time"
+            ] = "—"
+
+            payment_data[
+                "formatted_transaction_clock"
+            ] = ""
+
+        formatted_payments.append(payment_data)
+
     return render_template(
         "payments.html",
-        payments=payments
+        payments=formatted_payments
     )
 
+
+# ============================================================
+# EDIT PAYMENT
+# ============================================================
+
+@app.route(
+    "/payments-page/edit/<int:id>",
+    methods=["GET", "POST"]
+)
+def edit_payment_page(id):
+
+    if not login_required():
+        return redirect("/login")
+
+    conn = get_db_connection()
+
+    payment = conn.execute(
+        """
+        SELECT *
+        FROM payments
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if payment is None:
+
+        conn.close()
+
+        return "Payment not found.", 404
+
+    if request.method == "POST":
+
+        customer = request.form.get(
+            "customer",
+            ""
+        ).strip()
+
+        payment_amount = request.form.get(
+            "payment_amount",
+            ""
+        ).strip()
+
+        payment_method = request.form.get(
+            "payment_method",
+            ""
+        ).strip()
+
+        if (
+            customer
+            and payment_amount
+            and payment_method
+        ):
+
+            try:
+
+                payment_amount = float(
+                    payment_amount
+                )
+
+                conn.execute(
+                    """
+                    UPDATE payments
+                    SET customer = ?,
+                        payment_amount = ?,
+                        payment_method = ?
+                    WHERE id = ?
+                    """,
+                    (
+                        customer,
+                        payment_amount,
+                        payment_method,
+                        id
+                    )
+                )
+
+                conn.commit()
+                conn.close()
+
+                return redirect(
+                    "/payments-page"
+                )
+
+            except ValueError:
+                pass
+
+    conn.close()
+
+    return render_template(
+        "edit_payment.html",
+        payment=payment
+    )
+
+
+# ============================================================
+# DELETE PAYMENT
+# ============================================================
+
+@app.route(
+    "/payments-page/delete/<int:id>",
+    methods=["POST"]
+)
+def delete_payment_page(id):
+
+    if not login_required():
+        return redirect("/login")
+
+    conn = get_db_connection()
+
+    conn.execute(
+        """
+        DELETE FROM payments
+        WHERE id = ?
+        """,
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(
+        "/payments-page"
+    )
+
+
+# ============================================================
+# CUSTOMER EXISTS
+# ============================================================
+
 def customer_exists(customer_name):
+
     conn = get_db_connection()
 
     customer = conn.execute(
@@ -794,12 +1292,13 @@ def customer_exists(customer_name):
     return customer is not None
 
 
-# =========================
-# CUSTOMERS
-# =========================
+# ============================================================
+# CUSTOMERS API
+# ============================================================
 
 @app.route("/customers", methods=["POST"])
 def createCustomer():
+
     data = request.get_json(silent=True) or {}
 
     errors = {}
@@ -808,9 +1307,12 @@ def createCustomer():
         errors["name"] = "Name is required."
 
     if not data.get("contact_number"):
-        errors["contact_number"] = "Contact number is required."
+        errors["contact_number"] = (
+            "Contact number is required."
+        )
 
     if errors:
+
         return jsonify({
             "status": 422,
             "data": None,
@@ -825,7 +1327,8 @@ def createCustomer():
 
     cursor = conn.execute(
         """
-        INSERT INTO customers (name, contact_number)
+        INSERT INTO customers
+        (name, contact_number)
         VALUES (?, ?)
         """,
         (
@@ -852,6 +1355,7 @@ def createCustomer():
 
 @app.route("/customers", methods=["GET"])
 def listCustomers():
+
     conn = get_db_connection()
 
     customers = conn.execute(
@@ -866,13 +1370,17 @@ def listCustomers():
 
     return jsonify({
         "status": 200,
-        "data": [dict(customer) for customer in customers],
+        "data": [
+            dict(customer)
+            for customer in customers
+        ],
         "error": None
     }), 200
 
 
 @app.route("/customers/<id>", methods=["GET"])
 def showCustomer(id):
+
     conn = get_db_connection()
 
     customer = conn.execute(
@@ -887,6 +1395,7 @@ def showCustomer(id):
     conn.close()
 
     if customer is None:
+
         return jsonify({
             "status": 404,
             "data": None,
@@ -905,6 +1414,7 @@ def showCustomer(id):
 
 @app.route("/customers/<id>", methods=["PUT"])
 def updateCustomer(id):
+
     data = request.get_json(silent=True) or {}
 
     errors = {}
@@ -913,9 +1423,12 @@ def updateCustomer(id):
         errors["name"] = "Name is required."
 
     if not data.get("contact_number"):
-        errors["contact_number"] = "Contact number is required."
+        errors["contact_number"] = (
+            "Contact number is required."
+        )
 
     if errors:
+
         return jsonify({
             "status": 422,
             "data": None,
@@ -938,6 +1451,7 @@ def updateCustomer(id):
     ).fetchone()
 
     if customer is None:
+
         conn.close()
 
         return jsonify({
@@ -978,6 +1492,7 @@ def updateCustomer(id):
 
 @app.route("/customers/<id>", methods=["DELETE"])
 def deleteCustomer(id):
+
     conn = get_db_connection()
 
     customer = conn.execute(
@@ -990,6 +1505,7 @@ def deleteCustomer(id):
     ).fetchone()
 
     if customer is None:
+
         conn.close()
 
         return jsonify({
@@ -1022,12 +1538,13 @@ def deleteCustomer(id):
     }), 200
 
 
-# =========================
-# LAUNDRY ORDERS
-# =========================
+# ============================================================
+# LAUNDRY ORDERS API
+# ============================================================
 
 @app.route("/laundry-orders", methods=["POST"])
 def createLaundryOrder():
+
     data = request.get_json(silent=True) or {}
 
     errors = {}
@@ -1036,10 +1553,18 @@ def createLaundryOrder():
         errors["customer"] = "Customer is required."
 
     if "laundry_weight" not in data:
-        errors["laundry_weight"] = "Laundry weight is required."
+
+        errors["laundry_weight"] = (
+            "Laundry weight is required."
+        )
+
     else:
+
         try:
-            laundry_weight = float(data["laundry_weight"])
+
+            laundry_weight = float(
+                data["laundry_weight"]
+            )
 
             if laundry_weight <= 0:
                 errors["laundry_weight"] = (
@@ -1047,9 +1572,13 @@ def createLaundryOrder():
                 )
 
         except (TypeError, ValueError):
-            errors["laundry_weight"] = "Laundry weight must be a number."
+
+            errors["laundry_weight"] = (
+                "Laundry weight must be a number."
+            )
 
     if errors:
+
         return jsonify({
             "status": 422,
             "data": None,
@@ -1060,7 +1589,10 @@ def createLaundryOrder():
             }
         }), 422
 
-    if not customer_exists(data["customer"]):
+    if not customer_exists(
+        data["customer"]
+    ):
+
         return jsonify({
             "status": 404,
             "data": None,
@@ -1074,7 +1606,8 @@ def createLaundryOrder():
 
     cursor = conn.execute(
         """
-        INSERT INTO laundry_orders (customer, laundry_weight)
+        INSERT INTO laundry_orders
+        (customer, laundry_weight)
         VALUES (?, ?)
         """,
         (
@@ -1101,6 +1634,7 @@ def createLaundryOrder():
 
 @app.route("/laundry-orders", methods=["GET"])
 def listLaundryOrders():
+
     conn = get_db_connection()
 
     orders = conn.execute(
@@ -1115,13 +1649,17 @@ def listLaundryOrders():
 
     return jsonify({
         "status": 200,
-        "data": [dict(order) for order in orders],
+        "data": [
+            dict(order)
+            for order in orders
+        ],
         "error": None
     }), 200
 
 
 @app.route("/laundry-orders/<id>", methods=["GET"])
 def showLaundryOrder(id):
+
     conn = get_db_connection()
 
     order = conn.execute(
@@ -1136,6 +1674,7 @@ def showLaundryOrder(id):
     conn.close()
 
     if order is None:
+
         return jsonify({
             "status": 404,
             "data": None,
@@ -1154,6 +1693,7 @@ def showLaundryOrder(id):
 
 @app.route("/laundry-orders/<id>", methods=["PUT"])
 def updateLaundryOrder(id):
+
     data = request.get_json(silent=True) or {}
 
     errors = {}
@@ -1162,10 +1702,18 @@ def updateLaundryOrder(id):
         errors["customer"] = "Customer is required."
 
     if "laundry_weight" not in data:
-        errors["laundry_weight"] = "Laundry weight is required."
+
+        errors["laundry_weight"] = (
+            "Laundry weight is required."
+        )
+
     else:
+
         try:
-            laundry_weight = float(data["laundry_weight"])
+
+            laundry_weight = float(
+                data["laundry_weight"]
+            )
 
             if laundry_weight <= 0:
                 errors["laundry_weight"] = (
@@ -1173,9 +1721,13 @@ def updateLaundryOrder(id):
                 )
 
         except (TypeError, ValueError):
-            errors["laundry_weight"] = "Laundry weight must be a number."
+
+            errors["laundry_weight"] = (
+                "Laundry weight must be a number."
+            )
 
     if errors:
+
         return jsonify({
             "status": 422,
             "data": None,
@@ -1198,6 +1750,7 @@ def updateLaundryOrder(id):
     ).fetchone()
 
     if order is None:
+
         conn.close()
 
         return jsonify({
@@ -1212,7 +1765,8 @@ def updateLaundryOrder(id):
     conn.execute(
         """
         UPDATE laundry_orders
-        SET customer = ?, laundry_weight = ?
+        SET customer = ?,
+            laundry_weight = ?
         WHERE id = ?
         """,
         (
@@ -1238,6 +1792,7 @@ def updateLaundryOrder(id):
 
 @app.route("/laundry-orders/<id>", methods=["DELETE"])
 def deleteLaundryOrder(id):
+
     conn = get_db_connection()
 
     order = conn.execute(
@@ -1250,6 +1805,7 @@ def deleteLaundryOrder(id):
     ).fetchone()
 
     if order is None:
+
         conn.close()
 
         return jsonify({
@@ -1282,12 +1838,13 @@ def deleteLaundryOrder(id):
     }), 200
 
 
-# =========================
-# PICKUP SCHEDULES
-# =========================
+# ============================================================
+# PICKUP SCHEDULE API
+# ============================================================
 
 @app.route("/pickup-schedules", methods=["GET"])
 def listPickupSchedules():
+
     conn = get_db_connection()
 
     schedules = conn.execute(
@@ -1302,129 +1859,33 @@ def listPickupSchedules():
 
     return jsonify({
         "status": 200,
-        "data": [dict(schedule) for schedule in schedules],
-        "error": None
-    }), 200
-
-
-@app.route("/pickup-schedules/<id>", methods=["GET"])
-def showPickupSchedule(id):
-    conn = get_db_connection()
-
-    schedule = conn.execute(
-        """
-        SELECT id, customer, pickup_date
-        FROM pickup_schedules
-        WHERE id = ?
-        """,
-        (id,)
-    ).fetchone()
-
-    conn.close()
-
-    if schedule is None:
-        return jsonify({
-            "status": 404,
-            "data": None,
-            "error": {
-                "code": "NOT_FOUND",
-                "message": "Pickup schedule not found."
-            }
-        }), 404
-
-    return jsonify({
-        "status": 200,
-        "data": dict(schedule),
-        "error": None
-    }), 200
-
-
-@app.route("/pickup-schedules/<id>", methods=["PUT"])
-def updatePickupSchedule(id):
-    data = request.get_json(silent=True) or {}
-
-    errors = {}
-
-    if not data.get("pickup_date"):
-        errors["pickup_date"] = "Pickup date is required."
-
-    if not data.get("customer"):
-        errors["customer"] = "Customer is required."
-
-    if errors:
-        return jsonify({
-            "status": 422,
-            "data": None,
-            "error": {
-                "code": "VALIDATION_ERROR",
-                "message": "Validation failed.",
-                "fields": errors
-            }
-        }), 422
-
-    conn = get_db_connection()
-
-    schedule = conn.execute(
-        """
-        SELECT id
-        FROM pickup_schedules
-        WHERE id = ?
-        """,
-        (id,)
-    ).fetchone()
-
-    if schedule is None:
-        conn.close()
-
-        return jsonify({
-            "status": 404,
-            "data": None,
-            "error": {
-                "code": "NOT_FOUND",
-                "message": "Pickup schedule not found."
-            }
-        }), 404
-
-    conn.execute(
-        """
-        UPDATE pickup_schedules
-        SET customer = ?, pickup_date = ?
-        WHERE id = ?
-        """,
-        (
-            data["customer"],
-            data["pickup_date"],
-            id
-        )
-    )
-
-    conn.commit()
-    conn.close()
-
-    return jsonify({
-        "status": 200,
-        "data": {
-            "id": int(id),
-            "customer": data["customer"],
-            "pickup_date": data["pickup_date"]
-        },
+        "data": [
+            dict(schedule)
+            for schedule in schedules
+        ],
         "error": None
     }), 200
 
 
 @app.route("/pickup-schedules", methods=["POST"])
 def createPickupSchedule():
+
     data = request.get_json(silent=True) or {}
 
     errors = {}
 
     if not data.get("pickup_date"):
-        errors["pickup_date"] = "Pickup date is required."
+        errors["pickup_date"] = (
+            "Pickup date is required."
+        )
 
     if not data.get("customer"):
-        errors["customer"] = "Customer is required."
+        errors["customer"] = (
+            "Customer is required."
+        )
 
     if errors:
+
         return jsonify({
             "status": 422,
             "data": None,
@@ -1435,7 +1896,10 @@ def createPickupSchedule():
             }
         }), 422
 
-    if not customer_exists(data["customer"]):
+    if not customer_exists(
+        data["customer"]
+    ):
+
         return jsonify({
             "status": 404,
             "data": None,
@@ -1449,7 +1913,8 @@ def createPickupSchedule():
 
     cursor = conn.execute(
         """
-        INSERT INTO pickup_schedules (customer, pickup_date)
+        INSERT INTO pickup_schedules
+        (customer, pickup_date)
         VALUES (?, ?)
         """,
         (
@@ -1474,8 +1939,69 @@ def createPickupSchedule():
     }), 201
 
 
-@app.route("/pickup-schedules/<id>", methods=["DELETE"])
-def deletePickupSchedule(id):
+@app.route("/pickup-schedules/<id>", methods=["GET"])
+def showPickupSchedule(id):
+
+    conn = get_db_connection()
+
+    schedule = conn.execute(
+        """
+        SELECT id, customer, pickup_date
+        FROM pickup_schedules
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    conn.close()
+
+    if schedule is None:
+
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Pickup schedule not found."
+            }
+        }), 404
+
+    return jsonify({
+        "status": 200,
+        "data": dict(schedule),
+        "error": None
+    }), 200
+
+
+@app.route("/pickup-schedules/<id>", methods=["PUT"])
+def updatePickupSchedule(id):
+
+    data = request.get_json(silent=True) or {}
+
+    errors = {}
+
+    if not data.get("pickup_date"):
+        errors["pickup_date"] = (
+            "Pickup date is required."
+        )
+
+    if not data.get("customer"):
+        errors["customer"] = (
+            "Customer is required."
+        )
+
+    if errors:
+
+        return jsonify({
+            "status": 422,
+            "data": None,
+            "error": {
+                "code": "VALIDATION_ERROR",
+                "message": "Validation failed.",
+                "fields": errors
+            }
+        }), 422
+
     conn = get_db_connection()
 
     schedule = conn.execute(
@@ -1488,6 +2014,62 @@ def deletePickupSchedule(id):
     ).fetchone()
 
     if schedule is None:
+
+        conn.close()
+
+        return jsonify({
+            "status": 404,
+            "data": None,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "Pickup schedule not found."
+            }
+        }), 404
+
+    conn.execute(
+        """
+        UPDATE pickup_schedules
+        SET customer = ?,
+            pickup_date = ?
+        WHERE id = ?
+        """,
+        (
+            data["customer"],
+            data["pickup_date"],
+            id
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        "status": 200,
+        "data": {
+            "id": int(id),
+            "customer": data["customer"],
+            "pickup_date": data["pickup_date"]
+        },
+        "error": None
+    }), 200
+
+
+@app.route("/pickup-schedules/<id>", methods=["DELETE"])
+def deletePickupSchedule(id):
+
+    conn = get_db_connection()
+
+    schedule = conn.execute(
+        """
+        SELECT id
+        FROM pickup_schedules
+        WHERE id = ?
+        """,
+        (id,)
+    ).fetchone()
+
+    if schedule is None:
+
         conn.close()
 
         return jsonify({
@@ -1520,23 +2102,29 @@ def deletePickupSchedule(id):
     }), 200
 
 
-# =========================
-# DELIVERY RECORDS
-# =========================
+# ============================================================
+# DELIVERY RECORDS API
+# ============================================================
 
 @app.route("/delivery-records", methods=["POST"])
 def createDeliveryRecord():
+
     data = request.get_json(silent=True) or {}
 
     errors = {}
 
     if not data.get("delivery_date"):
-        errors["delivery_date"] = "Delivery date is required."
+        errors["delivery_date"] = (
+            "Delivery date is required."
+        )
 
     if not data.get("customer"):
-        errors["customer"] = "Customer is required."
+        errors["customer"] = (
+            "Customer is required."
+        )
 
     if errors:
+
         return jsonify({
             "status": 422,
             "data": None,
@@ -1547,7 +2135,10 @@ def createDeliveryRecord():
             }
         }), 422
 
-    if not customer_exists(data["customer"]):
+    if not customer_exists(
+        data["customer"]
+    ):
+
         return jsonify({
             "status": 404,
             "data": None,
@@ -1561,7 +2152,8 @@ def createDeliveryRecord():
 
     cursor = conn.execute(
         """
-        INSERT INTO delivery_records (customer, delivery_date)
+        INSERT INTO delivery_records
+        (customer, delivery_date)
         VALUES (?, ?)
         """,
         (
@@ -1588,6 +2180,7 @@ def createDeliveryRecord():
 
 @app.route("/delivery-records", methods=["GET"])
 def listDeliveryRecords():
+
     conn = get_db_connection()
 
     records = conn.execute(
@@ -1602,13 +2195,17 @@ def listDeliveryRecords():
 
     return jsonify({
         "status": 200,
-        "data": [dict(record) for record in records],
+        "data": [
+            dict(record)
+            for record in records
+        ],
         "error": None
     }), 200
 
 
 @app.route("/delivery-records/<id>", methods=["GET"])
 def showDeliveryRecord(id):
+
     conn = get_db_connection()
 
     record = conn.execute(
@@ -1623,6 +2220,7 @@ def showDeliveryRecord(id):
     conn.close()
 
     if record is None:
+
         return jsonify({
             "status": 404,
             "data": None,
@@ -1641,17 +2239,23 @@ def showDeliveryRecord(id):
 
 @app.route("/delivery-records/<id>", methods=["PUT"])
 def updateDeliveryRecord(id):
+
     data = request.get_json(silent=True) or {}
 
     errors = {}
 
     if not data.get("delivery_date"):
-        errors["delivery_date"] = "Delivery date is required."
+        errors["delivery_date"] = (
+            "Delivery date is required."
+        )
 
     if not data.get("customer"):
-        errors["customer"] = "Customer is required."
+        errors["customer"] = (
+            "Customer is required."
+        )
 
     if errors:
+
         return jsonify({
             "status": 422,
             "data": None,
@@ -1674,6 +2278,7 @@ def updateDeliveryRecord(id):
     ).fetchone()
 
     if record is None:
+
         conn.close()
 
         return jsonify({
@@ -1688,7 +2293,8 @@ def updateDeliveryRecord(id):
     conn.execute(
         """
         UPDATE delivery_records
-        SET customer = ?, delivery_date = ?
+        SET customer = ?,
+            delivery_date = ?
         WHERE id = ?
         """,
         (
@@ -1714,6 +2320,7 @@ def updateDeliveryRecord(id):
 
 @app.route("/delivery-records/<id>", methods=["DELETE"])
 def deleteDeliveryRecord(id):
+
     conn = get_db_connection()
 
     record = conn.execute(
@@ -1726,6 +2333,7 @@ def deleteDeliveryRecord(id):
     ).fetchone()
 
     if record is None:
+
         conn.close()
 
         return jsonify({
@@ -1758,21 +2366,35 @@ def deleteDeliveryRecord(id):
     }), 200
 
 
-# =========================
-# PAYMENTS
-# =========================
+# ============================================================
+# PAYMENTS API
+# ============================================================
 
 @app.route("/payments", methods=["POST"])
 def createPayment():
+
     data = request.get_json(silent=True) or {}
 
     errors = {}
 
+    if not data.get("customer"):
+        errors["customer"] = (
+            "Customer is required."
+        )
+
     if "payment_amount" not in data:
-        errors["payment_amount"] = "Payment amount is required."
+
+        errors["payment_amount"] = (
+            "Payment amount is required."
+        )
+
     else:
+
         try:
-            payment_amount = float(data["payment_amount"])
+
+            payment_amount = float(
+                data["payment_amount"]
+            )
 
             if payment_amount <= 0:
                 errors["payment_amount"] = (
@@ -1780,12 +2402,18 @@ def createPayment():
                 )
 
         except (TypeError, ValueError):
-            errors["payment_amount"] = "Payment amount must be a number."
+
+            errors["payment_amount"] = (
+                "Payment amount must be a number."
+            )
 
     if not data.get("payment_method"):
-        errors["payment_method"] = "Payment method is required."
+        errors["payment_method"] = (
+            "Payment method is required."
+        )
 
     if errors:
+
         return jsonify({
             "status": 422,
             "data": None,
@@ -1798,14 +2426,26 @@ def createPayment():
 
     conn = get_db_connection()
 
+    transaction_time = datetime.now().strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
+
     cursor = conn.execute(
         """
-        INSERT INTO payments (payment_amount, payment_method)
-        VALUES (?, ?)
+        INSERT INTO payments
+        (
+            customer,
+            payment_amount,
+            payment_method,
+            transaction_time
+        )
+        VALUES (?, ?, ?, ?)
         """,
         (
+            data["customer"],
             payment_amount,
-            data["payment_method"]
+            data["payment_method"],
+            transaction_time
         )
     )
 
@@ -1818,8 +2458,10 @@ def createPayment():
         "status": 201,
         "data": {
             "id": payment_id,
+            "customer": data["customer"],
             "payment_amount": payment_amount,
-            "payment_method": data["payment_method"]
+            "payment_method": data["payment_method"],
+            "transaction_time": transaction_time
         },
         "error": None
     }), 201
@@ -1827,11 +2469,17 @@ def createPayment():
 
 @app.route("/payments", methods=["GET"])
 def listPayments():
+
     conn = get_db_connection()
 
     payments = conn.execute(
         """
-        SELECT id, payment_amount, payment_method
+        SELECT
+            id,
+            customer,
+            payment_amount,
+            payment_method,
+            transaction_time
         FROM payments
         ORDER BY id
         """
@@ -1841,18 +2489,27 @@ def listPayments():
 
     return jsonify({
         "status": 200,
-        "data": [dict(payment) for payment in payments],
+        "data": [
+            dict(payment)
+            for payment in payments
+        ],
         "error": None
     }), 200
 
 
 @app.route("/payments/<id>", methods=["GET"])
 def showPayment(id):
+
     conn = get_db_connection()
 
     payment = conn.execute(
         """
-        SELECT id, payment_amount, payment_method
+        SELECT
+            id,
+            customer,
+            payment_amount,
+            payment_method,
+            transaction_time
         FROM payments
         WHERE id = ?
         """,
@@ -1862,6 +2519,7 @@ def showPayment(id):
     conn.close()
 
     if payment is None:
+
         return jsonify({
             "status": 404,
             "data": None,
@@ -1880,15 +2538,29 @@ def showPayment(id):
 
 @app.route("/payments/<id>", methods=["PUT"])
 def updatePayment(id):
+
     data = request.get_json(silent=True) or {}
 
     errors = {}
 
+    if not data.get("customer"):
+        errors["customer"] = (
+            "Customer is required."
+        )
+
     if "payment_amount" not in data:
-        errors["payment_amount"] = "Payment amount is required."
+
+        errors["payment_amount"] = (
+            "Payment amount is required."
+        )
+
     else:
+
         try:
-            payment_amount = float(data["payment_amount"])
+
+            payment_amount = float(
+                data["payment_amount"]
+            )
 
             if payment_amount <= 0:
                 errors["payment_amount"] = (
@@ -1896,12 +2568,18 @@ def updatePayment(id):
                 )
 
         except (TypeError, ValueError):
-            errors["payment_amount"] = "Payment amount must be a number."
+
+            errors["payment_amount"] = (
+                "Payment amount must be a number."
+            )
 
     if not data.get("payment_method"):
-        errors["payment_method"] = "Payment method is required."
+        errors["payment_method"] = (
+            "Payment method is required."
+        )
 
     if errors:
+
         return jsonify({
             "status": 422,
             "data": None,
@@ -1924,6 +2602,7 @@ def updatePayment(id):
     ).fetchone()
 
     if payment is None:
+
         conn.close()
 
         return jsonify({
@@ -1938,10 +2617,13 @@ def updatePayment(id):
     conn.execute(
         """
         UPDATE payments
-        SET payment_amount = ?, payment_method = ?
+        SET customer = ?,
+            payment_amount = ?,
+            payment_method = ?
         WHERE id = ?
         """,
         (
+            data["customer"],
             payment_amount,
             data["payment_method"],
             id
@@ -1955,6 +2637,7 @@ def updatePayment(id):
         "status": 200,
         "data": {
             "id": int(id),
+            "customer": data["customer"],
             "payment_amount": payment_amount,
             "payment_method": data["payment_method"]
         },
@@ -1964,6 +2647,7 @@ def updatePayment(id):
 
 @app.route("/payments/<id>", methods=["DELETE"])
 def deletePayment(id):
+
     conn = get_db_connection()
 
     payment = conn.execute(
@@ -1976,6 +2660,7 @@ def deletePayment(id):
     ).fetchone()
 
     if payment is None:
+
         conn.close()
 
         return jsonify({
@@ -2008,9 +2693,17 @@ def deletePayment(id):
     }), 200
 
 
-# =========================
+# ============================================================
 # RUN APPLICATION
-# =========================
+# ============================================================
+
+# ============================================================
+# RUN APPLICATION
+# ============================================================
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        debug=True,
+        host="127.0.0.1",
+        port=5000
+    )
