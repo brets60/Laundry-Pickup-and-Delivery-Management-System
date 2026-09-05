@@ -2458,6 +2458,8 @@ body {
 
 <body>
 
+
+
 <!-- =============================================================
      LAUNDRYCARE MASTER SIDEBAR
 ============================================================= -->
@@ -3457,6 +3459,33 @@ body {
                                 <td>
 
                                     <div class="action-buttons">
+
+
+
+                                         <!-- View -->
+
+    <a
+        href="{{ url_for('customer_details', customer_id=customer['id']) }}"
+        class="action-button view-button"
+        aria-label="View {{ customer['name'] }}"
+    >
+
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.9"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/>
+            <circle cx="12" cy="12" r="2.5"/>
+        </svg>
+
+        View
+
+    </a>
 
                                         <!-- Edit -->
 

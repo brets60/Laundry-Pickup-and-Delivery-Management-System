@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Payment | LaundryCare</title>
+    <title>Edit Pickup | LaundryCare</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/customers.css') }}">
 
     <style>
-        :root { --primary: #2563eb; --primary-dark: #1d4ed8; --primary-light: #eff6ff; --secondary: #06b6d4; --background: #f5f7fb; --surface: #ffffff; --sidebar: #172033; --sidebar-hover: #243149; --sidebar-text: #cbd5e1; --sidebar-active: #2563eb; --text: #172033; --text-secondary: #475569; --text-muted: #64748b; --border: #e2e8f0; --sidebar-width: 270px; }
+        :root { --primary: #2563eb; --primary-dark: #1d4ed8; --primary-light: #eff6ff; --secondary: #06b6d4; --background: #f5f7fb; --surface: #ffffff; --sidebar: #172033; --sidebar-hover: #243149; --sidebar-text: #cbd5e1; --sidebar-active: #2563eb; --text: #172033; --text-secondary: #475569; --text-muted: #64748b; --border: #e2e8f0; --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.05); --sidebar-width: 270px; }
         * { box-sizing: border-box; }
         body { margin: 0; min-height: 100vh; font-family: Inter, system-ui, sans-serif; background: #06172d !important; color: #e5edf7 !important; }
         button, input, select { font: inherit; }
@@ -21,6 +22,9 @@
         .nav-section-title { margin: 28px 10px 10px; color: #64748b; font-size: 10px; font-weight: 700; text-transform: uppercase; }
         .nav-link { display: flex; align-items: center; gap: 13px; min-height: 46px; padding: 0 13px; border-radius: 10px; color: var(--sidebar-text); text-decoration: none; font-size: 14px; font-weight: 500; }
         .nav-link.active { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; }
+        .sidebar-bottom { margin-top: auto; }
+        .user-profile { display: flex; align-items: center; gap: 11px; padding: 13px 10px; margin-bottom: 10px; border-top: 1px solid rgba(255,255,255,0.08); }
+        .user-avatar { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #dbeafe; color: var(--primary); font-size: 13px; font-weight: 800; }
 
         .main { min-height: 100vh; margin-left: var(--sidebar-width); padding: 30px 34px 40px; }
         .page-container { width: 100%; max-width: 1500px; margin: 0 auto; }
@@ -31,15 +35,17 @@
         .content-heading { background: linear-gradient(145deg, rgba(8, 27, 50, 0.97), rgba(4, 17, 34, 0.97)) !important; border: 1px solid rgba(72, 128, 184, 0.18) !important; border-radius: 16px; padding: 22px 24px; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.22); display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
         .section-label { margin: 0 0 5px; color: #22d3ee !important; font-size: 11px; font-weight: 800; text-transform: uppercase; }
         .section-title { margin: 0; color: #f8fafc !important; font-size: 25px; font-weight: 800; }
+        .section-description { margin: 5px 0 0; color: #9fb3c8 !important; font-size: 13px; }
 
-        .form-card { background: linear-gradient(145deg, rgba(8, 27, 50, 0.98), rgba(4, 17, 34, 0.98)) !important; border: 1px solid rgba(72, 128, 184, 0.18) !important; border-radius: 16px; padding: 25px; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.23); }
-        .customer-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) auto; align-items: end; gap: 16px; }
+        .form-card { background: linear-gradient(145deg, rgba(8, 27, 50, 0.98), rgba(4, 17, 34, 0.98)) !important; border: 1px solid rgba(72, 128, 184, 0.18) !important; border-radius: 16px; padding: 20px; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.23); }
+        .customer-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; align-items: end; gap: 16px; }
         .field-label { display: block; margin-bottom: 7px; color: #dce7f2 !important; font-size: 11px; font-weight: 700; }
 
+        /* Fixed Input Styles - Back to Dark Glass! */
         .form-input { width: 100%; height: 45px; padding: 0 13px; background: rgba(6, 23, 45, 0.95) !important; color: #f8fafc !important; border: 1px solid rgba(88, 137, 181, 0.30) !important; border-radius: 9px; outline: none; transition: 0.2s; }
         .form-input:focus { border-color: #2563eb !important; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
 
-        .primary-button { display: inline-flex; align-items: center; justify-content: center; min-height: 45px; padding: 0 20px; background: linear-gradient(135deg, #2563eb, #0891b2) !important; color: white !important; border: 1px solid rgba(56, 189, 248, 0.25) !important; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; }
+        .primary-button { display: inline-flex; align-items: center; justify-content: center; min-height: 45px; padding: 0 17px; background: linear-gradient(135deg, #2563eb, #0891b2) !important; color: white !important; border: 1px solid rgba(56, 189, 248, 0.25) !important; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; }
     </style>
 </head>
 <body>
@@ -52,14 +58,15 @@
             <p class="brand-subtitle">Pickup &amp; Delivery</p>
         </div>
     </div>
+
     <div class="nav-section-title">MAIN</div>
     <nav style="display: flex; flex-direction: column; gap: 5px;">
         <a href="/dashboard-page" class="nav-link"><span>Dashboard</span></a>
         <a href="/customers-page" class="nav-link"><span>Customers</span></a>
         <a href="/laundry-orders-page" class="nav-link"><span>Laundry Orders</span></a>
-        <a href="/pickup-schedules-page" class="nav-link"><span>Pickup Schedules</span></a>
+        <a href="/pickup-schedules-page" class="nav-link active"><span>Pickup Schedules</span></a>
         <a href="/delivery-records-page" class="nav-link"><span>Delivery Records</span></a>
-        <a href="/payments-page" class="nav-link active"><span>Payments</span></a>
+        <a href="/payments-page" class="nav-link"><span>Payments</span></a>
     </nav>
 </aside>
 
@@ -67,40 +74,39 @@
     <div class="page-container">
         <header class="top-header">
             <div>
-                <div class="breadcrumb"><span>Management</span> / <span>Payments</span></div>
-                <h2 class="page-title">Payments</h2>
+                <div class="breadcrumb">
+                    <span>Management</span> / <span>Pickup Schedules</span>
+                </div>
+                <h2 class="page-title">Pickup Schedules</h2>
             </div>
         </header>
 
         <div class="content-heading">
             <div>
-                <p class="section-label">Financial Management</p>
-                <h3 class="section-title">Edit Payment Record</h3>
-                <p class="section-description" style="color:#9fb3c8; margin-top:5px; font-size:13px;">Update the details for Record #{{ "%03d"|format(payment['id']) }}</p>
+                <p class="section-label">Pickup Management</p>
+                <h3 class="section-title">Edit Pickup Schedule</h3>
+                <p class="section-description">Update the details for Schedule #{{ "%03d"|format(pickup['id']) }}</p>
             </div>
-            <a href="/payments-page" class="primary-button" style="background: transparent !important; border: 1px solid rgba(88, 137, 181, 0.3) !important; color: #cbd5e1 !important;">Cancel</a>
+            <a href="/pickup-schedules-page" class="primary-button" style="background: transparent !important; border: 1px solid rgba(88, 137, 181, 0.3) !important; color: #cbd5e1 !important;">Cancel</a>
         </div>
 
         <section class="form-card">
-            <form action="/payments-page/edit/{{ payment['id'] }}" method="POST">
+            <form action="/pickup-schedules-page/edit/{{ pickup['id'] }}" method="POST">
                 <div class="customer-form">
 
+                    <!-- NOW A STANDARD TEXT BOX FOR TYPING -->
                     <div class="field-group">
                         <label class="field-label">Customer Name</label>
-                        <input type="text" name="customer" class="form-input" value="{{ payment['customer'] }}" required>
+                        <input type="text" name="customer" class="form-input" value="{{ pickup['customer'] }}" placeholder="Type customer name" required>
                     </div>
 
+                    <!-- STANDARD TEXT BOX -->
                     <div class="field-group">
-                        <label class="field-label">Payment Amount (₱)</label>
-                        <input type="text" name="payment_amount" class="form-input" value="{{ payment['payment_amount'] }}" required>
+                        <label class="field-label">Pickup Date</label>
+                        <input type="text" name="pickup_date" class="form-input" value="{{ pickup['pickup_date'] }}" placeholder="DD/MM/YYYY" required>
                     </div>
 
-                    <div class="field-group">
-                        <label class="field-label">Payment Method</label>
-                        <input type="text" name="payment_method" class="form-input" value="{{ payment['payment_method'] }}" required>
-                    </div>
-
-                    <button type="submit" class="primary-button">Save</button>
+                    <button type="submit" class="primary-button">Save Changes</button>
                 </div>
             </form>
         </section>

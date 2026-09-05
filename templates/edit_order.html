@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Customer | LaundryCare</title>
+    <title>Edit Order | LaundryCare</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/customers.css') }}">
@@ -51,7 +51,7 @@
             background: var(--background); color: var(--text);
             -webkit-font-smoothing: antialiased;
         }
-        button, input { font: inherit; }
+        button, input, select { font: inherit; }
         button, a { -webkit-tap-highlight-color: transparent; }
 
         /* =========================================================
@@ -147,6 +147,9 @@
         .form-input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
         .submit-button { min-width: 145px; height: 45px; }
 
+        /* Dropdown specific */
+        select.form-input option { color: #172033; background: #ffffff; }
+
         /* =========================================================
            FOOTER
            ========================================================= */
@@ -214,8 +217,9 @@
     <div class="lc-nav-label">MAIN</div>
     <nav class="lc-navigation" aria-label="Main navigation">
         <a href="/dashboard-page" class="lc-nav-item"><span>Dashboard</span></a>
-        <a href="/customers-page" class="lc-nav-item active" aria-current="page"><span>Customers</span></a>
-        <a href="/laundry-orders-page" class="lc-nav-item"><span>Laundry Orders</span></a>
+        <!-- Swapped active link from Customers to Laundry Orders! -->
+        <a href="/customers-page" class="lc-nav-item"><span>Customers</span></a>
+        <a href="/laundry-orders-page" class="lc-nav-item active" aria-current="page"><span>Laundry Orders</span></a>
         <a href="/pickup-schedules-page" class="lc-nav-item"><span>Pickup Schedules</span></a>
         <a href="/delivery-records-page" class="lc-nav-item"><span>Delivery Records</span></a>
         <a href="/payments-page" class="lc-nav-item"><span>Payments</span></a>
@@ -244,11 +248,12 @@
         <!-- TOP HEADER -->
         <header class="top-header">
             <div class="header-left">
+                <!-- Changed Breadcrumb to Laundry Orders -->
                 <div class="breadcrumb">
-                    <span>Management</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg> <span>Customers</span>
+                    <span>Management</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg> <span>Laundry Orders</span>
                 </div>
-                <h2 class="page-title">Customers</h2>
-                <p class="page-subtitle">Manage customer information and contact details.</p>
+                <h2 class="page-title">Laundry Orders</h2>
+                <p class="page-subtitle">Manage laundry orders and view order details.</p>
             </div>
             <div class="header-right">
                 <div class="header-user">
@@ -263,25 +268,26 @@
 
 
         <!-- =====================================================
-             EDIT CUSTOMER HEADING
+             EDIT ORDER HEADING
              ===================================================== -->
         <div class="content-heading">
             <div>
-                <p class="section-label">Customer Management</p>
-                <h3 class="section-title">Edit Customer</h3>
-                <p class="section-description">Update the details for {{ customer['name'] }}</p>
+                <p class="section-label">Order Management</p>
+                <h3 class="section-title">Edit Laundry Order</h3>
+                <p class="section-description">Update the details for Order #{{ order['id'] }}</p>
             </div>
 
-            <a href="/customers-page" class="primary-button" style="background: transparent !important; border: 1px solid rgba(88, 137, 181, 0.3) !important; color: #cbd5e1 !important; text-decoration: none;">
+            <!-- Changed Cancel button to go back to orders page -->
+            <a href="/laundry-orders-page" class="primary-button" style="background: transparent !important; border: 1px solid rgba(88, 137, 181, 0.3) !important; color: #cbd5e1 !important; text-decoration: none;">
                 Cancel
             </a>
         </div>
 
 
         <!-- =====================================================
-             EDIT CUSTOMER FORM
+             EDIT ORDER FORM
              ===================================================== -->
-        <section class="form-card" aria-labelledby="editCustomerTitle">
+        <section class="form-card" aria-labelledby="editOrderTitle">
             <div class="form-header">
                 <div class="form-header-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -289,27 +295,34 @@
                     </svg>
                 </div>
                 <div>
-                    <h3 class="form-title" id="editCustomerTitle">Update Details</h3>
-                    <p class="form-description">Make changes to the customer's information below and save.</p>
+                    <h3 class="form-title" id="editOrderTitle">Update Order Details</h3>
+                    <p class="form-description">Make changes to the order information below and save.</p>
                 </div>
             </div>
 
-            <form method="POST">
+            <!-- Changed action URL to order edit route -->
+            <form action="/laundry-orders-page/edit/{{ order['id'] }}" method="POST">
                 <div class="customer-form">
 
-                    <!-- Customer Name -->
+                    <!-- Customer Name (Dropdown) -->
                     <div class="field-group">
-                        <label class="field-label" for="name">Customer Name</label>
+                        <label class="field-label" for="customer">Customer Name</label>
                         <div class="input-wrapper">
-                            <input type="text" id="name" name="name" class="form-input" value="{{ customer['name'] }}" required>
+                            <select id="customer" name="customer" class="form-input" required>
+                                {% for c in customers %}
+                                    <option value="{{ c['name'] }}" {% if c['name'] == order['customer'] %}selected{% endif %}>
+                                        {{ c['name'] }}
+                                    </option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
 
-                    <!-- Contact Number -->
+                    <!-- Laundry Weight -->
                     <div class="field-group">
-                        <label class="field-label" for="contact_number">Contact Number</label>
+                        <label class="field-label" for="laundry_weight">Laundry Weight (kg)</label>
                         <div class="input-wrapper">
-                            <input type="text" id="contact_number" name="contact_number" class="form-input" value="{{ customer['contact_number'] }}" required>
+                            <input type="number" step="0.1" id="laundry_weight" name="laundry_weight" class="form-input" value="{{ order['laundry_weight'] }}" required>
                         </div>
                     </div>
 
