@@ -2,8 +2,21 @@ from flask import Flask, render_template, request, redirect, session, jsonify
 from datetime import datetime
 import sqlite3
 
+#controllers
+from controllers.customer_routes import customer_bp
+from controllers.order_routes import order_bp
+from controllers.pickup_routes import pickup_bp
+from controllers.delivery_routes import delivery_bp
+from controllers.payment_routes import payment_bp
+
 app = Flask(__name__)
 app.secret_key = "laundry-system-secret-key"
+
+app.register_blueprint(customer_bp)
+app.register_blueprint(order_bp)
+app.register_blueprint(pickup_bp)
+app.register_blueprint(delivery_bp)
+app.register_blueprint(payment_bp)
 
 DATABASE = "laundry.db"
 
@@ -124,6 +137,8 @@ init_database()
 
 def login_required():
     return "user_id" in session
+
+
 
 
 # ============================================================
@@ -350,6 +365,32 @@ def customers_page():
         customers=customers
     )
 
+@app.route("/customer/<int:customer_id>")
+def customer_details(customer_id):
+
+    if not login_required():
+        return redirect("/login")
+
+    conn = get_db_connection()
+
+    customer = conn.execute(
+        """
+        SELECT id, name, contact_number
+        FROM customers
+        WHERE id = ?
+        """,
+        (customer_id,)
+    ).fetchone()
+
+    conn.close()
+
+    if customer is None:
+        return "Customer not found", 404
+
+    return render_template(
+        "customer_details.html",
+        customer=customer
+    )
 
 # ============================================================
 # EDIT CUSTOMER
