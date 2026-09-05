@@ -570,7 +570,7 @@ def laundry_orders_page():
     conn.close()
 
     return render_template(
-        "laundry_orders.html",
+        "orders.html",
         orders=orders
     )
 
@@ -652,7 +652,7 @@ def edit_laundry_order_page(id):
     conn.close()
 
     return render_template(
-        "edit_laundry_order.html",
+        "edit_order.html",
         order=order
     )
 
@@ -750,7 +750,7 @@ def pickup_schedules_page():
     conn.close()
 
     return render_template(
-        "pickup_schedules.html",
+        "pickups.html",
         pickups=pickups
     )
 
@@ -823,7 +823,7 @@ def edit_pickup_schedule_page(id):
     conn.close()
 
     return render_template(
-        "edit_pickup_schedule.html",
+        "edit_pickup.html",
         pickup=pickup
     )
 
@@ -921,7 +921,7 @@ def delivery_records_page():
     conn.close()
 
     return render_template(
-        "delivery_records.html",
+        "deliveries.html",
         deliveries=deliveries
     )
 
@@ -994,7 +994,7 @@ def edit_delivery_record_page(id):
     conn.close()
 
     return render_template(
-        "edit_delivery_record.html",
+        "edit_delivery.html",
         delivery=delivery
     )
 

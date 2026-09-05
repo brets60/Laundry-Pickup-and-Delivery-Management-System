@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Order | LaundryCare</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/customers.css') }}">
+
+    <style>
+        /* =========================================================
+           LAUNDRYCARE CUSTOMER MANAGEMENT
+           ========================================================= */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+            --secondary: #06b6d4;
+            --background: #f5f7fb;
+            --surface: #ffffff;
+            --sidebar: #172033;
+            --sidebar-hover: #243149;
+            --sidebar-text: #cbd5e1;
+            --sidebar-active: #2563eb;
+            --text: #172033;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --success-bg: #f0fdf4;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --danger: #dc2626;
+            --danger-dark: #b91c1c;
+            --danger-bg: #fef2f2;
+            --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+            --shadow-lg: 0 18px 45px rgba(15, 23, 42, 0.14);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --sidebar-width: 270px;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0; min-height: 100vh;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--background); color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+        button, input, select { font: inherit; }
+        button, a { -webkit-tap-highlight-color: transparent; }
+
+        /* =========================================================
+           SIDEBAR
+           ========================================================= */
+        .sidebar {
+            position: fixed; z-index: 1000; top: 0; left: 0;
+            width: var(--sidebar-width); height: 100vh;
+            display: flex; flex-direction: column; padding: 24px 16px;
+            background: linear-gradient(180deg, #172033 0%, #1b2638 100%);
+            color: white; box-shadow: 8px 0 30px rgba(15, 23, 42, 0.08);
+            transition: transform 0.3s ease, width 0.3s ease;
+        }
+        .brand { display: flex; align-items: center; gap: 12px; padding: 4px 8px 26px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .brand-logo { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 8px 18px rgba(37, 99, 235, 0.28); }
+        .brand-logo svg { width: 24px; height: 24px; }
+        .brand-text { min-width: 0; }
+        .brand-name { margin: 0; font-size: 19px; font-weight: 800; letter-spacing: -0.3px; }
+        .brand-subtitle { margin: 3px 0 0; color: #94a3b8; font-size: 11px; line-height: 1.4; }
+        .nav-section-title { margin: 28px 10px 10px; color: #64748b; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
+        .navigation { display: flex; flex-direction: column; gap: 5px; }
+        .nav-link { position: relative; display: flex; align-items: center; gap: 13px; min-height: 46px; padding: 0 13px; border-radius: 10px; color: var(--sidebar-text); text-decoration: none; font-size: 14px; font-weight: 500; transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease; }
+        .nav-link svg { width: 19px; height: 19px; flex-shrink: 0; stroke-width: 1.9; }
+        .nav-link:hover { background: var(--sidebar-hover); color: white; transform: translateX(2px); }
+        .nav-link.active { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22); }
+        .nav-link.active::before { content: ""; position: absolute; left: -16px; width: 3px; height: 24px; border-radius: 0 4px 4px 0; background: #60a5fa; }
+        .sidebar-bottom { margin-top: auto; }
+        .user-profile { display: flex; align-items: center; gap: 11px; padding: 13px 10px; margin-bottom: 10px; border-top: 1px solid rgba(255,255,255,0.08); }
+        .user-avatar { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 50%; background: #dbeafe; color: var(--primary); font-size: 13px; font-weight: 800; }
+        .user-info { min-width: 0; }
+        .user-name { margin: 0; overflow: hidden; color: white; font-size: 13px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+        .user-role { margin: 3px 0 0; color: #94a3b8; font-size: 11px; }
+        .logout-link { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; min-height: 44px; border-radius: 10px; background: rgba(220, 38, 38, 0.1); color: #fca5a5; text-decoration: none; font-size: 13px; font-weight: 600; transition: background 0.2s ease, color 0.2s ease; }
+        .logout-link svg { width: 18px; height: 18px; }
+        .logout-link:hover { background: rgba(220, 38, 38, 0.18); color: #fecaca; }
+
+        /* =========================================================
+           MOBILE MENU & OVERLAY
+           ========================================================= */
+        .mobile-header { display: none; }
+        .sidebar-overlay { position: fixed; z-index: 900; inset: 0; background: rgba(15, 23, 42, 0.45); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .sidebar-overlay.show { opacity: 1; visibility: visible; }
+
+        /* =========================================================
+           MAIN CONTENT & HEADERS
+           ========================================================= */
+        .main { min-height: 100vh; margin-left: var(--sidebar-width); padding: 30px 34px 40px; }
+        .page-container { width: 100%; max-width: 1500px; margin: 0 auto; }
+        .top-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 30px; }
+        .header-left { min-width: 0; }
+        .breadcrumb { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; color: var(--text-muted); font-size: 12px; font-weight: 500; }
+        .breadcrumb svg { width: 14px; height: 14px; }
+        .page-title { margin: 0; color: var(--text); font-size: clamp(27px, 3vw, 36px); line-height: 1.15; letter-spacing: -1px; font-weight: 800; }
+        .page-subtitle { margin: 7px 0 0; color: var(--text-muted); font-size: 14px; }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .notification-button { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text-secondary); cursor: pointer; transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease; }
+        .notification-button:hover { background: var(--primary-light); border-color: #bfdbfe; color: var(--primary); transform: translateY(-1px); }
+        .notification-button svg { width: 19px; height: 19px; }
+        .header-user { display: flex; align-items: center; gap: 10px; padding: 5px 10px 5px 5px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+        .header-avatar { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 9px; background: var(--primary-light); color: var(--primary); font-size: 11px; font-weight: 800; }
+        .header-user-text { display: flex; flex-direction: column; }
+        .header-user-name { color: var(--text); font-size: 12px; font-weight: 700; }
+        .header-user-role { margin-top: 2px; color: var(--text-muted); font-size: 10px; }
+
+        /* =========================================================
+           ACTION BUTTONS
+           ========================================================= */
+        .primary-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 43px; padding: 0 17px; border: 0; border-radius: 10px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: 0 7px 15px rgba(37, 99, 235, 0.18); transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease; }
+        .primary-button:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25); filter: brightness(1.03); }
+        .primary-button:active { transform: translateY(0); }
+        .primary-button svg { width: 17px; height: 17px; }
+
+        .content-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
+        .section-label { margin: 0 0 5px; color: var(--primary); font-size: 11px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; }
+        .section-title { margin: 0; font-size: 20px; font-weight: 750; letter-spacing: -0.3px; }
+        .section-description { margin: 5px 0 0; color: var(--text-muted); font-size: 13px; }
+
+        /* =========================================================
+           FORM
+           ========================================================= */
+        .form-card { margin-bottom: 22px; padding: 23px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-sm); scroll-margin-top: 25px; }
+        .form-header { display: flex; align-items: flex-start; gap: 13px; margin-bottom: 22px; }
+        .form-header-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 11px; background: var(--primary-light); color: var(--primary); }
+        .form-header-icon svg { width: 21px; height: 21px; }
+        .form-title { margin: 0; font-size: 18px; font-weight: 750; }
+        .form-description { margin: 4px 0 0; color: var(--text-muted); font-size: 12px; }
+        .customer-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; align-items: end; gap: 16px; }
+        .field-group { min-width: 0; }
+        .field-label { display: block; margin-bottom: 7px; color: var(--text-secondary); font-size: 12px; font-weight: 700; }
+        .input-wrapper { position: relative; }
+        .form-input { width: 100%; height: 45px; padding: 0 13px; border: 1px solid var(--border); border-radius: 10px; outline: none; background: #fbfdff; color: var(--text); font-size: 13px; transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; }
+        .form-input::placeholder { color: #94a3b8; }
+        .form-input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .submit-button { min-width: 145px; height: 45px; }
+
+        /* Dropdown specific */
+        select.form-input option { color: #172033; background: #ffffff; }
+
+        /* =========================================================
+           FOOTER
+           ========================================================= */
+        .footer { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding-top: 25px; color: var(--text-muted); font-size: 10px; }
+        .footer-security { display: flex; align-items: center; gap: 5px; }
+        .footer-security svg { width: 13px; height: 13px; }
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+        @media (max-width: 1100px) {
+            :root { --sidebar-width: 230px; }
+            .main { padding: 25px; }
+            .customer-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .submit-button { width: 100%; }
+        }
+        @media (max-width: 760px) {
+            .sidebar { width: min(285px, 86vw); transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .mobile-header { position: sticky; z-index: 800; top: 0; display: flex; align-items: center; justify-content: space-between; height: 62px; margin: -25px -25px 24px; padding: 0 18px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); }
+            .mobile-brand { display: flex; align-items: center; gap: 9px; }
+            .mobile-brand-icon { width: 31px; height: 31px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+            .menu-button { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 9px; background: white; color: var(--text); cursor: pointer; }
+            .main { margin-left: 0; padding: 25px 18px 30px; }
+            .header-right { display: none; }
+            .customer-form { grid-template-columns: 1fr; gap: 13px; }
+        }
+
+        /* =========================================================
+           STEP 30 — CUSTOMERS PAGE DARK GLASS DESIGN
+           ========================================================= */
+        body { background: #06172d !important; color: #e5edf7 !important; }
+        .main-wrapper, .main-content, .content { background: #06172d !important; color: #e5edf7 !important; }
+        .content-heading { background: linear-gradient(145deg, rgba(8, 27, 50, 0.97), rgba(4, 17, 34, 0.97)) !important; border: 1px solid rgba(72, 128, 184, 0.18) !important; border-radius: 16px; padding: 22px 24px; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.03); }
+        .content-heading .section-label { color: #22d3ee !important; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; }
+        .content-heading .section-title { color: #f8fafc !important; font-size: 25px; font-weight: 800; }
+        .content-heading .section-description { color: #9fb3c8 !important; }
+        .primary-button { background: linear-gradient(135deg, #2563eb, #0891b2) !important; color: #ffffff !important; border: 1px solid rgba(56, 189, 248, 0.25) !important; border-radius: 10px; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.20); }
+        .primary-button:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(37, 99, 235, 0.30); }
+
+        .form-card { background: linear-gradient(145deg, rgba(8, 27, 50, 0.98), rgba(4, 17, 34, 0.98)) !important; border: 1px solid rgba(72, 128, 184, 0.18) !important; border-radius: 16px; padding: 20px; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.23), inset 0 1px 0 rgba(255, 255, 255, 0.03); }
+        .form-title { color: #f8fafc !important; font-size: 17px; font-weight: 800; }
+        .form-description { color: #8fa5bb !important; font-size: 10px; }
+        .field-label { color: #dce7f2 !important; font-size: 11px; font-weight: 700; }
+        .form-input { background: rgba(6, 23, 45, 0.95) !important; color: #f8fafc !important; border: 1px solid rgba(88, 137, 181, 0.20) !important; border-radius: 9px; padding-left: 15px; }
+        .form-input::placeholder { color: #607992 !important; }
+        .form-input:focus { background: rgba(7, 27, 49, 1) !important; color: #ffffff !important; border-color: #22d3ee !important; box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.08) !important; }
+    </style>
+</head>
+<body>
+
+<div class="lc-sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+<aside class="lc-sidebar" id="sidebar" aria-label="Main navigation">
+    <div class="lc-brand">
+        <div class="lc-brand-mark">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 18h28v20H10z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M14 18V11M34 18V11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="29" r="6" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="32" cy="8" r="1.5" fill="currentColor"/></svg>
+        </div>
+        <div>
+            <h1>LaundryCare</h1>
+            <p>Pickup &amp; Delivery Management</p>
+        </div>
+    </div>
+
+    <div class="lc-nav-label">MAIN</div>
+    <nav class="lc-navigation" aria-label="Main navigation">
+        <a href="/dashboard-page" class="lc-nav-item"><span>Dashboard</span></a>
+        <!-- Swapped active link from Customers to Laundry Orders! -->
+        <a href="/customers-page" class="lc-nav-item"><span>Customers</span></a>
+        <a href="/laundry-orders-page" class="lc-nav-item active" aria-current="page"><span>Laundry Orders</span></a>
+        <a href="/pickup-schedules-page" class="lc-nav-item"><span>Pickup Schedules</span></a>
+        <a href="/delivery-records-page" class="lc-nav-item"><span>Delivery Records</span></a>
+        <a href="/payments-page" class="lc-nav-item"><span>Payments</span></a>
+    </nav>
+
+    <div class="lc-sidebar-bottom">
+        <div class="lc-admin-profile">
+            <div class="lc-admin-avatar">A</div>
+            <div class="lc-admin-info"><strong>Admin</strong><span>System Administrator</span></div>
+        </div>
+        <a href="/logout" class="lc-logout" onclick="return confirm('Are you sure you want to logout?');"><span>Sign Out</span></a>
+    </div>
+</aside>
+
+<main class="main">
+    <div class="page-container">
+
+        <!-- MOBILE HEADER -->
+        <div class="mobile-header">
+            <div class="mobile-brand">
+                <span class="mobile-brand-name">LaundryCare</span>
+            </div>
+            <button type="button" class="menu-button" id="menuButton">Menu</button>
+        </div>
+
+        <!-- TOP HEADER -->
+        <header class="top-header">
+            <div class="header-left">
+                <!-- Changed Breadcrumb to Laundry Orders -->
+                <div class="breadcrumb">
+                    <span>Management</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m9 18 6-6-6-6"/></svg> <span>Laundry Orders</span>
+                </div>
+                <h2 class="page-title">Laundry Orders</h2>
+                <p class="page-subtitle">Manage laundry orders and view order details.</p>
+            </div>
+            <div class="header-right">
+                <div class="header-user">
+                    <div class="header-avatar">AD</div>
+                    <div class="header-user-text">
+                        <span class="header-user-name">{{ session.get("username", "Administrator") }}</span>
+                        <span class="header-user-role">Administrator</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+
+        <!-- =====================================================
+             EDIT ORDER HEADING
+             ===================================================== -->
+        <div class="content-heading">
+            <div>
+                <p class="section-label">Order Management</p>
+                <h3 class="section-title">Edit Laundry Order</h3>
+                <p class="section-description">Update the details for Order #{{ order['id'] }}</p>
+            </div>
+
+            <!-- Changed Cancel button to go back to orders page -->
+            <a href="/laundry-orders-page" class="primary-button" style="background: transparent !important; border: 1px solid rgba(88, 137, 181, 0.3) !important; color: #cbd5e1 !important; text-decoration: none;">
+                Cancel
+            </a>
+        </div>
+
+
+        <!-- =====================================================
+             EDIT ORDER FORM
+             ===================================================== -->
+        <section class="form-card" aria-labelledby="editOrderTitle">
+            <div class="form-header">
+                <div class="form-header-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="form-title" id="editOrderTitle">Update Order Details</h3>
+                    <p class="form-description">Make changes to the order information below and save.</p>
+                </div>
+            </div>
+
+            <!-- Changed action URL to order edit route -->
+            <form action="/laundry-orders-page/edit/{{ order['id'] }}" method="POST">
+                <div class="customer-form">
+
+                    <!-- Customer Name (Dropdown) -->
+                    <div class="field-group">
+                        <label class="field-label" for="customer">Customer Name</label>
+                        <div class="input-wrapper">
+                            <select id="customer" name="customer" class="form-input" required>
+                                {% for c in customers %}
+                                    <option value="{{ c['name'] }}" {% if c['name'] == order['customer'] %}selected{% endif %}>
+                                        {{ c['name'] }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Laundry Weight -->
+                    <div class="field-group">
+                        <label class="field-label" for="laundry_weight">Laundry Weight (kg)</label>
+                        <div class="input-wrapper">
+                            <input type="number" step="0.1" id="laundry_weight" name="laundry_weight" class="form-input" value="{{ order['laundry_weight'] }}" required>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="primary-button submit-button">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </section>
+
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <span>© 2026 LaundryCare. All rights reserved.</span>
+            <span class="footer-security">Secure Management System</span>
+        </footer>
+
+    </div>
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const sidebar = document.getElementById("sidebar");
+        const sidebarOverlay = document.getElementById("sidebarOverlay");
+        const menuButton = document.getElementById("menuButton");
+
+        function openSidebar() {
+            sidebar.classList.add("open");
+            sidebarOverlay.classList.add("show");
+            document.body.style.overflow = "hidden";
+        }
+        function closeSidebar() {
+            sidebar.classList.remove("open");
+            sidebarOverlay.classList.remove("show");
+            document.body.style.overflow = "";
+        }
+        if (menuButton) menuButton.addEventListener("click", function () { sidebar.classList.contains("open") ? closeSidebar() : openSidebar(); });
+        if (sidebarOverlay) sidebarOverlay.addEventListener("click", closeSidebar);
+        window.addEventListener("resize", function () { if (window.innerWidth > 760) closeSidebar(); });
+    });
+</script>
+
+</body>
+</html>
