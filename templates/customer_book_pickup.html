@@ -10,7 +10,7 @@
 
     <!-- NAVBAR -->
     <header class="portal-navbar">
-        <a href="/book-pickup" class="portal-brand">
+        <a href="/" class="portal-brand" title="Back to LaundryCare Home">
             <div class="portal-brand-icon">🧺</div>
             <div>
                 <div class="portal-brand-text">LaundryCare</div>
@@ -18,8 +18,13 @@
             </div>
         </a>
         <div class="portal-nav-links">
-            <a href="/track" class="nav-link-btn ghost">Track Order</a>
-            <a href="/login" class="nav-link-btn primary">Staff Login</a>
+            <a href="/" class="nav-link-btn ghost" style="display:inline-flex; align-items:center; gap:4px;">🏠 Home</a>
+            <a href="/track" class="nav-link-btn ghost">🔍 Track Order</a>
+            {% if session.get('user_id') %}
+            <a href="{% if session.get('role') == 'rider' %}/rider-app{% else %}/dashboard-page{% endif %}" class="nav-link-btn primary">📊 Dashboard</a>
+            {% else %}
+            <a href="/login" class="nav-link-btn ghost" style="font-size:12px; color:#94a3b8;">Staff Login</a>
+            {% endif %}
         </div>
     </header>
 
@@ -34,6 +39,14 @@
 
     <!-- MAIN FORM CONTAINER -->
     <main class="portal-container">
+
+        <!-- RETURN TO WELCOME HOME BAR -->
+        <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <a href="/" style="display: inline-flex; align-items: center; gap: 6px; color: #2563eb; font-weight: 700; font-size: 13px; text-decoration: none; padding: 6px 14px; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe; transition: all 0.2s;" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+                &larr; Back to Customer Welcome Page
+            </a>
+            <span style="font-size: 12px; color: #64748b;">📍 Maramag, Bukidnon Online Booking</span>
+        </div>
 
         {% if success and booking %}
         <!-- SUCCESS CONFIRMATION STATE -->
@@ -54,9 +67,15 @@
                 <div><strong>Payment:</strong> {{ booking.payment_method }}</div>
             </div>
 
-            <div class="success-actions">
+            <div class="success-actions" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
                 <a href="/track?ref={{ booking.ref }}" class="btn-track-success">
                     🔍 Track Pickup Status
+                </a>
+                <a href="/" class="btn-track-success" style="background:#0f172a; color:#ffffff;">
+                    🏠 Return to Home Page
+                </a>
+                <a href="/book-pickup" class="btn-track-success" style="background:#475569; color:#ffffff;">
+                    + Book Another Pickup
                 </a>
                 <a href="https://wa.me/639171234567?text=Hi%20LaundryCare!%20I%20just%20booked%20pickup%20%23{{ booking.ref }}%20at%20{{ booking.address|urlencode }}" target="_blank" class="btn-track-success" style="background:#2563eb;">
                     💬 Notify via WhatsApp

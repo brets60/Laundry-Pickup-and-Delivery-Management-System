@@ -10,7 +10,7 @@
 
     <!-- NAVBAR -->
     <header class="portal-navbar">
-        <a href="/track" class="portal-brand">
+        <a href="/" class="portal-brand" title="Back to LaundryCare Home">
             <div class="portal-brand-icon">🔍</div>
             <div>
                 <div class="portal-brand-text">LaundryCare Tracker</div>
@@ -18,8 +18,13 @@
             </div>
         </a>
         <div class="portal-nav-links">
-            <a href="/book-pickup" class="nav-link-btn primary">+ Book Pickup</a>
-            <a href="/login" class="nav-link-btn ghost">Staff Login</a>
+            <a href="/" class="nav-link-btn ghost" style="display:inline-flex; align-items:center; gap:4px;">🏠 Home</a>
+            <a href="/book-pickup" class="nav-link-btn primary">🚀 Book Pickup</a>
+            {% if session.get('user_id') %}
+            <a href="{% if session.get('role') == 'rider' %}/rider-app{% else %}/dashboard-page{% endif %}" class="nav-link-btn ghost">📊 Dashboard</a>
+            {% else %}
+            <a href="/login" class="nav-link-btn ghost" style="font-size:12px; color:#94a3b8;">Staff Login</a>
+            {% endif %}
         </div>
     </header>
 
@@ -38,6 +43,14 @@
 
     <main class="portal-container">
 
+        <!-- RETURN TO WELCOME HOME BAR -->
+        <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <a href="/" style="display: inline-flex; align-items: center; gap: 6px; color: #2563eb; font-weight: 700; font-size: 13px; text-decoration: none; padding: 6px 14px; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe; transition: all 0.2s;" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+                &larr; Back to Customer Welcome Page
+            </a>
+            <span style="font-size: 12px; color: #64748b;">📍 Maramag, Bukidnon Live Order Tracker</span>
+        </div>
+
         {% if not_found %}
         <!-- NOT FOUND STATE -->
         <div class="portal-card" style="text-align:center; padding:40px 20px;">
@@ -46,7 +59,10 @@
             <p style="font-size:13.5px; color:#64748b; max-width:400px; margin:0 auto 20px;">
                 Please double-check your Order Reference ID or Mobile Number. If you recently dropped off clothes, intake can take a few minutes.
             </p>
-            <a href="/book-pickup" class="nav-link-btn primary" style="display:inline-block;">+ Book a Pickup Instead</a>
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <a href="/book-pickup" class="nav-link-btn primary" style="display:inline-block;">+ Book a Pickup Instead</a>
+                <a href="/" class="nav-link-btn ghost" style="display:inline-block; background:#0f172a; color:#ffffff;">🏠 Return to Home Page</a>
+            </div>
         </div>
         {% elif result %}
         <!-- RESULT FOUND: LIVE TRACKER -->

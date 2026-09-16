@@ -100,3 +100,28 @@ def test_barangay_zone_auto_assignment(client):
     assert "Zone 3" in z3
     assert "Dave" in r3
 
+
+def test_welcome_home_routes_and_navigation(client):
+    """Test that customer welcome page is accessible via / and /welcome with return links."""
+    res_root = client.get('/')
+    assert res_root.status_code == 200
+    assert b"LaundryCare" in res_root.data
+    assert b"Fresh, Clean Clothes Delivered" in res_root.data
+
+    res_welcome = client.get('/welcome')
+    assert res_welcome.status_code == 200
+    assert b"LaundryCare" in res_welcome.data
+
+    # Verify return links from book-pickup, track, and login
+    res_booking = client.get('/book-pickup')
+    assert b'href="/"' in res_booking.data
+    assert b"Back to Customer Welcome Page" in res_booking.data
+
+    res_track = client.get('/track')
+    assert b'href="/"' in res_track.data
+    assert b"Back to Customer Welcome Page" in res_track.data
+
+    res_login = client.get('/login')
+    assert b'href="/"' in res_login.data
+    assert b"Back to Customer Welcome Page" in res_login.data
+

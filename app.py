@@ -308,11 +308,8 @@ def role_required(allowed_roles):
 # ============================================================
 
 @app.route("/")
+@app.route("/welcome")
 def home():
-    if "user_id" in session:
-        if session.get("role") == "rider":
-            return redirect("/rider-app")
-        return redirect("/dashboard-page")
     return render_template("welcome.html")
 
 

@@ -9,6 +9,21 @@
 </head>
 <body>
 
+    {% if session.get('user_id') %}
+    <div style="background:#0f172a; color:#f8fafc; padding:8px 24px; font-size:12.5px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #334155; position:sticky; top:0; z-index:200;">
+        <div style="display:flex; align-items:center; gap:8px;">
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#22c55e;"></span>
+            <span>Signed in as <strong>{{ session.get('full_name') or session.get('username')|capitalize }}</strong> ({{ session.get('role', 'admin')|upper }}) &bull; Viewing Public Customer Home Page</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <a href="{% if session.get('role') == 'rider' %}/rider-app{% else %}/dashboard-page{% endif %}" style="background:#2563eb; color:#ffffff; padding:5px 12px; border-radius:6px; font-size:12px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+                📊 Return to Dashboard &rarr;
+            </a>
+            <a href="/logout" onclick="return confirm('Sign out of LaundryCare?');" style="color:#94a3b8; font-size:12px; text-decoration:none;" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='#94a3b8'">Sign Out</a>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- TOP NAVIGATION -->
     <header class="welcome-nav">
         <a href="/" class="welcome-brand">
@@ -25,7 +40,11 @@
             <a href="#contact" class="nav-link">Find Us</a>
             <a href="/track" class="nav-link" style="color:#38bdf8;">🔍 Track Order</a>
             <a href="/book-pickup" class="btn-nav-action">🚀 Book Pickup</a>
+            {% if session.get('user_id') %}
+            <a href="{% if session.get('role') == 'rider' %}/rider-app{% else %}/dashboard-page{% endif %}" class="btn-nav-action" style="background:#059669; border-color:#059669; margin-left:6px;">📊 Dashboard</a>
+            {% else %}
             <a href="/login" class="nav-link" style="font-size:12px; color:#94a3b8; margin-left:8px;">Staff Portal</a>
+            {% endif %}
         </nav>
     </header>
 
