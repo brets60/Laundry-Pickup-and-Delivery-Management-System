@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaundryCare Maramag | Premier Doorstep Laundry Pickup &amp; Delivery</title>
+    <meta name="description" content="Professional laundry pickup and delivery service in Maramag, Bukidnon. Serving Sayre Highway, Poblacion, CMU Musuan, Dologon, and Base Camp.">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome.css') }}?v=1.0">
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <header class="welcome-nav">
+        <a href="/" class="welcome-brand">
+            <div class="brand-icon-box">🧺</div>
+            <div>
+                <div class="brand-title">LaundryCare</div>
+                <div class="brand-subtitle">Maramag, Bukidnon</div>
+            </div>
+        </a>
+
+        <nav class="nav-menu">
+            <a href="#services" class="nav-link">Services &amp; Rates</a>
+            <a href="#coverage" class="nav-link">Locations</a>
+            <a href="#contact" class="nav-link">Find Us</a>
+            <a href="/track" class="nav-link" style="color:#38bdf8;">🔍 Track Order</a>
+            <a href="/book-pickup" class="btn-nav-action">🚀 Book Pickup</a>
+            <a href="/login" class="nav-link" style="font-size:12px; color:#94a3b8; margin-left:8px;">Staff Portal</a>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="area-badge">
+                📍 Serving Sayre Highway, Poblacion &amp; CMU Musuan Campus
+            </div>
+            <h1 class="hero-title">
+                Fresh, Clean Clothes Delivered Straight to Your Doorstep
+            </h1>
+            <p class="hero-subtitle">
+                No time to do laundry? We pick up, professionally wash, dry, and neatly fold your clothes across Maramag, Bukidnon. Doorstep convenience tailored for CMU students, busy families, and professionals.
+            </p>
+
+            <div class="hero-cta-group">
+                <a href="/book-pickup" class="btn-hero-primary">
+                    <span>🧺 Schedule a Doorstep Pickup</span>
+                </a>
+                <a href="/track" class="btn-hero-secondary">
+                    <span>🔍 Track Existing Laundry</span>
+                </a>
+            </div>
+
+            <div class="hero-features-bar">
+                <div class="hero-feat-item">⚡ 24-Hour Express Turnaround</div>
+                <div class="hero-feat-item">🏷️ Affordable Rates from ₱50/kg</div>
+                <div class="hero-feat-item">🛵 Door-to-Door Delivery Couriers</div>
+                <div class="hero-feat-item">📲 Cash on Delivery &amp; GCash QR</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT -->
+    <main>
+
+        <!-- SERVICES & RATES -->
+        <section class="page-section" id="services">
+            <div class="section-header">
+                <div class="section-tag">Pricing &amp; Services</div>
+                <h2 class="section-title">Transparent Per-Kilo Rates</h2>
+                <p class="section-desc">Professional care using premium detergents, sanitizing dryers, and clean sealed packaging.</p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🧺</div>
+                    <div class="service-name">Wash &amp; Fold</div>
+                    <div class="service-info">Everyday casuals, shirts, jeans, and socks. Washed, heat-dried, and neatly folded into sealed bags.</div>
+                    <div class="service-price-tag">₱50.00 <span>/ kilo</span></div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">👔</div>
+                    <div class="service-name">Wash &amp; Iron / Press</div>
+                    <div class="service-info">Uniforms, office slacks, and collared button-downs. Crisp steam pressing ready for class or work.</div>
+                    <div class="service-price-tag">₱75.00 <span>/ kilo</span></div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">🛏️</div>
+                    <div class="service-name">Blankets &amp; Duvets</div>
+                    <div class="service-info">Heavy bedsheets, comforters, quilts, and thick bath towels sanitized in commercial large-drum washers.</div>
+                    <div class="service-price-tag">₱90.00 <span>/ kilo</span></div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">✨</div>
+                    <div class="service-name">Dry Cleaning</div>
+                    <div class="service-info">Formal gowns, barongs, suits, and delicate fabrics cleaned with gentle non-shrink fabric care.</div>
+                    <div class="service-price-tag">₱120.00 <span>/ kilo</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section class="page-section" style="background:#f1f5f9; max-width:100%; padding:70px 20px;">
+            <div style="max-width:1080px; margin:0 auto;">
+                <div class="section-header">
+                    <div class="section-tag">Convenience Made Simple</div>
+                    <h2 class="section-title">How Our Service Works</h2>
+                    <p class="section-desc">Get fresh laundry in 3 easy steps without leaving your dorm or home.</p>
+                </div>
+
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h3 class="step-title">Book Online in 60s</h3>
+                        <p class="step-desc">Fill in your pickup location (e.g. CMU Dorm, Poblacion, Dologon) and choose your preferred morning or afternoon time slot.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3 class="step-title">Courier Collects &amp; Weighed</h3>
+                        <p class="step-desc">Our rider Mike or Alex collects your bag, brings it to our shop to weigh on the digital scale, and logs your order.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h3 class="step-title">Delivered Fresh to Door</h3>
+                        <p class="step-desc">Track progress live on your phone. When ready, our rider returns your fresh, folded clothes. Pay via Cash on Delivery or GCash!</p>
+                    </div>
+                </div>
+
+                <div style="text-align:center; margin-top:36px;">
+                    <a href="/book-pickup" class="btn-hero-primary" style="padding:13px 26px;">
+                        Book Your First Pickup Today &rarr;
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- COVERAGE AREAS -->
+        <section class="page-section" id="coverage">
+            <div class="coverage-box">
+                <div class="coverage-grid">
+                    <div>
+                        <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#38bdf8; letter-spacing:0.08em; margin-bottom:8px;">
+                            Active Service Circuits
+                        </div>
+                        <h2 style="font-size:28px; font-weight:900; line-height:1.2; margin-bottom:12px;">
+                            Pickup &amp; Delivery Across Maramag, Bukidnon
+                        </h2>
+                        <p style="color:#94a3b8; font-size:14.5px; line-height:1.6;">
+                            Our daily logistics circuits cover academic campuses, residential subdivisions, and commercial hubs with scheduled morning and afternoon runs.
+                        </p>
+                    </div>
+                    <div>
+                        <div class="area-pills-container">
+                            <span class="area-pill">🎓 Central Mindanao University (CMU)</span>
+                            <span class="area-pill">🏢 Musuan Student Dorms &amp; Boarding</span>
+                            <span class="area-pill">🛍️ Poblacion Commercial &amp; Market</span>
+                            <span class="area-pill">🛣️ Sayre Highway Corridor</span>
+                            <span class="area-pill">🏡 Purok 3, Dologon</span>
+                            <span class="area-pill">📍 Base Camp Junction</span>
+                            <span class="area-pill">🌿 Camp 1</span>
+                            <span class="area-pill">🌾 Kuya</span>
+                            <span class="area-pill">🏘️ Anoling</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PHYSICAL BRANCH & CONTACT -->
+        <section class="page-section" id="contact">
+            <div class="section-header">
+                <div class="section-tag">Visit or Contact Us</div>
+                <h2 class="section-title">Where to Find Us</h2>
+                <p class="section-desc">Have questions or want to drop off clothes in person? Visit our main branch or call our hotline.</p>
+            </div>
+
+            <div class="contact-card">
+                <div>
+                    <div class="contact-detail-item">
+                        <div class="contact-icon-bubble">📍</div>
+                        <div>
+                            <div class="contact-title">Main Branch Location</div>
+                            <div class="contact-sub">Sayre Highway, Poblacion, Maramag, Bukidnon<br>(near Maramag Public Market &amp; Commercial Center)</div>
+                        </div>
+                    </div>
+
+                    <div class="contact-detail-item">
+                        <div class="contact-icon-bubble">⏰</div>
+                        <div>
+                            <div class="contact-title">Store Hours</div>
+                            <div class="contact-sub">Monday – Sunday: 7:00 AM – 7:00 PM<br>Daily Courier Dispatch: 9:00 AM &amp; 1:00 PM</div>
+                        </div>
+                    </div>
+
+                    <div class="contact-detail-item">
+                        <div class="contact-icon-bubble">📞</div>
+                        <div>
+                            <div class="contact-title">Contact Hotlines</div>
+                            <div class="contact-sub">Mobile: 0917-123-4567<br>Landline: (088) 356-1234</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background:#f8fafc; border:1px solid var(--border-light); border-radius:14px; padding:24px; display:flex; flex-direction:column; justify-content:center; text-align:center;">
+                    <div style="font-size:32px; margin-bottom:10px;">💬</div>
+                    <h3 style="font-size:18px; font-weight:800; color:#0f172a; margin-bottom:6px;">Need Instant Assistance?</h3>
+                    <p style="font-size:13.5px; color:#64748b; margin-bottom:20px;">Chat with our attendants for special care requests, bulk rates, or custom dispatch times.</p>
+                    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                        <a href="https://wa.me/639171234567?text=Hello%20LaundryCare%20Maramag!%20Inquiring%20about%20laundry%20pickup" target="_blank" class="btn-nav-action" style="background:#059669;">
+                            WhatsApp Chat
+                        </a>
+                        <a href="tel:09171234567" class="btn-nav-action" style="background:#2563eb;">
+                            Call Hotline
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="welcome-footer">
+        <div style="max-width:1080px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+            <div>
+                <strong>LaundryCare Maramag</strong> &bull; Sayre Highway, Poblacion, Maramag, Bukidnon
+            </div>
+            <div style="display:flex; gap:16px; font-size:12.5px;">
+                <a href="/book-pickup">Book Pickup</a>
+                <a href="/track">Track Laundry</a>
+                <a href="/login">Staff / Rider Sign In</a>
+            </div>
+        </div>
+        <div style="margin-top:16px; font-size:11.5px; color:#64748b;">
+            &copy; 2026 LaundryCare Management System. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>
