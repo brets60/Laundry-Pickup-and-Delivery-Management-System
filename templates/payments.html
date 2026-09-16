@@ -7,6 +7,7 @@
     <title>LaundryCare | Financial Reports & Payments</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/payments.css') }}?v=4.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 
 <body>
@@ -196,7 +197,7 @@
         <!-- 4 OPERATIONAL KPI STAT CARDS -->
         <section class="payments-stats-grid">
             <!-- Card 1: Total Revenue -->
-            <div class="stat-kpi-card">
+            <div class="stat-kpi-card hover-lift anim-fade-up">
                 <div class="kpi-icon-box kpi-blue">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="1" x2="12" y2="23"/>
@@ -210,7 +211,7 @@
             </div>
 
             <!-- Card 2: Paid Invoices -->
-            <div class="stat-kpi-card">
+            <div class="stat-kpi-card hover-lift anim-fade-up">
                 <div class="kpi-icon-box kpi-green">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -224,7 +225,7 @@
             </div>
 
             <!-- Card 3: Pending Collections -->
-            <div class="stat-kpi-card">
+            <div class="stat-kpi-card hover-lift anim-fade-up">
                 <div class="kpi-icon-box kpi-amber">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"/>
@@ -238,7 +239,7 @@
             </div>
 
             <!-- Card 4: Average Ticket -->
-            <div class="stat-kpi-card">
+            <div class="stat-kpi-card hover-lift anim-fade-up">
                 <div class="kpi-icon-box kpi-purple">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
@@ -291,7 +292,7 @@
             </div>
 
             <div style="overflow-x: auto;">
-                <table class="payments-table" id="paymentsTable">
+                <table class="payments-table anim-stagger-rows" id="paymentsTable">
                     <thead>
                         <tr>
                             <th>Receipt #</th>
@@ -354,10 +355,10 @@
                                 </td>
                                 <td>
                                     <div class="table-actions">
-                                        <button type="button" class="btn-action-sm" onclick="openReceiptModal(this)">
+                                        <button type="button" class="btn-action-sm btn-interactive" onclick="openReceiptModal(this)">
                                             Print Slip
                                         </button>
-                                        <button type="button" class="btn-action-sm" onclick="openEditModal(this)">
+                                        <button type="button" class="btn-action-sm btn-interactive" onclick="openEditModal(this)">
                                             Edit
                                         </button>
                                     </div>
@@ -444,7 +445,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-secondary" onclick="closeModal('recordModal')">Cancel</button>
-                <button type="submit" class="btn-primary">Record Payment</button>
+                <button type="submit" class="btn-primary btn-interactive">Record Payment</button>
             </div>
         </form>
     </div>
@@ -503,7 +504,7 @@
                 </button>
                 <div style="display:flex; gap:10px;">
                     <button type="button" class="btn-secondary" onclick="closeModal('editModal')">Cancel</button>
-                    <button type="submit" class="btn-primary">Save Changes</button>
+                    <button type="submit" class="btn-primary btn-interactive">Save Changes</button>
                 </div>
             </div>
         </form>
@@ -557,7 +558,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn-secondary" onclick="closeModal('receiptModal')">Close</button>
-            <button type="button" class="btn-primary" onclick="window.print()">
+            <button type="button" class="btn-primary btn-interactive" onclick="window.print()">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;">
                     <polyline points="6 9 6 2 18 2 18 9"/>
                     <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
@@ -665,5 +666,7 @@ function openReceiptModal(button) {
 }
 </script>
 
+    <!-- LaundryCare UI Interactions & Animations Engine -->
+    <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
 </body>
 </html>

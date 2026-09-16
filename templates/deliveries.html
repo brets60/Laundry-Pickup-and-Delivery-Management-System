@@ -7,6 +7,7 @@
     <title>LaundryCare | Delivery Records</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/delivery_records.css') }}?v=4.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 
 <body>
@@ -164,11 +165,11 @@
                 <p>Track and manage outgoing laundry deliveries</p>
             </div>
             <div style="display:flex; gap:10px; align-items:center;">
-                <a href="/rider-app" class="btn-action-outline" style="background:#10b981; color:#ffffff; border:none; padding:10px 16px; border-radius:8px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(16,185,129,0.25);" title="Open Rider Mobile Web App View">
+                <a href="/rider-app" class="btn-action-outline btn-interactive" style="background:#10b981; color:#ffffff; border:none; padding:10px 16px; border-radius:8px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(16,185,129,0.25);" title="Open Rider Mobile Web App View">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
                     <span>📱 Open Rider Mobile View</span>
                 </a>
-                <button type="button" class="btn-dispatch-action" id="openDispatchModalBtn">
+                <button type="button" class="btn-dispatch-action btn-interactive" id="openDispatchModalBtn">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19"/>
                         <line x1="5" y1="12" x2="19" y2="12"/>
@@ -228,7 +229,7 @@
         <!-- 4 OPERATIONAL KPI STAT CARDS -->
         <section class="deliveries-stats-grid">
             <!-- Card 1: Total Deliveries -->
-            <div class="stat-kpi-card">
+            <div class="stat-kpi-card hover-lift anim-fade-up">
                 <div class="kpi-icon-box kpi-blue">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="1" y="3" width="15" height="13"/>
@@ -244,7 +245,7 @@
             </div>
 
             <!-- Card 2: Out for Delivery -->
-            <div class="stat-kpi-card">
+            <div class="stat-kpi-card hover-lift anim-fade-up">
                 <div class="kpi-icon-box kpi-orange">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"/>
@@ -258,7 +259,7 @@
             </div>
 
             <!-- Card 3: Scheduled -->
-            <div class="stat-kpi-card">
+            <div class="stat-kpi-card hover-lift anim-fade-up">
                 <div class="kpi-icon-box kpi-amber">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -274,7 +275,7 @@
             </div>
 
             <!-- Card 4: Delivered -->
-            <div class="stat-kpi-card">
+            <div class="stat-kpi-card hover-lift anim-fade-up">
                 <div class="kpi-icon-box kpi-green">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -403,7 +404,7 @@
             </div>
 
             <div style="overflow-x: auto;">
-                <table class="deliveries-table" id="deliveriesTable">
+                <table class="deliveries-table anim-stagger-rows" id="deliveriesTable">
                     <thead>
                         <tr>
                             <th>Delivery ID</th>
@@ -498,13 +499,13 @@
                                 </td>
                                 <td>
                                     <div class="table-actions">
-                                        <button type="button" class="btn-action-sm btn-action-view" onclick="openViewDeliveryModal(this)">
+                                        <button type="button" class="btn-action-sm btn-action-view btn-interactive" onclick="openViewDeliveryModal(this)">
                                             View
                                         </button>
-                                        <button type="button" class="btn-action-sm btn-action-slip" onclick="openSlipModal(this)">
+                                        <button type="button" class="btn-action-sm btn-action-slip btn-interactive" onclick="openSlipModal(this)">
                                             Print Slip
                                         </button>
-                                        <button type="button" class="btn-action-sm btn-action-edit" onclick="openEditModal(this)">
+                                        <button type="button" class="btn-action-sm btn-action-edit btn-interactive" onclick="openEditModal(this)">
                                             Edit
                                         </button>
                                     </div>
@@ -618,7 +619,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-secondary" onclick="closeModal('dispatchModal')">Cancel</button>
-                <button type="submit" class="btn-primary">Dispatch Delivery</button>
+                <button type="submit" class="btn-primary btn-interactive">Dispatch Delivery</button>
             </div>
         </form>
     </div>
@@ -694,7 +695,7 @@
                 </button>
                 <div style="display:flex; gap:10px;">
                     <button type="button" class="btn-secondary" onclick="closeModal('editModal')">Cancel</button>
-                    <button type="submit" class="btn-primary">Save Changes</button>
+                    <button type="submit" class="btn-primary btn-interactive">Save Changes</button>
                 </div>
             </div>
         </form>
@@ -762,7 +763,7 @@
 
             <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
                 <button type="button" class="btn-modal-cancel" onclick="closeModal('viewDeliveryModal')">Close</button>
-                <button type="button" class="btn-action-sm btn-action-slip" id="viewDelSlipBtn">Print Slip</button>
+                <button type="button" class="btn-action-sm btn-action-slip btn-interactive" id="viewDelSlipBtn">Print Slip</button>
                 <button type="button" class="btn-modal-submit" id="viewDelEditBtn">Edit Record</button>
             </div>
         </div>
@@ -854,7 +855,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn-secondary" onclick="closeModal('slipModal')">Close</button>
-            <button type="button" class="btn-primary" onclick="window.print()">
+            <button type="button" class="btn-primary btn-interactive" onclick="window.print()">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;">
                     <polyline points="6 9 6 2 18 2 18 9"/>
                     <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
@@ -1351,5 +1352,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 </script>
 
+    <!-- LaundryCare UI Interactions & Animations Engine -->
+    <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
 </body>
 </html>

@@ -199,6 +199,7 @@
         .form-input::placeholder { color: #607992 !important; }
         .form-input:focus { background: rgba(7, 27, 49, 1) !important; color: #ffffff !important; border-color: #22d3ee !important; box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.08) !important; }
     </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 <body>
 
@@ -474,5 +475,7 @@
     });
 </script>
 
+    <!-- LaundryCare UI Interactions & Animations Engine -->
+    <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
 </body>
 </html>

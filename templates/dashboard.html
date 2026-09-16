@@ -7,6 +7,7 @@
     <title>LaundryCare | Dashboard</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}?v=4.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 
 <body>
@@ -207,19 +208,19 @@
         <section class="stats-grid-4">
 
             <!-- Card 1: Total Revenue -->
-            <div class="mock-stat-card">
+            <div class="mock-stat-card anim-fade-up hover-lift">
                 <div class="stat-header-row">
                     <span class="stat-header-label">Total Revenue</span>
                     <div class="peso-badge">₱</div>
                 </div>
-                <div class="stat-main-value">
+                <div class="stat-main-value" data-counter="{{ total_revenue if total_revenue and total_revenue > 0 else 124500 }}" data-counter-prefix="₱">
                     ₱{{ "{:,.2f}".format(total_revenue) if total_revenue and total_revenue > 0 else '124,500.00' }}
                 </div>
                 <div class="stat-trend-positive">+8.1%</div>
             </div>
 
             <!-- Card 2: Active Orders -->
-            <div class="mock-stat-card">
+            <div class="mock-stat-card anim-fade-up anim-delay-1 hover-lift">
                 <div class="stat-header-row">
                     <span class="stat-header-label">Active Orders</span>
                     <div class="blue-icon-badge">
@@ -230,14 +231,14 @@
                         </svg>
                     </div>
                 </div>
-                <div class="stat-main-value">
+                <div class="stat-main-value" data-counter="{{ orders_count if orders_count and orders_count > 0 else 148 }}">
                     {{ orders_count if orders_count and orders_count > 0 else 148 }}
                 </div>
                 <div class="stat-trend-positive">+12%</div>
             </div>
 
             <!-- Card 3: Pickups Scheduled -->
-            <div class="mock-stat-card">
+            <div class="mock-stat-card anim-fade-up anim-delay-2 hover-lift">
                 <div class="stat-header-row">
                     <span class="stat-header-label">Pickups Scheduled</span>
                     <div class="blue-icon-badge">
@@ -249,26 +250,26 @@
                         </svg>
                     </div>
                 </div>
-                <div class="stat-main-value">
+                <div class="stat-main-value" data-counter="{{ pickups_count if pickups_count and pickups_count > 0 else 32 }}">
                     {{ pickups_count if pickups_count and pickups_count > 0 else 32 }}
                 </div>
                 <div class="stat-trend-muted">Today</div>
             </div>
 
             <!-- Card 4: Out for Delivery -->
-            <div class="mock-stat-card">
+            <div class="mock-stat-card anim-fade-up anim-delay-3 hover-lift">
                 <div class="stat-header-row">
                     <span class="stat-header-label">Out for Delivery</span>
                     <div class="blue-icon-badge">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="1" y="3" width="15" height="13"/>
-                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                            <polygon points="16 8 20 8 23 11 23 16 16 16 8"/>
                             <circle cx="5.5" cy="18.5" r="2.5"/>
                             <circle cx="18.5" cy="18.5" r="2.5"/>
                         </svg>
                     </div>
                 </div>
-                <div class="stat-main-value">
+                <div class="stat-main-value" data-counter="{{ out_for_delivery_count if out_for_delivery_count and out_for_delivery_count > 0 else 19 }}">
                     {{ out_for_delivery_count if out_for_delivery_count and out_for_delivery_count > 0 else 19 }}
                 </div>
                 <div class="stat-trend-muted">Live</div>
@@ -444,7 +445,7 @@
                 <h2 class="table-card-title">Live Deliveries &amp; Orders</h2>
 
                 <div style="overflow-x: auto;">
-                    <table class="mock-table">
+                    <table class="mock-table anim-stagger-rows">
                         <thead>
                             <tr>
                                 <th>Order ID</th>
@@ -699,5 +700,7 @@
 
 </div>
 
+    <!-- LaundryCare UI Interactions & Animations Engine -->
+    <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
 </body>
 </html>

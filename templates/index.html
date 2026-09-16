@@ -21,6 +21,7 @@
     >
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 
 <body>
@@ -357,9 +358,9 @@
 
 
             <!-- Customers -->
-            <article class="stat-card stat-blue">
+            <article class="stat-card stat-blue hover-lift anim-fade-up">
 
-                <div class="stat-card-top">
+                <div class="stat-card-top hover-lift anim-fade-up">
 
                     <div class="stat-icon">
 
@@ -398,9 +399,9 @@
 
 
             <!-- Laundry Orders -->
-            <article class="stat-card stat-cyan">
+            <article class="stat-card stat-cyan hover-lift anim-fade-up">
 
-                <div class="stat-card-top">
+                <div class="stat-card-top hover-lift anim-fade-up">
 
                     <div class="stat-icon">
 
@@ -439,9 +440,9 @@
 
 
             <!-- Pickups -->
-            <article class="stat-card stat-purple">
+            <article class="stat-card stat-purple hover-lift anim-fade-up">
 
-                <div class="stat-card-top">
+                <div class="stat-card-top hover-lift anim-fade-up">
 
                     <div class="stat-icon">
 
@@ -483,9 +484,9 @@
 
 
             <!-- Deliveries -->
-            <article class="stat-card stat-green">
+            <article class="stat-card stat-green hover-lift anim-fade-up">
 
-                <div class="stat-card-top">
+                <div class="stat-card-top hover-lift anim-fade-up">
 
                     <div class="stat-icon">
 
@@ -524,9 +525,9 @@
 
 
             <!-- Payments -->
-            <article class="stat-card stat-orange">
+            <article class="stat-card stat-orange hover-lift anim-fade-up">
 
-                <div class="stat-card-top">
+                <div class="stat-card-top hover-lift anim-fade-up">
 
                     <div class="stat-icon">
 
@@ -564,9 +565,9 @@
 
 
             <!-- Revenue -->
-            <article class="stat-card stat-revenue">
+            <article class="stat-card stat-revenue hover-lift anim-fade-up">
 
-                <div class="stat-card-top">
+                <div class="stat-card-top hover-lift anim-fade-up">
 
                     <div class="stat-icon">
 
@@ -1224,5 +1225,7 @@
     src="{{ url_for('static', filename='js/dashboard.js') }}">
 </script>
 
+    <!-- LaundryCare UI Interactions & Animations Engine -->
+    <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
 </body>
 </html>

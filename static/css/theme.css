@@ -3,6 +3,8 @@
    Modern Executive Design System for LaundryCare
    ========================================================================== */
 
+@import url('animations.css');
+
 :root {
     /* Executive SaaS Brand Palette */
     --primary: #2563eb;

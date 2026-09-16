@@ -6,6 +6,7 @@
     <title>LaundryCare Maramag | Premier Doorstep Laundry Pickup &amp; Delivery</title>
     <meta name="description" content="Professional laundry pickup and delivery service based in Kalagutay, Base Camp, Maramag, Bukidnon. Serving CMU Musuan, Poblacion, Dologon, and all Maramag barangays.">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome.css') }}?v=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 <body>
 
@@ -39,9 +40,9 @@
             <a href="#coverage" class="nav-link">Locations</a>
             <a href="#contact" class="nav-link">Find Us</a>
             <a href="/track" class="nav-link" style="color:#38bdf8;">🔍 Track Order</a>
-            <a href="/book-pickup" class="btn-nav-action">🚀 Book Pickup</a>
+            <a href="/book-pickup" class="btn-nav-action btn-interactive">🚀 Book Pickup</a>
             {% if session.get('user_id') %}
-            <a href="{% if session.get('role') == 'rider' %}/rider-app{% else %}/dashboard-page{% endif %}" class="btn-nav-action" style="background:#059669; border-color:#059669; margin-left:6px;">📊 Dashboard</a>
+            <a href="{% if session.get('role') == 'rider' %}/rider-app{% else %}/dashboard-page{% endif %}" class="btn-nav-action btn-interactive" style="background:#059669; border-color:#059669; margin-left:6px;">📊 Dashboard</a>
             {% else %}
             <a href="/login" class="nav-link" style="font-size:12px; color:#94a3b8; margin-left:8px;">Staff Portal</a>
             {% endif %}
@@ -231,10 +232,10 @@
                     <h3 style="font-size:18px; font-weight:800; color:#0f172a; margin-bottom:6px;">Need Instant Assistance?</h3>
                     <p style="font-size:13.5px; color:#64748b; margin-bottom:20px;">Chat with our attendants for special care requests, bulk rates, or custom dispatch times.</p>
                     <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-                        <a href="https://wa.me/639171234567?text=Hello%20LaundryCare%20Maramag!%20Inquiring%20about%20laundry%20pickup" target="_blank" class="btn-nav-action" style="background:#059669;">
+                        <a href="https://wa.me/639171234567?text=Hello%20LaundryCare%20Maramag!%20Inquiring%20about%20laundry%20pickup" target="_blank" class="btn-nav-action btn-interactive" style="background:#059669;">
                             WhatsApp Chat
                         </a>
-                        <a href="tel:09171234567" class="btn-nav-action" style="background:#2563eb;">
+                        <a href="tel:09171234567" class="btn-nav-action btn-interactive" style="background:#2563eb;">
                             Call Hotline
                         </a>
                     </div>
@@ -261,5 +262,7 @@
         </div>
     </footer>
 
+    <!-- LaundryCare UI Interactions & Animations Engine -->
+    <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
 </body>
 </html>

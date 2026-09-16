@@ -48,6 +48,7 @@
 
         .primary-button { display: inline-flex; align-items: center; justify-content: center; min-height: 45px; padding: 0 17px; background: linear-gradient(135deg, #2563eb, #0891b2) !important; color: white !important; border: 1px solid rgba(56, 189, 248, 0.25) !important; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; }
     </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 <body>
 
@@ -231,5 +232,7 @@
         </section>
     </div>
 </main>
+    <!-- LaundryCare UI Interactions & Animations Engine -->
+    <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
 </body>
 </html>

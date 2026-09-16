@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book a Laundry Pickup | LaundryCare Maramag, Bukidnon</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/customer_portal.css') }}?v=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 <body>
 
@@ -91,10 +92,10 @@
         {% endif %}
 
         <!-- BOOKING FORM -->
-        <div class="portal-card">
-            <div class="portal-card-header">
-                <h2 class="portal-card-title">Schedule Your Laundry Collection</h2>
-                <p class="portal-card-subtitle">Fill in your pickup location and laundry requirements below</p>
+        <div class="portal-card hover-lift anim-fade-up">
+            <div class="portal-card-header hover-lift anim-fade-up">
+                <h2 class="portal-card-title hover-lift anim-fade-up">Schedule Your Laundry Collection</h2>
+                <p class="portal-card-subtitle hover-lift anim-fade-up">Fill in your pickup location and laundry requirements below</p>
             </div>
 
             <form action="/book-pickup" method="POST">
@@ -258,6 +259,8 @@
         // Initialize on load
         document.addEventListener('DOMContentLoaded', updateSectorBadge);
     </script>
+    <!-- LaundryCare UI Interactions & Animations Engine -->
+    <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
 </body>
 </html>
 

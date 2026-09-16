@@ -7,6 +7,7 @@
     <title>LaundryCare | Laundry Orders</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/laundry_orders.css') }}?v=4.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 
 <body>
@@ -258,7 +259,7 @@
             <h2 class="table-heading">All Laundry Orders</h2>
 
             <div style="overflow-x: auto;">
-                <table class="orders-table" id="ordersTable">
+                <table class="orders-table anim-stagger-rows" id="ordersTable">
                     <thead>
                         <tr>
                             <th>Order ID</th>
@@ -340,16 +341,16 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons-cell">
-                                        <button type="button" class="btn-action-outline btn-action-view" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
+                                        <button type="button" class="btn-action-outline btn-action-view btn-interactive" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
                                             View
                                         </button>
-                                        <button type="button" class="btn-action-outline" onclick="openPrintModal('ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.laundry_weight }} kg', '{{ order.service_type or 'Wash & Fold' }}', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}')">
+                                        <button type="button" class="btn-action-outline btn-interactive" onclick="openPrintModal('ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.laundry_weight }} kg', '{{ order.service_type or 'Wash & Fold' }}', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}')">
                                             Print Tag
                                         </button>
-                                        <a href="/laundry-orders-page/edit/{{ order.id }}" class="btn-action-outline">
+                                        <a href="/laundry-orders-page/edit/{{ order.id }}" class="btn-action-outline btn-interactive">
                                             Edit
                                         </a>
-                                        <a href="/delivery-records-page?order_id={{ order.id }}&customer={{ order.customer }}" class="btn-action-outline btn-action-dispatch" title="Dispatch order with rider">
+                                        <a href="/delivery-records-page?order_id={{ order.id }}&customer={{ order.customer }}" class="btn-action-outline btn-action-dispatch btn-interactive" title="Dispatch order with rider">
                                             Dispatch
                                         </a>
                                     </div>
@@ -379,12 +380,12 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons-cell">
-                                        <button type="button" class="btn-action-outline btn-action-view" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
+                                        <button type="button" class="btn-action-outline btn-action-view btn-interactive" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
                                             View
                                         </button>
-                                        <button type="button" class="btn-action-outline" onclick="openPrintModal('ORD-1024', 'John Doe', '8.5 kg', 'Wash & Fold', '₱425.00')">Print Tag</button>
-                                        <a href="/laundry-orders-page" class="btn-action-outline">Edit</a>
-                                        <a href="/delivery-records-page" class="btn-action-outline btn-action-dispatch">Dispatch</a>
+                                        <button type="button" class="btn-action-outline btn-interactive" onclick="openPrintModal('ORD-1024', 'John Doe', '8.5 kg', 'Wash & Fold', '₱425.00')">Print Tag</button>
+                                        <a href="/laundry-orders-page" class="btn-action-outline btn-interactive">Edit</a>
+                                        <a href="/delivery-records-page" class="btn-action-outline btn-action-dispatch btn-interactive">Dispatch</a>
                                     </div>
                                 </td>
                             </tr>
@@ -409,12 +410,12 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons-cell">
-                                        <button type="button" class="btn-action-outline btn-action-view" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
+                                        <button type="button" class="btn-action-outline btn-action-view btn-interactive" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
                                             View
                                         </button>
-                                        <button type="button" class="btn-action-outline" onclick="openPrintModal('ORD-1025', 'John Doe', '8.5 kg', 'Dry Cleaning', '₱425.00')">Print Tag</button>
-                                        <a href="/laundry-orders-page" class="btn-action-outline">Edit</a>
-                                        <a href="/delivery-records-page" class="btn-action-outline btn-action-dispatch">Dispatch</a>
+                                        <button type="button" class="btn-action-outline btn-interactive" onclick="openPrintModal('ORD-1025', 'John Doe', '8.5 kg', 'Dry Cleaning', '₱425.00')">Print Tag</button>
+                                        <a href="/laundry-orders-page" class="btn-action-outline btn-interactive">Edit</a>
+                                        <a href="/delivery-records-page" class="btn-action-outline btn-action-dispatch btn-interactive">Dispatch</a>
                                     </div>
                                 </td>
                             </tr>
@@ -439,12 +440,12 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons-cell">
-                                        <button type="button" class="btn-action-outline btn-action-view" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
+                                        <button type="button" class="btn-action-outline btn-action-view btn-interactive" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
                                             View
                                         </button>
-                                        <button type="button" class="btn-action-outline" onclick="openPrintModal('ORD-1026', 'John Doe', '8.5 kg', 'Dry Cleaning', '₱425.00')">Print Tag</button>
-                                        <a href="/laundry-orders-page" class="btn-action-outline">Edit</a>
-                                        <a href="/delivery-records-page" class="btn-action-outline btn-action-dispatch">Dispatch</a>
+                                        <button type="button" class="btn-action-outline btn-interactive" onclick="openPrintModal('ORD-1026', 'John Doe', '8.5 kg', 'Dry Cleaning', '₱425.00')">Print Tag</button>
+                                        <a href="/laundry-orders-page" class="btn-action-outline btn-interactive">Edit</a>
+                                        <a href="/delivery-records-page" class="btn-action-outline btn-action-dispatch btn-interactive">Dispatch</a>
                                     </div>
                                 </td>
                             </tr>
@@ -469,12 +470,12 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons-cell">
-                                        <button type="button" class="btn-action-outline btn-action-view" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
+                                        <button type="button" class="btn-action-outline btn-action-view btn-interactive" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
                                             View
                                         </button>
-                                        <button type="button" class="btn-action-outline" onclick="openPrintModal('ORD-1028', 'John Doe', '8.5 kg', 'Dry Cleaning', '₱425.00')">Print Tag</button>
-                                        <a href="/laundry-orders-page" class="btn-action-outline">Edit</a>
-                                        <a href="/delivery-records-page" class="btn-action-outline btn-action-dispatch">Dispatch</a>
+                                        <button type="button" class="btn-action-outline btn-interactive" onclick="openPrintModal('ORD-1028', 'John Doe', '8.5 kg', 'Dry Cleaning', '₱425.00')">Print Tag</button>
+                                        <a href="/laundry-orders-page" class="btn-action-outline btn-interactive">Edit</a>
+                                        <a href="/delivery-records-page" class="btn-action-outline btn-action-dispatch btn-interactive">Dispatch</a>
                                     </div>
                                 </td>
                             </tr>
@@ -610,9 +611,9 @@
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
-                <button type="button" class="btn-action-outline" onclick="closeViewOrderModal()">Close</button>
-                <button type="button" class="btn-action-outline" id="viewOrderPrintBtn">Print Tag</button>
-                <a href="#" id="viewOrderEditLink" class="btn-action-outline btn-action-dispatch">Edit Order</a>
+                <button type="button" class="btn-action-outline btn-interactive" onclick="closeViewOrderModal()">Close</button>
+                <button type="button" class="btn-action-outline btn-interactive" id="viewOrderPrintBtn">Print Tag</button>
+                <a href="#" id="viewOrderEditLink" class="btn-action-outline btn-action-dispatch btn-interactive">Edit Order</a>
             </div>
         </div>
     </div>
@@ -922,9 +923,9 @@ function openPrintModal(orderId, customer, weight, service, price) {
 
         <!-- Footer Actions -->
         <div class="drawer-footer">
-            <button type="button" class="btn-action-outline" onclick="closeOrderInspectionDrawer()">Close</button>
+            <button type="button" class="btn-action-outline btn-interactive" onclick="closeOrderInspectionDrawer()">Close</button>
             <div style="display:flex; gap:8px;">
-                <button type="button" class="btn-action-outline" id="drawerPrintTagBtn">
+                <button type="button" class="btn-action-outline btn-interactive" id="drawerPrintTagBtn">
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:4px;">
                         <polyline points="6 9 6 2 18 2 18 9"/>
                         <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
@@ -932,7 +933,7 @@ function openPrintModal(orderId, customer, weight, service, price) {
                     </svg>
                     Print Tag
                 </button>
-                <a href="#" id="drawerDispatchLink" class="btn-action-outline btn-action-dispatch">
+                <a href="#" id="drawerDispatchLink" class="btn-action-outline btn-action-dispatch btn-interactive">
                     Dispatch Order &rarr;
                 </a>
             </div>
@@ -940,5 +941,7 @@ function openPrintModal(orderId, customer, weight, service, price) {
     </aside>
 </div>
 
+    <!-- LaundryCare UI Interactions & Animations Engine -->
+    <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
 </body>
 </html>

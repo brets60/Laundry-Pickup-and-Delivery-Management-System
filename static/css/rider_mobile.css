@@ -1,3 +1,4 @@
+@import url('animations.css');
 /* ==========================================================================
    LAUNDRYCARE — PROFESSIONAL RIDER LOGISTICS CONSOLE
    Clean, Responsive, Enterprise-Grade Design for Mobile & Desktop
@@ -177,7 +178,7 @@ body {
     height: 8px;
     border-radius: 50%;
     background: #10b981;
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+    animation: pulseGreen 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
 }
 
 /* KPI Stat Cards Grid */
@@ -194,6 +195,12 @@ body {
     border: 1px solid #e2e8f0;
     padding: 14px 16px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+}
+
+.portal-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -4px rgba(15, 23, 42, 0.08);
 }
 
 .kpi-title-label {

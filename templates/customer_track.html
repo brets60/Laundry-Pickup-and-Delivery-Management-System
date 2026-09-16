@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Laundry Tracker | LaundryCare Maramag</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/customer_portal.css') }}?v=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 <body>
 
@@ -53,7 +54,7 @@
 
         {% if not_found %}
         <!-- NOT FOUND STATE -->
-        <div class="portal-card" style="text-align:center; padding:40px 20px;">
+        <div class="portal-card hover-lift anim-fade-up" style="text-align:center; padding:40px 20px;">
             <div style="font-size:42px; margin-bottom:12px;">🔎</div>
             <h3 style="font-size:18px; font-weight:800; color:#0f172a; margin-bottom:6px;">No Record Found for "{{ query }}"</h3>
             <p style="font-size:13.5px; color:#64748b; max-width:400px; margin:0 auto 20px;">
@@ -66,17 +67,17 @@
         </div>
         {% elif result %}
         <!-- RESULT FOUND: LIVE TRACKER -->
-        <div class="portal-card">
+        <div class="portal-card hover-lift anim-fade-up">
 
             <!-- ORDER IDENTIFIERS -->
-            <div class="portal-card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div class="portal-card-header hover-lift anim-fade-up" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
                     {% if result.order %}
                     <span style="font-size:12px; font-weight:800; color:#2563eb; background:#eff6ff; padding:4px 10px; border-radius:6px;">ORDER #ORD-{{ "%04d"|format(result.order.id) }}</span>
                     {% elif result.pickup %}
                     <span style="font-size:12px; font-weight:800; color:#059669; background:#ecfdf5; padding:4px 10px; border-radius:6px;">PICKUP #PCK-{{ "%04d"|format(result.pickup.id) }}</span>
                     {% endif %}
-                    <h2 class="portal-card-title" style="margin-top:6px;">
+                    <h2 class="portal-card-title hover-lift anim-fade-up" style="margin-top:6px;">
                         {{ result.customer.name if result.customer else (result.order.customer if result.order else result.pickup.customer) }}
                     </h2>
                 </div>
@@ -217,7 +218,7 @@
         </div>
         {% else %}
         <!-- INITIAL LANDING DEMO INFO -->
-        <div class="portal-card">
+        <div class="portal-card hover-lift anim-fade-up">
             <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin-bottom:8px;">How Live Tracking Works</h3>
             <ul style="font-size:13.5px; color:#475569; padding-left:20px; display:flex; flex-direction:column; gap:8px;">
                 <li><strong>1. Real-time updates:</strong> As our wash attendants weigh, wash, dry, and fold your clothes, your tracking page updates automatically.</li>
@@ -294,5 +295,7 @@
         }
     </script>
 
+    <!-- LaundryCare UI Interactions & Animations Engine -->
+    <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
 </body>
 </html>

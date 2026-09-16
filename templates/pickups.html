@@ -7,6 +7,7 @@
     <title>LaundryCare | Pickup Schedules</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pickup_schedules.css') }}?v=4.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 
 <body>
@@ -210,7 +211,7 @@
         <!-- 4 OPERATIONAL KPI STAT CARDS -->
         <section class="pickups-stats-grid">
             <!-- Card 1: Total Pickups -->
-            <div class="stat-kpi-card">
+            <div class="stat-kpi-card hover-lift anim-fade-up">
                 <div class="kpi-icon-box kpi-blue">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -226,7 +227,7 @@
             </div>
 
             <!-- Card 2: Pending -->
-            <div class="stat-kpi-card">
+            <div class="stat-kpi-card hover-lift anim-fade-up">
                 <div class="kpi-icon-box kpi-amber">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"/>
@@ -240,7 +241,7 @@
             </div>
 
             <!-- Card 3: Assigned / In Transit -->
-            <div class="stat-kpi-card">
+            <div class="stat-kpi-card hover-lift anim-fade-up">
                 <div class="kpi-icon-box kpi-orange">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="1" y="3" width="15" height="13"/>
@@ -256,7 +257,7 @@
             </div>
 
             <!-- Card 4: Picked Up -->
-            <div class="stat-kpi-card">
+            <div class="stat-kpi-card hover-lift anim-fade-up">
                 <div class="kpi-icon-box kpi-green">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -337,7 +338,7 @@
             </div>
 
             <div style="overflow-x: auto;">
-                <table class="pickups-table" id="pickupsTable">
+                <table class="pickups-table anim-stagger-rows" id="pickupsTable">
                     <thead>
                         <tr>
                             <th>Pickup ID</th>
@@ -426,13 +427,13 @@
                                 </td>
                                 <td>
                                     <div class="table-actions">
-                                        <button type="button" class="btn-action-sm btn-action-view" onclick="openViewPickupModal(this)">
+                                        <button type="button" class="btn-action-sm btn-action-view btn-interactive" onclick="openViewPickupModal(this)">
                                             View
                                         </button>
-                                        <button type="button" class="btn-action-sm btn-action-tag" onclick="openTagModal(this)">
+                                        <button type="button" class="btn-action-sm btn-action-tag btn-interactive" onclick="openTagModal(this)">
                                             Print Tag
                                         </button>
-                                        <button type="button" class="btn-action-sm btn-action-edit" onclick="openEditModal(this)">
+                                        <button type="button" class="btn-action-sm btn-action-edit btn-interactive" onclick="openEditModal(this)">
                                             Edit
                                         </button>
                                     </div>
@@ -544,7 +545,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-secondary" onclick="closeModal('scheduleModal')">Cancel</button>
-                <button type="submit" class="btn-primary">Confirm Booking</button>
+                <button type="submit" class="btn-primary btn-interactive">Confirm Booking</button>
             </div>
         </form>
     </div>
@@ -621,7 +622,7 @@
                 </button>
                 <div style="display:flex; gap:10px;">
                     <button type="button" class="btn-secondary" onclick="closeModal('editModal')">Cancel</button>
-                    <button type="submit" class="btn-primary">Save Changes</button>
+                    <button type="submit" class="btn-primary btn-interactive">Save Changes</button>
                 </div>
             </div>
         </form>
@@ -689,7 +690,7 @@
 
             <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
                 <button type="button" class="btn-modal-cancel" onclick="closeModal('viewPickupModal')">Close</button>
-                <button type="button" class="btn-action-sm btn-action-tag" id="viewPickTagBtn">Print Tag</button>
+                <button type="button" class="btn-action-sm btn-action-tag btn-interactive" id="viewPickTagBtn">Print Tag</button>
                 <button type="button" class="btn-modal-submit" id="viewPickEditBtn">Edit Schedule</button>
             </div>
         </div>
@@ -768,7 +769,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn-secondary" onclick="closeModal('tagModal')">Close</button>
-            <button type="button" class="btn-primary" onclick="window.print()">
+            <button type="button" class="btn-primary btn-interactive" onclick="window.print()">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;">
                     <polyline points="6 9 6 2 18 2 18 9"/>
                     <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
@@ -1014,5 +1015,7 @@ function openTagModal(button) {
 
 </script>
 
+    <!-- LaundryCare UI Interactions & Animations Engine -->
+    <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
 </body>
 </html>
