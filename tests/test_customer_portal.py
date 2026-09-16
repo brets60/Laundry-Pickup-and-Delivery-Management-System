@@ -95,10 +95,14 @@ def test_barangay_zone_auto_assignment(client):
     assert "Zone 2" in z2
     assert "Alex" in r2
 
-    # Zone 3: Dologon & Base Camp
+    # Zone 3: Dologon & Base Camp (including shop hub at Kalagutay)
     z3, r3 = resolve_maramag_zone_and_rider("Purok 3, Dologon, Maramag")
     assert "Zone 3" in z3
     assert "Dave" in r3
+
+    z3_k, r3_k = resolve_maramag_zone_and_rider("Kalagutay Base camp maramag bukidnon")
+    assert "Zone 3" in z3_k
+    assert "Dave" in r3_k
 
 
 def test_welcome_home_routes_and_navigation(client):
@@ -106,7 +110,7 @@ def test_welcome_home_routes_and_navigation(client):
     res_root = client.get('/')
     assert res_root.status_code == 200
     assert b"LaundryCare" in res_root.data
-    assert b"Fresh, Clean Clothes Delivered" in res_root.data
+    assert b"Kalagutay, Base Camp" in res_root.data
 
     res_welcome = client.get('/welcome')
     assert res_welcome.status_code == 200

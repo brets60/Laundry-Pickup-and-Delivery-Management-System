@@ -27,7 +27,7 @@ def manage_customers():
         name = (request.form.get('name') or '').strip()
         contact_number = (request.form.get('contact_number') or '').strip()
         email = (request.form.get('email') or '').strip()
-        address = (request.form.get('address') or 'Poblacion, Maramag, Bukidnon').strip()
+        address = (request.form.get('address') or 'Kalagutay, Base Camp, Maramag, Bukidnon').strip()
         membership = (request.form.get('membership') or 'Regular').strip()
 
         # VALIDATION
@@ -98,7 +98,7 @@ def edit_customer(customer_id):
         name = (request.form.get('name') or '').strip()
         contact_number = (request.form.get('contact_number') or '').strip()
         email = (request.form.get('email') or '').strip()
-        address = (request.form.get('address') or 'Poblacion, Maramag, Bukidnon').strip()
+        address = (request.form.get('address') or 'Kalagutay, Base Camp, Maramag, Bukidnon').strip()
         membership = (request.form.get('membership') or 'Regular').strip()
 
         if not name or not contact_number:

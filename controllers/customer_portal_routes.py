@@ -17,7 +17,7 @@ def resolve_maramag_zone_and_rider(barangay_or_address):
     addr = (barangay_or_address or '').lower()
     if any(k in addr for k in ['cmu', 'musuan', 'camp 1', 'sampaguita', 'dorm', 'university', 'colambugan']):
         return 'Zone 1: CMU & Musuan', 'Rider Mike (Van 1)'
-    elif any(k in addr for k in ['dologon', 'base camp', 'kuya', 'anoling', 'dagumba', 'purok 3']):
+    elif any(k in addr for k in ['kalagutay', 'base camp', 'basecamp', 'dologon', 'kuya', 'anoling', 'dagumba', 'purok 3']):
         return 'Zone 3: Dologon & Base Camp', 'Rider Dave (Moto 3)'
     else:
         return 'Zone 2: Poblacion Center', 'Rider Alex (Moto 2)'

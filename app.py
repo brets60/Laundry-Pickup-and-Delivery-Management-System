@@ -54,7 +54,7 @@ def init_database():
             name TEXT NOT NULL,
             contact_number TEXT NOT NULL,
             email TEXT,
-            address TEXT DEFAULT 'Poblacion, Maramag, Bukidnon',
+            address TEXT DEFAULT 'Kalagutay, Base Camp, Maramag, Bukidnon',
             membership TEXT DEFAULT 'Regular',
             total_orders INTEGER DEFAULT 0,
             pending_balance REAL DEFAULT 0.0,
@@ -66,7 +66,7 @@ def init_database():
     existing_cust_cols = [row["name"] for row in cursor.fetchall()]
     cust_migrations = [
         ("email", "TEXT"),
-        ("address", "TEXT DEFAULT 'Poblacion, Maramag, Bukidnon'"),
+        ("address", "TEXT DEFAULT 'Kalagutay, Base Camp, Maramag, Bukidnon'"),
         ("membership", "TEXT DEFAULT 'Regular'"),
         ("total_orders", "INTEGER DEFAULT 0"),
         ("pending_balance", "REAL DEFAULT 0.0"),
