@@ -79,3 +79,24 @@ def test_api_track_lookup(client):
     data = res.get_json()
     assert 'status' in data
     assert data['status'] == 'ok'
+
+
+def test_barangay_zone_auto_assignment(client):
+    """Test that booking in different Maramag barangays routes to dedicated zone couriers."""
+    from controllers.customer_portal_routes import resolve_maramag_zone_and_rider
+
+    # Zone 1: CMU & Musuan
+    z1, r1 = resolve_maramag_zone_and_rider("Sampaguita Dorm, CMU Campus / Musuan, Maramag")
+    assert "Zone 1" in z1
+    assert "Mike" in r1
+
+    # Zone 2: Poblacion
+    z2, r2 = resolve_maramag_zone_and_rider("Sayre Highway, Poblacion, Maramag")
+    assert "Zone 2" in z2
+    assert "Alex" in r2
+
+    # Zone 3: Dologon & Base Camp
+    z3, r3 = resolve_maramag_zone_and_rider("Purok 3, Dologon, Maramag")
+    assert "Zone 3" in z3
+    assert "Dave" in r3
+

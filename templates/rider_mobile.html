@@ -97,6 +97,14 @@
             </div>
         </div>
 
+        <!-- RIDER BARANGAY ZONE FILTER TOOLBAR -->
+        <div style="display:flex; gap:6px; overflow-x:auto; padding:0 0 12px; margin-bottom:4px;" id="riderZoneFilters">
+            <button type="button" class="tab-btn-pill active" style="font-size:12px; padding:6px 12px;" onclick="filterRiderZone('all', this)">All Stops</button>
+            <button type="button" class="tab-btn-pill" style="font-size:12px; padding:6px 12px; border-left:3px solid #2563eb;" onclick="filterRiderZone('zone 1', this)">🎓 Zone 1 (CMU)</button>
+            <button type="button" class="tab-btn-pill" style="font-size:12px; padding:6px 12px; border-left:3px solid #10b981;" onclick="filterRiderZone('zone 2', this)">🛍️ Zone 2 (Poblacion)</button>
+            <button type="button" class="tab-btn-pill" style="font-size:12px; padding:6px 12px; border-left:3px solid #f59e0b;" onclick="filterRiderZone('zone 3', this)">🛣️ Zone 3 (Dologon)</button>
+        </div>
+
         <!-- =====================================================
              TAB 1: DELIVERIES DECK
              ===================================================== -->
@@ -104,12 +112,27 @@
             {% if deliveries %}
                 {% for d in deliveries %}
                 {% set st = (d.status or 'Scheduled')|lower %}
-                <article class="stop-card-pro" id="deliveryCard-{{ d.id }}">
+                {% set d_addr = (d.delivery_address or '')|lower %}
+                {% set d_rdr = (d.assigned_rider or '')|lower %}
+                {% if 'cmu' in d_addr or 'musuan' in d_addr or 'camp 1' in d_addr or 'mike' in d_rdr %}
+                    {% set r_zone = 'zone 1' %}
+                    {% set r_zone_label = 'Zone 1: CMU Musuan' %}
+                    {% set r_zone_cls = 'zone-cmu' %}
+                {% elif 'dologon' in d_addr or 'base camp' in d_addr or 'kuya' in d_addr or 'anoling' in d_addr or 'dave' in d_rdr %}
+                    {% set r_zone = 'zone 3' %}
+                    {% set r_zone_label = 'Zone 3: Dologon / Base Camp' %}
+                    {% set r_zone_cls = 'zone-dologon' %}
+                {% else %}
+                    {% set r_zone = 'zone 2' %}
+                    {% set r_zone_label = 'Zone 2: Poblacion' %}
+                    {% set r_zone_cls = 'zone-poblacion' %}
+                {% endif %}
+                <article class="stop-card-pro" id="deliveryCard-{{ d.id }}" data-zone="{{ r_zone }}">
                     <div class="stop-header-bar">
                         <div class="stop-tags-left">
                             <span class="stop-seq-tag">STOP #{{ loop.index }}</span>
                             <span class="stop-order-tag">#DEL-{{ "%04d"|format(d.id) }}</span>
-                            <span style="font-size:12px; color:#64748b;">(Order #ORD-{{ "%04d"|format(d.order_id or d.id) }})</span>
+                            <span class="zone-badge {{ r_zone_cls }}" style="font-size:11px;">{{ r_zone_label }}</span>
                         </div>
                         {% if st == 'delivered' %}
                             <span class="status-badge-pro delivered">Delivered</span>
@@ -443,6 +466,22 @@
             window.location.reload();
         });
     }
+
+    function filterRiderZone(zone, btn) {
+        document.querySelectorAll('#riderZoneFilters .tab-btn-pill').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        const filter = (zone || 'all').toLowerCase();
+        document.querySelectorAll('.stop-card-pro').forEach(card => {
+            const cardZone = (card.getAttribute('data-zone') || '').toLowerCase();
+            if (filter === 'all' || cardZone.includes(filter)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
 </script>
 
 </body>

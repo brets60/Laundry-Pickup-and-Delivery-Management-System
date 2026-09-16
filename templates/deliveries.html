@@ -203,11 +203,25 @@
 
             <!-- Status Filter Pills -->
             <div class="status-filter-group">
-                <button type="button" class="filter-pill active" onclick="setStatusFilter('all', this)">All</button>
+                <button type="button" class="filter-pill active" onclick="setStatusFilter('all', this)">All Statuses</button>
                 <button type="button" class="filter-pill" onclick="setStatusFilter('scheduled', this)">Scheduled</button>
                 <button type="button" class="filter-pill" onclick="setStatusFilter('out for delivery', this)">Out for Delivery</button>
                 <button type="button" class="filter-pill" onclick="setStatusFilter('delivered', this)">Delivered</button>
                 <button type="button" class="filter-pill" onclick="setStatusFilter('cancelled', this)">Cancelled</button>
+            </div>
+        </div>
+
+        <!-- BARANGAY ZONE SECTOR FILTER TOOLBAR -->
+        <div class="zone-filter-toolbar" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:10px 16px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <span class="zone-label-tag">📍 Barangay Zone:</span>
+                <button type="button" class="filter-pill active" id="zoneFilterAll" onclick="setZoneFilter('all', this)">All Zones</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #2563eb;" onclick="setZoneFilter('zone 1', this)">🎓 Zone 1: CMU Musuan (Mike)</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #10b981;" onclick="setZoneFilter('zone 2', this)">🛍️ Zone 2: Poblacion (Alex)</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #f59e0b;" onclick="setZoneFilter('zone 3', this)">🛣️ Zone 3: Dologon &amp; Base Camp (Dave)</button>
+            </div>
+            <div style="font-size:12px; color:#64748b;">
+                3 Dedicated Couriers Assigned
             </div>
         </div>
 
@@ -394,6 +408,7 @@
                         <tr>
                             <th>Delivery ID</th>
                             <th>Order ID</th>
+                            <th>Barangay Zone</th>
                             <th>Customer &amp; Address</th>
                             <th>Assigned Rider</th>
                             <th>Delivery Date</th>
@@ -405,9 +420,25 @@
                         {% if deliveries %}
                             {% for d in deliveries %}
                             {% set st = (d.status or 'Scheduled')|lower %}
+                            {% set addr_l = (d.delivery_address or '')|lower %}
+                            {% set rdr_l = (d.assigned_rider or '')|lower %}
+                            {% if 'cmu' in addr_l or 'musuan' in addr_l or 'camp 1' in addr_l or 'mike' in rdr_l %}
+                                {% set z_code = 'zone 1' %}
+                                {% set z_name = 'Zone 1: CMU Musuan' %}
+                                {% set z_cls = 'zone-cmu' %}
+                            {% elif 'dologon' in addr_l or 'base camp' in addr_l or 'kuya' in addr_l or 'anoling' in addr_l or 'dave' in rdr_l %}
+                                {% set z_code = 'zone 3' %}
+                                {% set z_name = 'Zone 3: Dologon / Base Camp' %}
+                                {% set z_cls = 'zone-dologon' %}
+                            {% else %}
+                                {% set z_code = 'zone 2' %}
+                                {% set z_name = 'Zone 2: Poblacion' %}
+                                {% set z_cls = 'zone-poblacion' %}
+                            {% endif %}
                             <tr class="delivery-row" 
                                 data-status="{{ st }}" 
-                                data-search="{{ d.customer }} {{ d.id }} {{ d.delivery_address or '' }} {{ d.assigned_rider or '' }} {{ d.order_id or '' }}"
+                                data-zone="{{ z_code }}"
+                                data-search="{{ d.customer }} {{ d.id }} {{ d.delivery_address or '' }} {{ d.assigned_rider or '' }} {{ d.order_id or '' }} {{ z_name }}"
                                 data-id="{{ d.id }}"
                                 data-customer="{{ d.customer }}"
                                 data-order-id="{{ d.order_id or '' }}"
@@ -428,6 +459,9 @@
                                     {% else %}
                                         <span style="color:#94a3b8; font-size:13px;">—</span>
                                     {% endif %}
+                                </td>
+                                <td>
+                                    <span class="zone-badge {{ z_cls }}">{{ z_name }}</span>
                                 </td>
                                 <td>
                                     <div class="customer-name">{{ d.customer }}</div>
@@ -1269,6 +1303,50 @@ window.addEventListener('DOMContentLoaded', () => {
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+
+    let currentStatusFilter = 'all';
+    let currentZoneFilter = 'all';
+
+    function setStatusFilter(status, btn) {
+        currentStatusFilter = (status || 'all').toLowerCase();
+        document.querySelectorAll('.status-filter-group .filter-pill').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        applyCombinedFilters();
+    }
+
+    function setZoneFilter(zone, btn) {
+        currentZoneFilter = (zone || 'all').toLowerCase();
+        document.querySelectorAll('.zone-filter-toolbar .filter-pill').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        applyCombinedFilters();
+    }
+
+    function filterDeliveriesTable() {
+        applyCombinedFilters();
+    }
+
+    function applyCombinedFilters() {
+        const searchInput = document.getElementById('deliverySearchInput');
+        const searchVal = (searchInput ? searchInput.value : '').toLowerCase().trim();
+        const rows = document.querySelectorAll('#deliveriesTable tbody tr.delivery-row');
+
+        rows.forEach(row => {
+            const rowStatus = (row.getAttribute('data-status') || '').toLowerCase();
+            const rowZone = (row.getAttribute('data-zone') || '').toLowerCase();
+            const rowSearch = (row.getAttribute('data-search') || '').toLowerCase();
+
+            const matchStatus = (currentStatusFilter === 'all' || rowStatus === currentStatusFilter);
+            const matchZone = (currentZoneFilter === 'all' || rowZone.includes(currentZoneFilter));
+            const matchSearch = (!searchVal || rowSearch.includes(searchVal));
+
+            if (matchStatus && matchZone && matchSearch) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
     }
 
 </script>

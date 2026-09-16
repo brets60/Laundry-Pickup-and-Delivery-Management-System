@@ -185,11 +185,25 @@
 
             <!-- Status Filter Pills -->
             <div class="status-filter-group">
-                <button type="button" class="filter-pill active" onclick="setStatusFilter('all', this)">All</button>
+                <button type="button" class="filter-pill active" onclick="setStatusFilter('all', this)">All Statuses</button>
                 <button type="button" class="filter-pill" onclick="setStatusFilter('pending', this)">Pending</button>
                 <button type="button" class="filter-pill" onclick="setStatusFilter('assigned', this)">Assigned</button>
                 <button type="button" class="filter-pill" onclick="setStatusFilter('picked up', this)">Picked Up</button>
                 <button type="button" class="filter-pill" onclick="setStatusFilter('cancelled', this)">Cancelled</button>
+            </div>
+        </div>
+
+        <!-- BARANGAY ZONE SECTOR FILTER TOOLBAR -->
+        <div class="zone-filter-toolbar" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:10px 16px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <span class="zone-label-tag">📍 Barangay Zone:</span>
+                <button type="button" class="filter-pill active" onclick="setZoneFilter('all', this)">All Zones</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #2563eb;" onclick="setZoneFilter('zone 1', this)">🎓 Zone 1: CMU Musuan (Mike)</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #10b981;" onclick="setZoneFilter('zone 2', this)">🛍️ Zone 2: Poblacion (Alex)</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #f59e0b;" onclick="setZoneFilter('zone 3', this)">🛣️ Zone 3: Dologon &amp; Base Camp (Dave)</button>
+            </div>
+            <div style="font-size:12px; color:#64748b;">
+                3 Dedicated Couriers Assigned
             </div>
         </div>
 
@@ -327,6 +341,7 @@
                     <thead>
                         <tr>
                             <th>Pickup ID</th>
+                            <th>Barangay Zone</th>
                             <th>Customer Name &amp; Contact</th>
                             <th>Pickup Address</th>
                             <th>Time Slot &amp; Date</th>
@@ -339,9 +354,25 @@
                         {% if pickups %}
                             {% for p in pickups %}
                             {% set st = (p.status or 'Pending')|lower %}
+                            {% set p_addr = (p.pickup_address or '')|lower %}
+                            {% set p_rdr = (p.assigned_driver or '')|lower %}
+                            {% if 'cmu' in p_addr or 'musuan' in p_addr or 'camp 1' in p_addr or 'mike' in p_rdr %}
+                                {% set pz_code = 'zone 1' %}
+                                {% set pz_name = 'Zone 1: CMU Musuan' %}
+                                {% set pz_cls = 'zone-cmu' %}
+                            {% elif 'dologon' in p_addr or 'base camp' in p_addr or 'kuya' in p_addr or 'anoling' in p_addr or 'dave' in p_rdr %}
+                                {% set pz_code = 'zone 3' %}
+                                {% set pz_name = 'Zone 3: Dologon / Base Camp' %}
+                                {% set pz_cls = 'zone-dologon' %}
+                            {% else %}
+                                {% set pz_code = 'zone 2' %}
+                                {% set pz_name = 'Zone 2: Poblacion' %}
+                                {% set pz_cls = 'zone-poblacion' %}
+                            {% endif %}
                             <tr class="pickup-row" 
                                 data-status="{{ st }}" 
-                                data-search="{{ p.customer }} {{ p.id }} {{ p.contact_number or '' }} {{ p.pickup_address or '' }} {{ p.assigned_driver or '' }}"
+                                data-zone="{{ pz_code }}"
+                                data-search="{{ p.customer }} {{ p.id }} {{ p.contact_number or '' }} {{ p.pickup_address or '' }} {{ p.assigned_driver or '' }} {{ pz_name }}"
                                 data-id="{{ p.id }}"
                                 data-customer="{{ p.customer }}"
                                 data-contact="{{ p.contact_number or '09123456789' }}"
@@ -352,6 +383,9 @@
                                 data-notes="{{ p.notes or '' }}">
                                 <td>
                                     <span class="cell-pick-id">#PCK-{{ "%04d"|format(p.id) }}</span>
+                                </td>
+                                <td>
+                                    <span class="zone-badge {{ pz_cls }}">{{ pz_name }}</span>
                                 </td>
                                 <td>
                                     <div class="customer-name">{{ p.customer }}</div>
@@ -934,6 +968,50 @@ function openTagModal(button) {
 
     openModal('tagModal');
 }
+
+    let currentPickupStatusFilter = 'all';
+    let currentPickupZoneFilter = 'all';
+
+    function setStatusFilter(status, btn) {
+        currentPickupStatusFilter = (status || 'all').toLowerCase();
+        document.querySelectorAll('.status-filter-group .filter-pill').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        applyCombinedPickupFilters();
+    }
+
+    function setZoneFilter(zone, btn) {
+        currentPickupZoneFilter = (zone || 'all').toLowerCase();
+        document.querySelectorAll('.zone-filter-toolbar .filter-pill').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        applyCombinedPickupFilters();
+    }
+
+    function filterPickupsTable() {
+        applyCombinedPickupFilters();
+    }
+
+    function applyCombinedPickupFilters() {
+        const searchInput = document.getElementById('pickupSearchInput');
+        const searchVal = (searchInput ? searchInput.value : '').toLowerCase().trim();
+        const rows = document.querySelectorAll('#pickupsTable tbody tr.pickup-row');
+
+        rows.forEach(row => {
+            const rowStatus = (row.getAttribute('data-status') || '').toLowerCase();
+            const rowZone = (row.getAttribute('data-zone') || '').toLowerCase();
+            const rowSearch = (row.getAttribute('data-search') || '').toLowerCase();
+
+            const matchStatus = (currentPickupStatusFilter === 'all' || rowStatus === currentPickupStatusFilter);
+            const matchZone = (currentPickupZoneFilter === 'all' || rowZone.includes(currentPickupZoneFilter));
+            const matchSearch = (!searchVal || rowSearch.includes(searchVal));
+
+            if (matchStatus && matchZone && matchSearch) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
 </script>
 
 </body>

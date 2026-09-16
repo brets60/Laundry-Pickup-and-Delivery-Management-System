@@ -1073,3 +1073,44 @@ textarea.form-control {
     background: #f1f5f9;
     color: #475569;
 }
+
+/* BARANGAY ZONE BADGES & TOOLBAR */
+.zone-filter-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+.zone-label-tag {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+}
+.zone-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+.zone-cmu {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+.zone-poblacion {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+.zone-dologon {
+    background: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}

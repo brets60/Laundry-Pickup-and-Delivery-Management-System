@@ -49,6 +49,7 @@
             <div style="background:#ffffff; border-radius:10px; border:1px solid #d1fae5; padding:14px; text-align:left; font-size:13px; margin-bottom:16px;">
                 <div style="margin-bottom:4px;"><strong>Pickup Date:</strong> {{ booking.pickup_date }} ({{ booking.pickup_time }})</div>
                 <div style="margin-bottom:4px;"><strong>Location:</strong> {{ booking.address }}</div>
+                <div style="margin-bottom:4px;"><strong>Assigned Sector:</strong> <span style="color:#2563eb; font-weight:700;">{{ booking.zone }}</span> (Courier: <strong>{{ booking.rider }}</strong>)</div>
                 <div style="margin-bottom:4px;"><strong>Service:</strong> {{ booking.service_type }} ({{ booking.estimated_load }})</div>
                 <div><strong>Payment:</strong> {{ booking.payment_method }}</div>
             </div>
@@ -95,30 +96,40 @@
                     </div>
                 </div>
 
-                <!-- SECTION 2: MARAMAG PICKUP ADDRESS -->
+                <!-- SECTION 2: MARAMAG PICKUP ADDRESS & ZONE DISPATCH -->
                 <div style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:#2563eb; margin:16px 0 12px;">
-                    2. Pickup Location (Maramag, Bukidnon)
+                    2. Pickup Location &amp; Dedicated Courier Sector
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Barangay / Campus Area <span class="required">*</span></label>
-                    <select name="barangay" class="form-control" required>
-                        <option value="CMU Campus / Musuan (Dormitory/Apartment)">CMU Campus / Musuan (Dormitory / Boarding House)</option>
-                        <option value="Poblacion" selected>Poblacion (Sayre Highway / Market / Commercial)</option>
-                        <option value="Purok 3, Dologon">Dologon</option>
-                        <option value="Base Camp Junction">Base Camp</option>
-                        <option value="Camp 1, Sayre Highway">Camp 1</option>
-                        <option value="Kuya">Kuya</option>
-                        <option value="Anoling">Anoling</option>
-                        <option value="North Poblacion">North Poblacion</option>
-                        <option value="South Poblacion">South Poblacion</option>
+                    <select name="barangay" id="barangaySelect" class="form-control" required onchange="updateSectorBadge()">
+                        <option value="CMU Campus / Musuan (Dormitory/Apartment)" data-zone="Zone 1: CMU & Musuan" data-rider="Rider Mike (Van 1)">🎓 CMU Campus / Musuan [Zone 1 &bull; Rider Mike (Van 1)]</option>
+                        <option value="Camp 1, Sayre Highway" data-zone="Zone 1: CMU & Musuan" data-rider="Rider Mike (Van 1)">🌿 Camp 1, Sayre Hwy [Zone 1 &bull; Rider Mike (Van 1)]</option>
+                        <option value="Poblacion" data-zone="Zone 2: Poblacion Center" data-rider="Rider Alex (Moto 2)" selected>🛍️ Poblacion (Sayre Hwy / Market) [Zone 2 &bull; Rider Alex (Moto 2)]</option>
+                        <option value="North Poblacion" data-zone="Zone 2: Poblacion Center" data-rider="Rider Alex (Moto 2)">🏘️ North Poblacion [Zone 2 &bull; Rider Alex (Moto 2)]</option>
+                        <option value="South Poblacion" data-zone="Zone 2: Poblacion Center" data-rider="Rider Alex (Moto 2)">🏛️ South Poblacion [Zone 2 &bull; Rider Alex (Moto 2)]</option>
+                        <option value="Purok 3, Dologon" data-zone="Zone 3: Dologon & Base Camp" data-rider="Rider Dave (Moto 3)">🏡 Dologon (Purok 3) [Zone 3 &bull; Rider Dave (Moto 3)]</option>
+                        <option value="Base Camp Junction" data-zone="Zone 3: Dologon & Base Camp" data-rider="Rider Dave (Moto 3)">📍 Base Camp Junction [Zone 3 &bull; Rider Dave (Moto 3)]</option>
+                        <option value="Kuya" data-zone="Zone 3: Dologon & Base Camp" data-rider="Rider Dave (Moto 3)">🌾 Kuya [Zone 3 &bull; Rider Dave (Moto 3)]</option>
+                        <option value="Anoling" data-zone="Zone 3: Dologon & Base Camp" data-rider="Rider Dave (Moto 3)">🛣️ Anoling [Zone 3 &bull; Rider Dave (Moto 3)]</option>
                     </select>
+                </div>
+
+                <!-- DYNAMIC SECTOR BANNER -->
+                <div id="sectorNoticeBox" style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:10px 14px; margin-bottom:14px; font-size:12.5px; display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:18px;">🛵</span>
+                    <div>
+                        <strong style="color:#1e40af;" id="sectorZoneLabel">Zone 2: Poblacion Center Circuit</strong>
+                        <div style="color:#64748b; font-size:11.5px;">Assigned Sector Courier: <strong style="color:#0f172a;" id="sectorRiderLabel">Rider Alex (Motorcycle 2)</strong></div>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">House # / Street / Dormitory Room / Landmark</label>
-                    <input type="text" name="address_details" class="form-control" placeholder="e.g., Sampaguita Dorm, Room 302, or Near Petron Sayre Hwy" value="{{ form_data.address_details if form_data else '' }}">
+                    <input type="text" name="address_details" class="form-control" placeholder="e.g., Sampaguita Dorm Room 302, or Near Petron Sayre Hwy" value="{{ form_data.address_details if form_data else '' }}">
                 </div>
+
 
                 <!-- SECTION 3: SERVICE TYPE -->
                 <div style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:#2563eb; margin:16px 0 12px;">
@@ -208,11 +219,25 @@
 
     </main>
 
-    <!-- FOOTER -->
     <footer class="portal-footer">
         <p><strong>LaundryCare Maramag</strong> &bull; Sayre Highway, Poblacion, Maramag, Bukidnon</p>
         <p style="margin-top:4px;">Hotline: (088) 356-1234 &bull; Mobile: 0917-123-4567 &bull; Serving all Maramag Barangays &amp; CMU Campus</p>
     </footer>
 
+    <script>
+
+        function updateSectorBadge() {
+            const select = document.getElementById('barangaySelect');
+            const selectedOpt = select.options[select.selectedIndex];
+            const zone = selectedOpt.getAttribute('data-zone') || 'Zone 2: Poblacion Center';
+            const rider = selectedOpt.getAttribute('data-rider') || 'Rider Alex (Moto 2)';
+
+            document.getElementById('sectorZoneLabel').textContent = zone + ' Circuit';
+            document.getElementById('sectorRiderLabel').textContent = rider;
+        }
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', updateSectorBadge);
+    </script>
 </body>
 </html>
+

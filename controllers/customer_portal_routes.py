@@ -13,6 +13,16 @@ def get_db_connection():
     return conn
 
 
+def resolve_maramag_zone_and_rider(barangay_or_address):
+    addr = (barangay_or_address or '').lower()
+    if any(k in addr for k in ['cmu', 'musuan', 'camp 1', 'sampaguita', 'dorm', 'university', 'colambugan']):
+        return 'Zone 1: CMU & Musuan', 'Rider Mike (Van 1)'
+    elif any(k in addr for k in ['dologon', 'base camp', 'kuya', 'anoling', 'dagumba', 'purok 3']):
+        return 'Zone 3: Dologon & Base Camp', 'Rider Dave (Moto 3)'
+    else:
+        return 'Zone 2: Poblacion Center', 'Rider Alex (Moto 2)'
+
+
 # ============================================================
 # 1. ONLINE LAUNDRY PICKUP BOOKING FORM
 # ============================================================
@@ -70,20 +80,23 @@ def book_pickup():
                 (name, contact_number, email, full_address)
             )
 
+        # Automatic Barangay-to-Rider Zone Allocation
+        zone_name, assigned_rider = resolve_maramag_zone_and_rider(full_address)
+
         # Formulate operational notes for staff and courier
-        combined_notes = f"[Online Booking] Service: {service_type} | Est. Load: {estimated_load} | Pay: {payment_method}"
+        combined_notes = f"[{zone_name}] Rider: {assigned_rider} | Service: {service_type} | Est. Load: {estimated_load} | Pay: {payment_method}"
         if notes:
             combined_notes += f" | Notes: {notes}"
 
-        # Insert pickup schedule
+        # Insert pickup schedule with dedicated zone courier assigned
         cursor = conn.cursor()
         cursor.execute(
             """
             INSERT INTO pickup_schedules 
             (customer, pickup_date, pickup_time, pickup_address, status, assigned_driver, notes, created_at)
-            VALUES (?, ?, ?, ?, 'Pending', 'Unassigned (Awaiting Staff)', ?, ?)
+            VALUES (?, ?, ?, ?, 'Assigned', ?, ?, ?)
             """,
-            (name, pickup_date, pickup_time, full_address, combined_notes, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            (name, pickup_date, pickup_time, full_address, assigned_rider, combined_notes, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         )
         pickup_id = cursor.lastrowid
         conn.commit()
@@ -99,7 +112,9 @@ def book_pickup():
             'pickup_time': pickup_time,
             'service_type': service_type,
             'estimated_load': estimated_load,
-            'payment_method': payment_method
+            'payment_method': payment_method,
+            'zone': zone_name,
+            'rider': assigned_rider
         }
 
         return render_template(
@@ -108,6 +123,7 @@ def book_pickup():
             booking=booking_info,
             today_str=today_str
         )
+
 
     conn.close()
     return render_template('customer_book_pickup.html', today_str=today_str)
