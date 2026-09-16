@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaundryCare | System Settings</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}?v=4.0">
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- =========================================================
+         LEFT SIDEBAR (UNIFIED EXACT MATCH ACROSS ALL PAGES)
+         ========================================================= -->
+    <aside class="dashboard-sidebar">
+
+        <!-- BRAND LOGO -->
+        <a href="/dashboard-page" class="sidebar-brand">
+            <div class="brand-icon-box">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                    <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                    <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                </svg>
+            </div>
+            <span>LaundryCare</span>
+        </a>
+
+        <!-- MENU ITEMS -->
+        <nav class="sidebar-nav">
+            <!-- Dashboard -->
+            <a href="/dashboard-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+
+            {% if session.get('role', 'admin') in ['admin', 'staff'] %}
+            <!-- Orders -->
+            <a href="/laundry-orders-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                    <path d="M9 12h6M9 16h6"/>
+                </svg>
+                <span>Orders</span>
+            </a>
+            {% endif %}
+
+            <!-- Deliveries -->
+            <a href="/delivery-records-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="3" width="15" height="13"/>
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 8"/>
+                    <circle cx="5.5" cy="18.5" r="2.5"/>
+                    <circle cx="18.5" cy="18.5" r="2.5"/>
+                </svg>
+                <span>Deliveries</span>
+            </a>
+
+            <!-- Pickups -->
+            <a href="/pickup-schedules-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                    <line x1="12" y1="14" x2="12" y2="18"/>
+                    <line x1="10" y1="16" x2="14" y2="16"/>
+                </svg>
+                <span>Pickups</span>
+            </a>
+
+            {% if session.get('role', 'admin') in ['admin', 'staff'] %}
+            <!-- Customers -->
+            <a href="/customers-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>Customers</span>
+            </a>
+            {% endif %}
+
+            {% if session.get('role', 'admin') == 'admin' %}
+            <!-- Staff -->
+            <a href="/staff-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Staff</span>
+            </a>
+            {% endif %}
+
+            {% if session.get('role', 'admin') == 'admin' %}
+            <!-- Reports -->
+            <a href="/payments-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <line x1="9" y1="18" x2="9" y2="15"/>
+                    <line x1="15" y1="18" x2="15" y2="9"/>
+                </svg>
+                <span>Reports</span>
+            </a>
+            {% endif %}
+
+            {% if session.get('role', 'admin') == 'admin' %}
+            <!-- Settings (ACTIVE) -->
+            <a href="/settings-page" class="active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.51 1 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                <span>Settings</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <!-- SIDEBAR USER & LOGOUT -->
+        <div class="sidebar-footer" style="padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: auto; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.15);">
+            <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: {% if session.get('role') == 'rider' %}#ea580c{% elif session.get('role') == 'staff' %}#059669{% else %}#2563eb{% endif %}; color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    {{ (session.get('username') or 'A')[0]|upper }}
+                </div>
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <div style="font-size: 13px; font-weight: 600; color: #f8fafc;">{{ session.get('username', 'Admin')|capitalize }}</div>
+                    <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: {% if session.get('role') == 'rider' %}#fdba74{% elif session.get('role') == 'staff' %}#6ee7b7{% else %}#93c5fd{% endif %};">
+                        {{ session.get('role', 'admin')|upper }}
+                    </div>
+                </div>
+            </div>
+            <a href="/logout" title="Sign Out" onclick="return confirm('Sign out of LaundryCare?');" style="color: #94a3b8; display: flex; align-items: center; padding: 6px; border-radius: 6px; text-decoration: none;" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='#94a3b8'">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+            </a>
+        </div>
+    </aside>
+
+    <!-- =========================================================
+         MAIN APPLICATION AREA
+         ========================================================= -->
+    <main class="dashboard-main">
+
+        <!-- TOP HEADER -->
+        <div class="settings-top-header">
+            <div class="header-title-group">
+                <h1>System Settings</h1>
+                <p>Store profile, service rates, notification preferences, and account security</p>
+            </div>
+        </div>
+
+        <!-- TAB NAVIGATION -->
+        <div class="settings-tabs">
+            <button type="button" class="tab-link active" onclick="showTab('tab-profile', this)">Store Profile</button>
+            <button type="button" class="tab-link" onclick="showTab('tab-rates', this)">Service Rates</button>
+            <button type="button" class="tab-link" onclick="showTab('tab-preferences', this)">Preferences</button>
+            <button type="button" class="tab-link" onclick="showTab('tab-security', this)">Account &amp; Security</button>
+        </div>
+
+        <!-- TAB 1: STORE PROFILE -->
+        <div class="tab-pane active" id="tab-profile">
+            <div class="settings-content-grid">
+                <div>
+                    <div class="settings-card">
+                        <h2 class="settings-card-title">Store Information</h2>
+                        <form id="storeProfileForm" onsubmit="saveSettingsAlert(event)">
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Store Name</label>
+                                    <input type="text" class="form-control" value="LaundryCare Central Hub">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Contact Phone</label>
+                                    <input type="text" class="form-control" value="+63 917 656 7838">
+                                </div>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Store Address</label>
+                                    <input type="text" class="form-control" value="Suite 302, Emerald Ave, Pasig City">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Support Email</label>
+                                    <input type="email" class="form-control" value="support@laundrycare.ph">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-save-settings">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                                <span>Save Changes</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Operating Hours Card -->
+                <div>
+                    <div class="settings-card">
+                        <h2 class="settings-card-title">Operating Days</h2>
+                        <div class="toggle-row">
+                            <span class="toggle-label">Monday</span>
+                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">Tuesday</span>
+                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">Wednesday</span>
+                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">Thursday</span>
+                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">Friday</span>
+                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">Saturday</span>
+                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">Sunday</span>
+                            <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: SERVICE RATES -->
+        <div class="tab-pane" id="tab-rates" style="display:none;">
+            <div class="settings-card" style="max-width: 680px;">
+                <h2 class="settings-card-title">Standard Service Pricing</h2>
+                <form onsubmit="saveSettingsAlert(event)">
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Wash &amp; Fold (₱ / kg)</label>
+                            <input type="number" step="0.5" class="form-control" value="50.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Dry Cleaning Base (₱ / item)</label>
+                            <input type="number" step="1.0" class="form-control" value="180.00">
+                        </div>
+                    </div>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Ironing &amp; Press (₱ / item)</label>
+                            <input type="number" step="0.5" class="form-control" value="40.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Standard Delivery Surcharge (₱)</label>
+                            <input type="number" step="1.0" class="form-control" value="60.00">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-save-settings">Save Pricing Rules</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 3: PREFERENCES -->
+        <div class="tab-pane" id="tab-preferences" style="display:none;">
+            <div class="settings-card" style="max-width: 680px;">
+                <h2 class="settings-card-title">Notification &amp; Workflow Preferences</h2>
+                <div class="toggle-row" style="padding: 16px 0;">
+                    <div>
+                        <div style="font-weight:600; color:#0f172a;">SMS Dispatch Notifications</div>
+                        <div style="font-size:13px; color:#64748b;">Notify clients via SMS when driver leaves for delivery</div>
+                    </div>
+                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="toggle-row" style="padding: 16px 0;">
+                    <div>
+                        <div style="font-weight:600; color:#0f172a;">Auto-print Laundry Bag Tags</div>
+                        <div style="font-size:13px; color:#64748b;">Automatically prompt tag printing upon order creation</div>
+                    </div>
+                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="toggle-row" style="padding: 16px 0;">
+                    <div>
+                        <div style="font-weight:600; color:#0f172a;">Auto-generate Receipt PDF</div>
+                        <div style="font-size:13px; color:#64748b;">Generate printable digital receipt when payments are logged</div>
+                    </div>
+                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: ACCOUNT & SECURITY -->
+        <div class="tab-pane" id="tab-security" style="display:none;">
+            <div class="settings-card" style="max-width: 580px;">
+                <h2 class="settings-card-title">Administrator Account</h2>
+                <div class="form-group">
+                    <label class="form-label">Logged In Username</label>
+                    <input type="text" class="form-control" value="admin" disabled style="background:#f1f5f9; color:#64748b;">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" class="form-control" placeholder="Leave blank to keep unchanged">
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px;">
+                    <a href="/logout" onclick="return confirm('Sign out of LaundryCare?');" style="color:#dc2626; font-size:14px; font-weight:600; text-decoration:none;">
+                        Sign Out of Session &rarr;
+                    </a>
+                    <button type="button" class="btn-save-settings" onclick="alert('Password updated successfully!')">Update Security</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+function showTab(tabId, buttonElement) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('active'));
+    
+    const target = document.getElementById(tabId);
+    if (target) target.style.display = 'block';
+    if (buttonElement) buttonElement.classList.add('active');
+}
+
+function saveSettingsAlert(e) {
+    e.preventDefault();
+    alert('Settings updated successfully!');
+}
+</script>
+
+</body>
+</html>

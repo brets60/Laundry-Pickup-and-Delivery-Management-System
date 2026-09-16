@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Laundry Tracker | LaundryCare Maramag</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/customer_portal.css') }}?v=1.0">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="portal-navbar">
+        <a href="/track" class="portal-brand">
+            <div class="portal-brand-icon">🔍</div>
+            <div>
+                <div class="portal-brand-text">LaundryCare Tracker</div>
+                <div class="portal-brand-sub">Maramag, Bukidnon</div>
+            </div>
+        </a>
+        <div class="portal-nav-links">
+            <a href="/book-pickup" class="nav-link-btn primary">+ Book Pickup</a>
+            <a href="/login" class="nav-link-btn ghost">Staff Login</a>
+        </div>
+    </header>
+
+    <!-- HERO SEARCH SECTION -->
+    <section class="portal-hero" style="padding: 30px 20px 40px;">
+        <div class="portal-hero-container">
+            <h1>Track Your Laundry in Real Time</h1>
+            <p>Enter your Order Number (e.g. #ORD-0001), Booking Code (#PCK-0001), or Mobile Phone Number to check live wash and delivery progress.</p>
+
+            <form action="/track" method="GET" class="track-search-bar" style="max-width: 500px; margin: 0 auto;">
+                <input type="text" name="ref" class="track-search-input" placeholder="e.g. ORD-0001, PCK-0001, or 0917..." value="{{ query }}" required>
+                <button type="submit" class="btn-track-search">Search</button>
+            </form>
+        </div>
+    </section>
+
+    <main class="portal-container">
+
+        {% if not_found %}
+        <!-- NOT FOUND STATE -->
+        <div class="portal-card" style="text-align:center; padding:40px 20px;">
+            <div style="font-size:42px; margin-bottom:12px;">🔎</div>
+            <h3 style="font-size:18px; font-weight:800; color:#0f172a; margin-bottom:6px;">No Record Found for "{{ query }}"</h3>
+            <p style="font-size:13.5px; color:#64748b; max-width:400px; margin:0 auto 20px;">
+                Please double-check your Order Reference ID or Mobile Number. If you recently dropped off clothes, intake can take a few minutes.
+            </p>
+            <a href="/book-pickup" class="nav-link-btn primary" style="display:inline-block;">+ Book a Pickup Instead</a>
+        </div>
+        {% elif result %}
+        <!-- RESULT FOUND: LIVE TRACKER -->
+        <div class="portal-card">
+
+            <!-- ORDER IDENTIFIERS -->
+            <div class="portal-card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div>
+                    {% if result.order %}
+                    <span style="font-size:12px; font-weight:800; color:#2563eb; background:#eff6ff; padding:4px 10px; border-radius:6px;">ORDER #ORD-{{ "%04d"|format(result.order.id) }}</span>
+                    {% elif result.pickup %}
+                    <span style="font-size:12px; font-weight:800; color:#059669; background:#ecfdf5; padding:4px 10px; border-radius:6px;">PICKUP #PCK-{{ "%04d"|format(result.pickup.id) }}</span>
+                    {% endif %}
+                    <h2 class="portal-card-title" style="margin-top:6px;">
+                        {{ result.customer.name if result.customer else (result.order.customer if result.order else result.pickup.customer) }}
+                    </h2>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:11px; color:#64748b; text-transform:uppercase; font-weight:700;">Service Area</div>
+                    <div style="font-size:13px; font-weight:700; color:#0f172a;">Maramag, Bukidnon</div>
+                </div>
+            </div>
+
+            <!-- STEPPER PROGRESS -->
+            {% set step = result.current_step %}
+            <div class="stepper-container">
+                <div class="stepper-track">
+                    <div class="stepper-line-bg"></div>
+                    <div class="stepper-line-progress" style="width: {{ (step - 1) * 20 }}%;"></div>
+
+                    <div class="step-node {{ 'completed' if step > 1 else ('active' if step == 1 else '') }}">
+                        <div class="step-bubble">{{ '✓' if step > 1 else '1' }}</div>
+                        <span class="step-title">Intake</span>
+                    </div>
+
+                    <div class="step-node {{ 'completed' if step > 2 else ('active' if step == 2 else '') }}">
+                        <div class="step-bubble">{{ '✓' if step > 2 else '2' }}</div>
+                        <span class="step-title">Washing</span>
+                    </div>
+
+                    <div class="step-node {{ 'completed' if step > 3 else ('active' if step == 3 else '') }}">
+                        <div class="step-bubble">{{ '✓' if step > 3 else '3' }}</div>
+                        <span class="step-title">Drying</span>
+                    </div>
+
+                    <div class="step-node {{ 'completed' if step > 4 else ('active' if step == 4 else '') }}">
+                        <div class="step-bubble">{{ '✓' if step > 4 else '4' }}</div>
+                        <span class="step-title">Folded</span>
+                    </div>
+
+                    <div class="step-node {{ 'completed' if step > 5 else ('active' if step == 5 else '') }}">
+                        <div class="step-bubble">{{ '✓' if step > 5 else '5' }}</div>
+                        <span class="step-title">Transit</span>
+                    </div>
+
+                    <div class="step-node {{ 'completed' if step >= 6 else '' }}">
+                        <div class="step-bubble">{{ '✓' if step >= 6 else '6' }}</div>
+                        <span class="step-title">Delivered</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATUS SPOTLIGHT BANNER -->
+            <div class="status-spotlight-card">
+                <div class="spotlight-info">
+                    <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:#38bdf8; font-weight:700; margin-bottom:2px;">Current Status</div>
+                    <h3>{{ result.step_name }}</h3>
+                    <p>{{ result.step_desc }}</p>
+                </div>
+                <span class="spotlight-badge">{{ result.step_name }}</span>
+            </div>
+
+            <!-- SUMMARY TILES -->
+            <div class="details-summary-grid">
+                <!-- Laundry Load Details -->
+                <div class="summary-tile">
+                    <div class="summary-tile-label">Laundry Intake &amp; Weight</div>
+                    <div class="summary-tile-val">
+                        {% if result.order %}
+                            {{ result.order.laundry_weight }} kg &bull; {{ result.order.service_type }}
+                        {% else %}
+                            Pending Scale Weighing
+                        {% endif %}
+                    </div>
+                    <div class="summary-tile-sub">
+                        {% if result.order %}
+                            Standard Maramag Per-Kilo Tariff
+                        {% else %}
+                            {{ result.pickup.notes if result.pickup else 'Scheduled for weighing at shop' }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Billing & Payment Details -->
+                <div class="summary-tile">
+                    <div class="summary-tile-label">Billing &amp; Settlement</div>
+                    <div class="summary-tile-val" style="color: {{ '#059669' if result.is_fully_paid else '#2563eb' }};">
+                        {% if result.order %}
+                            ₱{{ "{:,.2f}".format(result.total_price) }}
+                        {% else %}
+                            ₱ To be calculated
+                        {% endif %}
+                    </div>
+                    <div class="summary-tile-sub">
+                        {% if result.is_fully_paid %}
+                            <span style="color:#059669; font-weight:700;">🟢 Fully Paid (Receipt Issued)</span>
+                        {% elif result.order %}
+                            <span style="color:#f59e0b; font-weight:700;">🟠 Prepare ₱{{ "{:,.2f}".format(result.balance_due) }} COD for Rider</span>
+                        {% else %}
+                            Cash on Delivery / GCash upon drop
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOGISTICS & DESTINATION DETAILS -->
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:20px; font-size:13.5px;">
+                <div style="font-weight:700; color:#0f172a; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+                    <span>📍 Destination / Pickup Address:</span>
+                </div>
+                <div style="color:#475569;">
+                    {% if result.delivery and result.delivery.delivery_address %}
+                        {{ result.delivery.delivery_address }}
+                    {% elif result.pickup and result.pickup.pickup_address %}
+                        {{ result.pickup.pickup_address }}
+                    {% elif result.customer and result.customer.address %}
+                        {{ result.customer.address }}
+                    {% else %}
+                        Poblacion, Maramag, Bukidnon
+                    {% endif %}
+                </div>
+                {% if result.delivery and result.delivery.assigned_rider %}
+                <div style="margin-top:8px; font-size:12.5px; color:#2563eb; font-weight:700;">
+                    🚚 Assigned Courier: {{ result.delivery.assigned_rider }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- ACTION BUTTONS (PAY VIA GCASH & WHATSAPP) -->
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="button" class="btn-track-success" style="background:#2563eb; cursor:pointer;" onclick="openGcashModal()">
+                    📲 Scan GCash / Maya QR
+                </button>
+                <a href="https://wa.me/639171234567?text=Hi%20LaundryCare!%20Inquiring%20about%20order%20status%20for%20{{ query|urlencode }}" target="_blank" class="btn-track-success" style="background:#059669;">
+                    💬 Chat with Shop Support
+                </a>
+                <a href="tel:09171234567" class="btn-track-success" style="background:#475569;">
+                    📞 Call Branch
+                </a>
+            </div>
+
+        </div>
+        {% else %}
+        <!-- INITIAL LANDING DEMO INFO -->
+        <div class="portal-card">
+            <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin-bottom:8px;">How Live Tracking Works</h3>
+            <ul style="font-size:13.5px; color:#475569; padding-left:20px; display:flex; flex-direction:column; gap:8px;">
+                <li><strong>1. Real-time updates:</strong> As our wash attendants weigh, wash, dry, and fold your clothes, your tracking page updates automatically.</li>
+                <li><strong>2. Courier dispatch:</strong> When your laundry goes out for delivery in Maramag, you can see your assigned rider and time window.</li>
+                <li><strong>3. Cashless payment:</strong> You can pay COD in cash or scan our GCash/Maya QR code before the rider arrives.</li>
+            </ul>
+        </div>
+        {% endif %}
+
+    </main>
+
+    <!-- GCASH / MAYA MODAL -->
+    <div class="gcash-modal-backdrop" id="gcashModal" onclick="closeGcashModal()">
+        <div class="gcash-modal-card" onclick="event.stopPropagation()">
+            <h3 style="font-size:18px; font-weight:800; color:#0f172a;">LaundryCare Cashless QR</h3>
+            <p style="font-size:12.5px; color:#64748b; margin-top:2px;">Scan using GCash, Maya, or any InstaPay banking app</p>
+            
+            <div class="gcash-qr-box">
+                <!-- SVG SIMULATED QR CODE -->
+                <svg viewBox="0 0 160 160" width="160" height="160">
+                    <rect width="160" height="160" fill="#ffffff"/>
+                    <!-- Position Patterns -->
+                    <rect x="10" y="10" width="40" height="40" fill="#0f172a"/>
+                    <rect x="18" y="18" width="24" height="24" fill="#ffffff"/>
+                    <rect x="24" y="24" width="12" height="12" fill="#0f172a"/>
+                    
+                    <rect x="110" y="10" width="40" height="40" fill="#0f172a"/>
+                    <rect x="118" y="18" width="24" height="24" fill="#ffffff"/>
+                    <rect x="124" y="24" width="12" height="12" fill="#0f172a"/>
+
+                    <rect x="10" y="110" width="40" height="40" fill="#0f172a"/>
+                    <rect x="18" y="118" width="24" height="24" fill="#ffffff"/>
+                    <rect x="24" y="124" width="12" height="12" fill="#0f172a"/>
+
+                    <!-- Data dots simulation -->
+                    <rect x="60" y="20" width="10" height="10" fill="#0f172a"/>
+                    <rect x="80" y="20" width="10" height="10" fill="#0f172a"/>
+                    <rect x="60" y="40" width="20" height="10" fill="#0f172a"/>
+                    <rect x="20" y="60" width="10" height="20" fill="#0f172a"/>
+                    <rect x="40" y="70" width="20" height="10" fill="#0f172a"/>
+                    <rect x="70" y="60" width="20" height="20" fill="#2563eb"/>
+                    <rect x="100" y="60" width="10" height="20" fill="#0f172a"/>
+                    <rect x="120" y="70" width="20" height="10" fill="#0f172a"/>
+                    <rect x="60" y="90" width="20" height="10" fill="#0f172a"/>
+                    <rect x="90" y="90" width="20" height="10" fill="#0f172a"/>
+                    <rect x="60" y="110" width="10" height="30" fill="#0f172a"/>
+                    <rect x="80" y="120" width="30" height="10" fill="#0f172a"/>
+                    <rect x="120" y="110" width="20" height="20" fill="#0f172a"/>
+                </svg>
+            </div>
+
+            <div style="font-size:14px; font-weight:800; color:#0f172a; margin-bottom:2px;">Account: LaundryCare Maramag</div>
+            <div style="font-size:13px; color:#2563eb; font-weight:700;">GCash / Maya: 0917-123-4567</div>
+            <p style="font-size:11.5px; color:#64748b; margin-top:6px;">Please include your Order ID in the payment message/reference.</p>
+
+            <button type="button" class="btn-track-search" style="margin-top:16px; width:100%;" onclick="closeGcashModal()">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="portal-footer">
+        <p><strong>LaundryCare Maramag</strong> &bull; Sayre Highway, Poblacion, Maramag, Bukidnon</p>
+        <p style="margin-top:4px;">Hotline: (088) 356-1234 &bull; Mobile: 0917-123-4567</p>
+    </footer>
+
+    <script>
+        function openGcashModal() {
+            document.getElementById('gcashModal').style.display = 'flex';
+        }
+        function closeGcashModal() {
+            document.getElementById('gcashModal').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>

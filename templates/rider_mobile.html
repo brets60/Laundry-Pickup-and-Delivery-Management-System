@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaundryCare Rider | Field Logistics &amp; GPS Navigation</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/rider_mobile.css') }}?v=4.0">
+</head>
+<body>
+
+<div class="rider-portal-container">
+
+    <!-- =========================================================
+         TOP NAVIGATION HEADER
+         ========================================================= -->
+    <header class="portal-header">
+        <div class="portal-header-row">
+            <a href="/rider-app" class="portal-brand">
+                <div class="portal-logo-box">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                        <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="portal-title-text">LaundryCare Rider</div>
+                    <div class="portal-subtitle-text">Logistics Dispatch &amp; GPS Portal</div>
+                </div>
+            </a>
+
+            <div class="portal-header-actions">
+                <a href="/delivery-records-page" class="btn-portal-outline" title="Switch to Full Operations Console">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                    <span>Desktop View</span>
+                </a>
+                <a href="/logout" class="btn-portal-outline btn-portal-logout" onclick="return confirm('Sign out and conclude current shift?');" title="Sign Out">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    <span>Sign Out</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Courier Shift Profile Banner -->
+    <div class="rider-shift-banner">
+        <div class="rider-info-group">
+            <div class="rider-badge-avatar">
+                {{ (session.get('username') or 'R')[0]|upper }}
+            </div>
+            <div>
+                <div class="rider-name-val">{{ session.get('full_name') or session.get('username', 'Courier Juan') }}</div>
+                <div class="rider-sub-val">Assigned Courier &bull; Van / Motorcycle Unit 2</div>
+            </div>
+        </div>
+        <div class="shift-status-badge">
+            <span class="status-dot-pulse"></span>
+            <span>Active on Duty</span>
+        </div>
+    </div>
+
+    <!-- Operational KPI Metrics Grid -->
+    <section class="portal-kpi-grid">
+        <div class="portal-kpi-card">
+            <div class="kpi-title-label">Scheduled Stops</div>
+            <div class="kpi-main-number">{{ deliveries|length }}</div>
+        </div>
+        <div class="portal-kpi-card">
+            <div class="kpi-title-label">Completed Drops</div>
+            <div class="kpi-main-number" style="color:#059669;">{{ stats.delivered if stats else 2 }}</div>
+        </div>
+        <div class="portal-kpi-card">
+            <div class="kpi-title-label">Pickups Pending</div>
+            <div class="kpi-main-number" style="color:#f59e0b;">{{ pickups|length }}</div>
+        </div>
+        <div class="portal-kpi-card">
+            <div class="kpi-title-label">COD to Collect</div>
+            <div class="kpi-main-number" style="color:#2563eb;">₱1,275.00</div>
+        </div>
+    </section>
+
+    <!-- Main Content Body -->
+    <main class="portal-body">
+
+        <!-- Navigation Tabs: Deliveries vs Pickups -->
+        <div class="tab-toolbar">
+            <div class="tab-button-group">
+                <button type="button" class="tab-btn-pill active" id="tabDelBtn" onclick="switchPortalTab('deliveries')">
+                    Deliveries ({{ deliveries|length }})
+                </button>
+                <button type="button" class="tab-btn-pill" id="tabPckBtn" onclick="switchPortalTab('pickups')">
+                    Scheduled Pickups ({{ pickups|length }})
+                </button>
+            </div>
+            <div style="font-size:12.5px; color:#64748b; padding-right:8px;">
+                Tap <strong>Google Maps</strong> or <strong>Waze</strong> for live GPS turn directions
+            </div>
+        </div>
+
+        <!-- =====================================================
+             TAB 1: DELIVERIES DECK
+             ===================================================== -->
+        <div class="stops-deck" id="deckDeliveries">
+            {% if deliveries %}
+                {% for d in deliveries %}
+                {% set st = (d.status or 'Scheduled')|lower %}
+                <article class="stop-card-pro" id="deliveryCard-{{ d.id }}">
+                    <div class="stop-header-bar">
+                        <div class="stop-tags-left">
+                            <span class="stop-seq-tag">STOP #{{ loop.index }}</span>
+                            <span class="stop-order-tag">#DEL-{{ "%04d"|format(d.id) }}</span>
+                            <span style="font-size:12px; color:#64748b;">(Order #ORD-{{ "%04d"|format(d.order_id or d.id) }})</span>
+                        </div>
+                        {% if st == 'delivered' %}
+                            <span class="status-badge-pro delivered">Delivered</span>
+                        {% elif st == 'out for delivery' %}
+                            <span class="status-badge-pro transit">Out for Delivery</span>
+                        {% else %}
+                            <span class="status-badge-pro scheduled">Scheduled</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="stop-content-grid">
+                        <div>
+                            <div class="cust-name-line">{{ d.customer }}</div>
+                            <div class="cust-spec-chips">
+                                <span class="spec-badge">🧺 {{ d.laundry_weight or '8.5' }} kg</span>
+                                <span class="spec-badge">{{ d.service_type or 'Wash & Fold' }}</span>
+                                <span class="spec-badge" style="color:#059669; font-weight:700;">₱{{ "{:,.2f}".format(d.total_price if d.total_price else 425.0) }}</span>
+                            </div>
+                        </div>
+
+                        <div class="dest-address-card">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <div>
+                                <strong>Destination:</strong> {{ d.delivery_address or 'Poblacion, Maramag, Bukidnon' }}
+                                {% if d.delivery_notes %}
+                                <div style="font-size:11.5px; color:#64748b; margin-top:2px;"><em>Note:</em> {{ d.delivery_notes }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1-TAP GPS & ACTIONS BAR -->
+                    <div class="stop-actions-bar">
+                        <!-- GPS Buttons -->
+                        <div class="gps-button-group">
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ d.delivery_address|urlencode if d.delivery_address else 'Poblacion+Maramag+Bukidnon' }}" 
+                               target="_blank" 
+                               class="btn-gps-action btn-gmaps"
+                               title="Open in Google Maps">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                                <span>Google Maps</span>
+                            </a>
+                            <a href="https://waze.com/ul?q={{ d.delivery_address|urlencode if d.delivery_address else 'Poblacion+Maramag+Bukidnon' }}" 
+                               target="_blank" 
+                               class="btn-gps-action btn-waze"
+                               title="Open in Waze">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                                <span>Waze</span>
+                            </a>
+                        </div>
+
+                        <!-- Direct Call & WhatsApp -->
+                        <div class="contact-button-group">
+                            <a href="tel:{{ d.contact_number or '09123456789' }}" class="btn-contact-pill call">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                <span>Call</span>
+                            </a>
+                            <a href="https://wa.me/{{ (d.contact_number or '09123456789')|replace(' ', '')|replace('-', '') }}" target="_blank" class="btn-contact-pill wa">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                                <span>WhatsApp</span>
+                            </a>
+                        </div>
+
+                        <!-- Workflow Progression Button -->
+                        <div>
+                            {% if st == 'delivered' %}
+                                <div class="stamp-completed">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <span>Delivered &bull; Handover Complete</span>
+                                </div>
+                            {% elif st == 'out for delivery' %}
+                                <button type="button" class="workflow-status-btn btn-complete-handover" onclick="openProSignatureModal({{ d.id }}, '{{ d.customer }}', '#ORD-{{ "%04d"|format(d.order_id or d.id) }}', '₱{{ "{:,.2f}".format(d.total_price if d.total_price else 425.0) }}')">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                    <span>Complete Handover &amp; Sign</span>
+                                </button>
+                            {% else %}
+                                <button type="button" class="workflow-status-btn btn-start-trip" onclick="updateProDeliveryStatus({{ d.id }}, 'Out for Delivery')">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                                    <span>Start Delivery (En Route)</span>
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            {% else %}
+                <div style="text-align:center; padding:48px 20px; background:#ffffff; border-radius:14px; border:1px solid #e2e8f0; color:#64748b;">
+                    <p>No active delivery assignments found for your shift.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- =====================================================
+             TAB 2: PICKUPS DECK
+             ===================================================== -->
+        <div class="stops-deck" id="deckPickups" style="display:none;">
+            {% if pickups %}
+                {% for p in pickups %}
+                <article class="stop-card-pro">
+                    <div class="stop-header-bar">
+                        <div class="stop-tags-left">
+                            <span class="stop-seq-tag" style="background:#059669;">COLLECTION</span>
+                            <span class="stop-order-tag">#PCK-{{ "%04d"|format(p.id) }}</span>
+                        </div>
+                        <span class="status-badge-pro transit">{{ p.status or 'Scheduled' }}</span>
+                    </div>
+
+                    <div class="stop-content-grid">
+                        <div>
+                            <div class="cust-name-line">{{ p.customer }}</div>
+                            <div class="cust-spec-chips">
+                                <span class="spec-badge">Time Window: <strong>{{ p.pickup_time or 'Morning Run' }}</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="dest-address-card">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <div>
+                                <strong>Pickup Location:</strong> {{ p.pickup_address or 'Poblacion, Maramag, Bukidnon' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stop-actions-bar">
+                        <div class="gps-button-group">
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ p.pickup_address|urlencode if p.pickup_address else 'Poblacion+Maramag+Bukidnon' }}" target="_blank" class="btn-gps-action btn-gmaps">
+                                <span>Google Maps</span>
+                            </a>
+                            <a href="https://waze.com/ul?q={{ p.pickup_address|urlencode if p.pickup_address else 'Poblacion+Maramag+Bukidnon' }}" target="_blank" class="btn-gps-action btn-waze">
+                                <span>Waze</span>
+                            </a>
+                        </div>
+                        <div class="contact-button-group">
+                            <a href="tel:{{ p.contact_number or '' }}" class="btn-contact-pill call">
+                                <span>Call Client</span>
+                            </a>
+                        </div>
+                        <div>
+                            <button type="button" class="workflow-status-btn btn-complete-handover" onclick="confirmProPickup({{ p.id }})">
+                                🧺 Confirm Bag Collection
+                            </button>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            {% else %}
+                <div style="text-align:center; padding:48px 20px; background:#ffffff; border-radius:14px; border:1px solid #e2e8f0; color:#64748b;">
+                    <p>No pickup requests currently scheduled.</p>
+                </div>
+            {% endif %}
+        </div>
+
+    </main>
+
+</div>
+
+<!-- =============================================================
+     HANDOVER SIGNATURE MODAL DIALOG
+     ============================================================= -->
+<div class="modal-backdrop-pro" id="proSigModal" onclick="closeProSignatureModal()">
+    <div class="modal-card-pro" onclick="event.stopPropagation()">
+        <div class="modal-header-pro">
+            <h3>Handover Proof &amp; Customer Signature</h3>
+            <button type="button" style="background:none; border:none; font-size:20px; cursor:pointer; color:#64748b;" onclick="closeProSignatureModal()">&times;</button>
+        </div>
+        <div class="modal-body-pro">
+            <div style="font-size:14px; font-weight:700; color:#0f172a;">
+                Client: <span id="modalCustomerName">Customer</span> &bull; <span style="color:#2563eb;" id="modalOrderRef">#ORD-1024</span>
+            </div>
+
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px; font-size:12.5px; display:flex; flex-direction:column; gap:6px;">
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                    <input type="checkbox" checked> <span>Laundry bag seal intact and verified</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                    <input type="checkbox" checked> <span>Garments counted by recipient</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; color:#059669; font-weight:700; cursor:pointer;">
+                    <input type="checkbox" checked> <span>Payment Verified: <span id="modalOrderPrice">₱425.00</span></span>
+                </label>
+            </div>
+
+            <div>
+                <div style="font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">Customer Digital Signature:</div>
+                <div class="sig-pad-wrapper">
+                    <canvas id="proSignatureCanvas" width="430" height="120"></canvas>
+                    <button type="button" class="btn-clear-sig-pro" onclick="clearProSig()">Clear</button>
+                </div>
+                <div style="font-size:11px; color:#94a3b8; margin-top:2px;">Sign on screen to confirm receipt</div>
+            </div>
+        </div>
+        <div class="modal-footer-pro">
+            <button type="button" class="btn-portal-outline" style="color:#475569; border-color:#cbd5e1; background:#ffffff;" onclick="closeProSignatureModal()">Cancel</button>
+            <button type="button" class="workflow-status-btn btn-complete-handover" onclick="submitProDeliveryHandover()">Confirm Handover</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchPortalTab(tab) {
+        const delBtn = document.getElementById('tabDelBtn');
+        const pckBtn = document.getElementById('tabPckBtn');
+        const delDeck = document.getElementById('deckDeliveries');
+        const pckDeck = document.getElementById('deckPickups');
+
+        if (tab === 'deliveries') {
+            delBtn.classList.add('active');
+            pckBtn.classList.remove('active');
+            delDeck.style.display = 'flex';
+            pckDeck.style.display = 'none';
+        } else {
+            pckBtn.classList.add('active');
+            delBtn.classList.remove('active');
+            pckDeck.style.display = 'flex';
+            delDeck.style.display = 'none';
+        }
+    }
+
+    function updateProDeliveryStatus(id, newStatus) {
+        if (!confirm('Update delivery #' + id + ' to ' + newStatus + '?')) return;
+
+        fetch('/rider-app/status/' + id, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+        })
+        .then(res => res.json())
+        .then(() => window.location.reload())
+        .catch(() => window.location.reload());
+    }
+
+    function confirmProPickup(id) {
+        if (!confirm('Confirm intake of laundry bag for Pickup #' + id + '?')) return;
+
+        fetch('/rider-app/pickup-status/' + id, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'Picked Up' })
+        })
+        .then(res => res.json())
+        .then(() => window.location.reload())
+        .catch(() => window.location.reload());
+    }
+
+    // Modal & Canvas Logic
+    let activeDelId = null;
+    const modal = document.getElementById('proSigModal');
+    const canvas = document.getElementById('proSignatureCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+
+    function getCoords(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: (clientX - rect.left) * (canvas.width / rect.width),
+            y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+        isDrawing = true;
+        const pos = getCoords(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+    });
+    canvas.addEventListener('mousemove', (e) => {
+        if (!isDrawing) return;
+        const pos = getCoords(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+    });
+    window.addEventListener('mouseup', () => { isDrawing = false; });
+
+    canvas.addEventListener('touchstart', (e) => {
+        isDrawing = true;
+        const pos = getCoords(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        e.preventDefault();
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', (e) => {
+        if (!isDrawing) return;
+        const pos = getCoords(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        e.preventDefault();
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', () => { isDrawing = false; });
+
+    function clearProSig() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function openProSignatureModal(delId, cust, refCode, price) {
+        activeDelId = delId;
+        document.getElementById('modalCustomerName').textContent = cust;
+        document.getElementById('modalOrderRef').textContent = refCode;
+        document.getElementById('modalOrderPrice').textContent = price;
+        clearProSig();
+        modal.classList.add('active');
+    }
+
+    function closeProSignatureModal() {
+        modal.classList.remove('active');
+        activeDelId = null;
+    }
+
+    function submitProDeliveryHandover() {
+        if (!activeDelId) return;
+
+        fetch('/rider-app/status/' + activeDelId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'Delivered' })
+        })
+        .then(res => res.json())
+        .then(() => {
+            closeProSignatureModal();
+            window.location.reload();
+        })
+        .catch(() => {
+            closeProSignatureModal();
+            window.location.reload();
+        });
+    }
+</script>
+
+</body>
+</html>

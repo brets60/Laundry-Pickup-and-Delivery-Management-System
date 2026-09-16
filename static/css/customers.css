@@ -1,370 +1,696 @@
-/* =========================================================
-   LAUNDRYCARE — CUSTOMER MANAGEMENT
-   TEXT VISIBILITY & DARK THEME
-   ========================================================= */
+/* ==========================================================================
+   LAUNDRYCARE — MODERN CUSTOMERS STYLING
+   ========================================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 body {
-    background: red !important;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #f3f6f9;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
 }
 
-/* Main page */
-body {
-    color: #eaf2ff;
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f3f6f9;
 }
 
-/* =========================================================
-   TOP PAGE HEADER
-   ========================================================= */
+.dashboard-sidebar {
+    width: 220px;
+    min-width: 220px;
+    background-color: #0a1628;
+    color: #889bb5;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 24px 14px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+}
 
-.content-heading h1,
-.content-heading .section-title {
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 8px 30px;
+    color: #ffffff;
+    font-size: 19px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.brand-icon-box {
+    width: 32px;
+    height: 32px;
+    background: #1877f2;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    flex-shrink: 0;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 8px;
+    color: #889bb5;
+    font-size: 14.5px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.sidebar-nav a:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-nav a.active {
+    background: #1877f2;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.sidebar-nav a svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.dashboard-main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 28px 36px 40px;
+    background-color: #f3f6f9;
+    min-height: 100vh;
+    min-width: 0;
+}
+
+.customers-top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.header-title-group h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+}
+
+.header-title-group p {
+    font-size: 14px;
+    color: #64748b;
+}
+
+.btn-add-customer {
+    background: #1877f2;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 6px rgba(24, 119, 242, 0.25);
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn-add-customer:hover {
+    background: #1565d8;
+    transform: translateY(-1px);
+}
+
+.filter-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.search-input-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 16px;
+    width: 330px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.search-input-box svg {
+    color: #94a3b8;
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+}
+
+.search-input-box input {
+    border: none;
+    outline: none;
+    font-size: 14px;
+    width: 100%;
+    color: #0f172a;
+    background: transparent;
+}
+
+.search-input-box input::placeholder {
+    color: #94a3b8;
+}
+
+.status-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-pill {
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.filter-pill:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.filter-pill.active {
+    background: #e0f2fe;
+    color: #0284c7;
+    border-color: #38bdf8;
+    font-weight: 600;
+}
+
+.customers-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.stat-kpi-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 22px 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    border: 1px solid #edf2f7;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.kpi-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.kpi-icon-box svg {
+    width: 22px;
+    height: 22px;
+}
+
+.kpi-blue { background: #eff6ff; color: #2563eb; }
+.kpi-amber { background: #fffbeb; color: #d97706; }
+.kpi-purple { background: #f5f3ff; color: #7c3aed; }
+.kpi-green { background: #f0fdf4; color: #16a34a; }
+
+.kpi-text-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.kpi-label {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.kpi-number {
+    font-size: 30px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.customers-table-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+    padding: 24px;
+    margin-bottom: 40px;
+}
+
+.table-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.table-heading {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.table-record-count {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.customers-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+}
+
+.customers-table th {
+    font-size: 12.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    padding: 12px 14px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.customers-table th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.customers-table th:last-child {
+    border-top-right-radius: 8px;
+}
+
+.customers-table td {
+    padding: 14px 14px;
+    font-size: 14px;
+    color: #1e293b;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.customers-table tbody tr:hover {
+    background-color: #fcfdfe;
+}
+
+.customers-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.cell-cust-id {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 13.5px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.customer-name {
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 2px;
+}
+
+.customer-phone {
+    font-size: 12.5px;
+    color: #64748b;
+}
+
+.address-text {
+    font-size: 13px;
+    color: #334155;
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.badge-membership {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.badge-regular { background: #f1f5f9; color: #475569; }
+.badge-vip { background: #fef3c7; color: #b45309; }
+.badge-gold { background: #fef9c3; color: #854d0e; }
+
+.table-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-action-sm {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+}
+
+.btn-action-sm:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a;
+}
+
+/* Modals */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay.open {
+    display: flex;
+}
+
+.modal-card {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 540px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    animation: modalPop 0.2s ease-out;
+}
+
+@keyframes modalPop {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+}
+
+.modal-close-btn:hover {
+    color: #0f172a;
+    background: #f1f5f9;
+}
+
+.modal-body {
+    padding: 24px;
+    max-height: 75vh;
+    overflow-y: auto;
+}
+
+.modal-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #0f172a;
+    outline: none;
+    background: #ffffff;
+    transition: border-color 0.15s ease;
+}
+
+.form-control:focus {
+    border-color: #1877f2;
+    box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.15);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 75px;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #f1f5f9;
+    background: #f8fafc;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn-secondary {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background: #f1f5f9;
+}
+
+.btn-primary {
+    background: #1877f2;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(24, 119, 242, 0.25);
+}
+
+.btn-primary:hover {
+    background: #1565d8;
+}
+
+
+/* View Action Button */
+.btn-action-view {
+    background: #eff6ff !important;
+    border-color: #bfdbfe !important;
+    color: #2563eb !important;
+    font-weight: 600 !important;
+}
+.btn-action-view:hover {
+    background: #2563eb !important;
+    border-color: #2563eb !important;
     color: #ffffff !important;
-    font-weight: 800 !important;
 }
 
-.content-heading p,
-.content-heading .section-description {
-    color: #a9bdd4 !important;
+
+/* ==========================================================================
+   PHASE 4 CRM REDESIGN: VIP SHIMMER BADGES, SPARKLINES & WHATSAPP ACTIONS
+   ========================================================================== */
+
+/* Shimmering VIP Loyalty Badges */
+.badge-membership {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Breadcrumb */
-.breadcrumb {
-    color: #8fa8c4 !important;
+.badge-membership.badge-vip {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.35);
 }
 
-.breadcrumb a {
-    color: #6f8eae !important;
+.badge-membership.badge-gold {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    border: 1px solid #fcd34d;
+    box-shadow: 0 1px 4px rgba(245, 158, 11, 0.15);
 }
 
-.breadcrumb span {
-    color: #a9bdd4 !important;
+.badge-membership.badge-regular {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
 }
 
-/* =========================================================
-   CUSTOMER MANAGEMENT HEADER
-   ========================================================= */
-
-.section-label {
-    color: #19d3d8 !important;
-    font-weight: 800 !important;
-    letter-spacing: 2px;
+/* Sparkline Week Activity */
+.activity-sparkline {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #f8fafc;
+    padding: 3px 6px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
 }
 
-.customer-management h2,
-.customer-management-card h2,
-.management-header h2 {
-    color: #ffffff !important;
-    font-weight: 800 !important;
+.day-dot {
+    width: 17px;
+    height: 17px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    background: #f1f5f9;
+    transition: all 0.15s ease;
 }
 
-/* Registered Customers */
-.customer-management p,
-.customer-management-card p,
-.management-header p {
-    color: #a9bdd4 !important;
-}
-
-/* =========================================================
-   STATISTICS CARDS
-   ========================================================= */
-
-.stat-card {
-    color: #eaf2ff !important;
-}
-
-.stat-label,
-.stat-title {
-    color: #dce8f5 !important;
-    font-weight: 700 !important;
-}
-
-.stat-value {
-    color: #ffffff !important;
-    font-weight: 800 !important;
-}
-
-.stat-description {
-    color: #91a9c2 !important;
-}
-
-/* =========================================================
-   ADD CUSTOMER FORM
-   ========================================================= */
-
-.form-title {
-    color: #ffffff !important;
-    font-weight: 800 !important;
-}
-
-.form-description {
-    color: #9fb4cf !important;
-}
-
-.field-label,
-.form-card label,
-form label {
-    color: #e4edf8 !important;
-    font-weight: 700 !important;
-}
-
-/* Input */
-.form-input,
-.form-card input,
-form input {
-    color: #edf5ff !important;
-}
-
-/* Placeholder */
-.form-input::placeholder,
-.form-card input::placeholder,
-form input::placeholder {
-    color: #7892ad !important;
-    opacity: 1 !important;
-}
-
-/* =========================================================
-   CUSTOMER RECORDS
-   ========================================================= */
-
-.records-title {
-    color: #ffffff !important;
-    font-weight: 800 !important;
-}
-
-.records-description {
-    color: #9fb4cf !important;
-}
-
-/* Search */
-.search-input {
-    color: #edf5ff !important;
-}
-
-.search-input::placeholder {
-    color: #7892ad !important;
-    opacity: 1 !important;
-}
-
-/* =========================================================
-   CUSTOMER TABLE
-   ========================================================= */
-
-#customerTable {
-    color: #dce8f5 !important;
-}
-
-/* Table headings */
-#customerTable thead th {
-    color: #9bb2ca !important;
-    font-weight: 800 !important;
-}
-
-/* Table content */
-#customerTable tbody td {
-    color: #dce8f5 !important;
-}
-
-/* Customer name */
-#customerTable .customer-name {
-    color: #ffffff !important;
-    font-weight: 700 !important;
-}
-
-/* Customer ID */
-#customerTable .customer-id {
-    color: #8faaca !important;
-}
-
-/* Contact */
-#customerTable .contact-info,
-#customerTable .contact-info span {
-    color: #b4c7db !important;
-}
-
-/* =========================================================
-   BUTTONS
-   ========================================================= */
-
-.primary-button,
-.action-button,
-.edit-button {
-    color: #ffffff !important;
-    font-weight: 700 !important;
-}
-
-/* =========================================================
-   GENERAL TEXT PROTECTION
-   ========================================================= */
-
-.main-content {
-    color: #dce8f5;
-}
-
-.main-content h1,
-.main-content h2,
-.main-content h3,
-.main-content h4 {
-    color: #ffffff !important;
-}
-
-.main-content p {
-    color: #9fb4cf;
-}
-
-.main-content strong {
+.day-dot.active {
+    background: #2563eb;
     color: #ffffff;
 }
 
-
-/* =========================================================
-   CUSTOMER PAGE — HEADING VISIBILITY
-   ========================================================= */
-
-.content-heading .section-label {
-    color: #22d3ee !important;
-    opacity: 1 !important;
-    font-size: 11px !important;
-    font-weight: 800 !important;
-    letter-spacing: 1.5px !important;
+.day-dot.high {
+    background: #10b981;
+    color: #ffffff;
 }
 
-.content-heading .section-title {
-    color: #ffffff !important;
-    opacity: 1 !important;
-    font-size: 25px !important;
-    font-weight: 800 !important;
-    line-height: 1.2 !important;
+/* Quick Action Icons */
+.btn-action-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    cursor: pointer;
 }
 
-.content-heading .section-description {
-    color: #a9bdd4 !important;
-    opacity: 1 !important;
-    font-size: 12px !important;
-    font-weight: 500 !important;
-    line-height: 1.5 !important;
+.btn-wa {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
 }
 
-/* =========================================================
-   CUSTOMER MANAGEMENT — EXACT PAGE HEADING
-   ========================================================= */
-
-.content-heading {
-    position: relative;
-
-    background: linear-gradient(
-        145deg,
-        rgba(8, 27, 50, 0.98),
-        rgba(4, 17, 34, 0.98)
-    ) !important;
-
-    border: 1px solid rgba(72, 128, 184, 0.22) !important;
-
-    border-radius: 16px !important;
-
-    padding: 24px 26px !important;
-
-    margin-bottom: 16px !important;
-
-    box-shadow:
-        0 15px 30px rgba(0, 0, 0, 0.22),
-        inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
+.btn-wa:hover {
+    background: #15803d;
+    color: #ffffff;
+    transform: scale(1.08);
 }
 
-
-/* CUSTOMER MANAGEMENT */
-
-.content-heading .section-label {
-    display: block !important;
-
-    margin: 0 0 7px 0 !important;
-
-    color: #22d3ee !important;
-
-    font-size: 11px !important;
-    font-weight: 800 !important;
-
-    line-height: 1.3 !important;
-
-    letter-spacing: 1.5px !important;
-
-    text-transform: uppercase !important;
-
-    opacity: 1 !important;
+.btn-call {
+    background: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
 }
 
-
-/* REGISTERED CUSTOMERS */
-
-.content-heading .section-title {
-    display: block !important;
-
-    margin: 0 !important;
-
-    color: #ffffff !important;
-
-    font-size: 27px !important;
-    font-weight: 800 !important;
-
-    line-height: 1.25 !important;
-
-    letter-spacing: -0.3px !important;
-
-    opacity: 1 !important;
-}
-
-
-/* DESCRIPTION */
-
-.content-heading .section-description {
-    display: block !important;
-
-    margin: 7px 0 0 0 !important;
-
-    color: #a9bdd4 !important;
-
-    font-size: 12px !important;
-    font-weight: 500 !important;
-
-    line-height: 1.5 !important;
-
-    opacity: 1 !important;
-}
-
-/* =========================================================
-   CUSTOMER PAGE — TOP HEADER
-   ========================================================= */
-
-.top-header {
-    background: transparent !important;
-    color: #ffffff !important;
-}
-
-.page-title {
-    color: #ffffff !important;
-    font-size: 34px !important;
-    font-weight: 800 !important;
-    line-height: 1.2 !important;
-    opacity: 1 !important;
-}
-
-.page-subtitle {
-    color: #9fb3c8 !important;
-    font-size: 15px !important;
-    font-weight: 500 !important;
-    line-height: 1.5 !important;
-    opacity: 1 !important;
-}
-
-/* Breadcrumb */
-
-.breadcrumb {
-    color: #8fb2d3 !important;
-}
-
-.breadcrumb a {
-    color: #66a8df !important;
-}
-
-.breadcrumb span {
-    color: #ffffff !important;
+.btn-call:hover {
+    background: #0369a1;
+    color: #ffffff;
+    transform: scale(1.08);
 }

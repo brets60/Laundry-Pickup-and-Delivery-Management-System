@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Laundry Pickup | LaundryCare Maramag, Bukidnon</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/customer_portal.css') }}?v=1.0">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="portal-navbar">
+        <a href="/book-pickup" class="portal-brand">
+            <div class="portal-brand-icon">🧺</div>
+            <div>
+                <div class="portal-brand-text">LaundryCare</div>
+                <div class="portal-brand-sub">Maramag, Bukidnon</div>
+            </div>
+        </a>
+        <div class="portal-nav-links">
+            <a href="/track" class="nav-link-btn ghost">Track Order</a>
+            <a href="/login" class="nav-link-btn primary">Staff Login</a>
+        </div>
+    </header>
+
+    <!-- HERO HEADER -->
+    <section class="portal-hero">
+        <div class="portal-hero-container">
+            <div class="maramag-badge">📍 Serving Maramag, Bukidnon &amp; CMU Musuan</div>
+            <h1>Request Doorstep Laundry Pickup</h1>
+            <p>Fresh, clean clothes without leaving your house or dormitory. Picked up, professionally washed, and delivered right to your door.</p>
+        </div>
+    </section>
+
+    <!-- MAIN FORM CONTAINER -->
+    <main class="portal-container">
+
+        {% if success and booking %}
+        <!-- SUCCESS CONFIRMATION STATE -->
+        <div class="success-banner">
+            <div class="success-badge-icon">✓</div>
+            <h2>Pickup Request Booked!</h2>
+            <p>Thank you, <strong>{{ booking.customer }}</strong>. Our team has received your request and assigned our logistics circuit.</p>
+            
+            <div class="booking-ref-box">
+                BOOKING REF: #{{ booking.ref }}
+            </div>
+
+            <div style="background:#ffffff; border-radius:10px; border:1px solid #d1fae5; padding:14px; text-align:left; font-size:13px; margin-bottom:16px;">
+                <div style="margin-bottom:4px;"><strong>Pickup Date:</strong> {{ booking.pickup_date }} ({{ booking.pickup_time }})</div>
+                <div style="margin-bottom:4px;"><strong>Location:</strong> {{ booking.address }}</div>
+                <div style="margin-bottom:4px;"><strong>Service:</strong> {{ booking.service_type }} ({{ booking.estimated_load }})</div>
+                <div><strong>Payment:</strong> {{ booking.payment_method }}</div>
+            </div>
+
+            <div class="success-actions">
+                <a href="/track?ref={{ booking.ref }}" class="btn-track-success">
+                    🔍 Track Pickup Status
+                </a>
+                <a href="https://wa.me/639171234567?text=Hi%20LaundryCare!%20I%20just%20booked%20pickup%20%23{{ booking.ref }}%20at%20{{ booking.address|urlencode }}" target="_blank" class="btn-track-success" style="background:#2563eb;">
+                    💬 Notify via WhatsApp
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div style="background:#fee2e2; border:1px solid #f87171; color:#991b1b; padding:12px 16px; border-radius:10px; margin-bottom:20px; font-size:13.5px; font-weight:600;">
+            ⚠️ {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- BOOKING FORM -->
+        <div class="portal-card">
+            <div class="portal-card-header">
+                <h2 class="portal-card-title">Schedule Your Laundry Collection</h2>
+                <p class="portal-card-subtitle">Fill in your pickup location and laundry requirements below</p>
+            </div>
+
+            <form action="/book-pickup" method="POST">
+
+                <!-- SECTION 1: CONTACT INFO -->
+                <div style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:#2563eb; margin-bottom:12px;">
+                    1. Contact Information
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Full Name <span class="required">*</span></label>
+                        <input type="text" name="name" class="form-control" placeholder="e.g., Maria Santos" required value="{{ form_data.name if form_data else '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mobile Number <span class="required">*</span></label>
+                        <input type="tel" name="contact_number" class="form-control" placeholder="e.g., 0917-123-4567" required value="{{ form_data.contact_number if form_data else '' }}">
+                    </div>
+                </div>
+
+                <!-- SECTION 2: MARAMAG PICKUP ADDRESS -->
+                <div style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:#2563eb; margin:16px 0 12px;">
+                    2. Pickup Location (Maramag, Bukidnon)
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Barangay / Campus Area <span class="required">*</span></label>
+                    <select name="barangay" class="form-control" required>
+                        <option value="CMU Campus / Musuan (Dormitory/Apartment)">CMU Campus / Musuan (Dormitory / Boarding House)</option>
+                        <option value="Poblacion" selected>Poblacion (Sayre Highway / Market / Commercial)</option>
+                        <option value="Purok 3, Dologon">Dologon</option>
+                        <option value="Base Camp Junction">Base Camp</option>
+                        <option value="Camp 1, Sayre Highway">Camp 1</option>
+                        <option value="Kuya">Kuya</option>
+                        <option value="Anoling">Anoling</option>
+                        <option value="North Poblacion">North Poblacion</option>
+                        <option value="South Poblacion">South Poblacion</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">House # / Street / Dormitory Room / Landmark</label>
+                    <input type="text" name="address_details" class="form-control" placeholder="e.g., Sampaguita Dorm, Room 302, or Near Petron Sayre Hwy" value="{{ form_data.address_details if form_data else '' }}">
+                </div>
+
+                <!-- SECTION 3: SERVICE TYPE -->
+                <div style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:#2563eb; margin:16px 0 12px;">
+                    3. Laundry Service Type
+                </div>
+
+                <div class="radio-card-group" style="margin-bottom:16px;">
+                    <label class="radio-card">
+                        <input type="radio" name="service_type" value="Wash & Fold" checked>
+                        <span class="radio-card-name">🧺 Wash &amp; Fold</span>
+                        <span class="radio-card-desc">Everyday clothes, folded and packaged</span>
+                        <span class="radio-card-price">₱50.00 / kg</span>
+                    </label>
+
+                    <label class="radio-card">
+                        <input type="radio" name="service_type" value="Wash & Iron">
+                        <span class="radio-card-name">👔 Wash &amp; Iron</span>
+                        <span class="radio-card-desc">Uniforms, slacks, and collared shirts</span>
+                        <span class="radio-card-price">₱75.00 / kg</span>
+                    </label>
+
+                    <label class="radio-card">
+                        <input type="radio" name="service_type" value="Heavy Blankets & Comforters">
+                        <span class="radio-card-name">🛏️ Blankets &amp; Duvets</span>
+                        <span class="radio-card-desc">Heavy bedsheets, quilts, and towels</span>
+                        <span class="radio-card-price">₱90.00 / kg</span>
+                    </label>
+
+                    <label class="radio-card">
+                        <input type="radio" name="service_type" value="Dry Cleaning">
+                        <span class="radio-card-name">✨ Dry Cleaning</span>
+                        <span class="radio-card-desc">Barongs, suits, and delicate formal wear</span>
+                        <span class="radio-card-price">₱120.00 / kg</span>
+                    </label>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Estimated Bag Volume</label>
+                        <select name="estimated_load" class="form-control">
+                            <option value="Small Bag (~3-5 kg)">Small Bag (~3-5 kg)</option>
+                            <option value="Medium Bag (~6-8 kg)" selected>Medium Bag (~6-8 kg)</option>
+                            <option value="Large Bag (~9-12 kg)">Large Bag (~9-12 kg)</option>
+                            <option value="Multiple Bags (15+ kg)">Multiple Bags (15+ kg)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Payment Preference</label>
+                        <select name="payment_method" class="form-control">
+                            <option value="Cash on Delivery (COD)" selected>Cash on Delivery (COD to Rider)</option>
+                            <option value="GCash / Maya QR">GCash / Maya QR (Scan on Dropoff)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- SECTION 4: SCHEDULE -->
+                <div style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:#2563eb; margin:16px 0 12px;">
+                    4. Preferred Pickup Window
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Pickup Date</label>
+                        <input type="date" name="pickup_date" class="form-control" value="{{ today_str }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Preferred Time Slot</label>
+                        <select name="pickup_time" class="form-control">
+                            <option value="09:00 AM - 12:00 PM" selected>Morning Run (09:00 AM – 12:00 PM)</option>
+                            <option value="01:00 PM - 05:00 PM">Afternoon Circuit (01:00 PM – 05:00 PM)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Special Laundry Notes (Optional)</label>
+                    <textarea name="notes" class="form-control" rows="2" placeholder="e.g., Please use hypoallergenic fabric conditioner, ring dorm doorbell on arrival..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit-booking">
+                    🚀 Confirm Laundry Pickup Request
+                </button>
+            </form>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="portal-footer">
+        <p><strong>LaundryCare Maramag</strong> &bull; Sayre Highway, Poblacion, Maramag, Bukidnon</p>
+        <p style="margin-top:4px;">Hotline: (088) 356-1234 &bull; Mobile: 0917-123-4567 &bull; Serving all Maramag Barangays &amp; CMU Campus</p>
+    </footer>
+
+</body>
+</html>

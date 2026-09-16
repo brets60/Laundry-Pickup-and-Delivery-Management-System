@@ -1,1846 +1,1277 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaundryCare | Delivery Records</title>
 
-    <title>Delivery Records - LaundryCare</title>
-
-    <link rel="stylesheet"
-      href="{{ url_for('static', filename='css/sidebar.css') }}">
-
-    <meta
-        name="description"
-        content="LaundryCare Delivery Control Center"
-    >
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/delivery_records.css') }}"
-    >
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/delivery_records.css') }}?v=4.0">
 </head>
 
 <body>
 
-<!-- SIDEBAR OVERLAY -->
-<div class="lc-sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+<div class="dashboard-layout">
 
-<!-- SIDEBAR -->
-<aside class="lc-sidebar" id="sidebar" aria-label="Main navigation">
+    <!-- =========================================================
+         LEFT SIDEBAR (EXACT SAME AS DASHBOARD & ORDERS)
+         ========================================================= -->
+    <aside class="dashboard-sidebar">
 
-    <!-- BRAND -->
-    <div class="lc-brand">
-        <div class="lc-brand-mark">
-            <svg viewBox="0 0 48 48" aria-hidden="true">
-                <rect x="7" y="7" width="34" height="34" rx="10"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"/>
-                <path d="M16 24h16M24 16v16"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      stroke-linecap="round"/>
-            </svg>
-        </div>
-
-        <div>
-            <h1>LaundryCare</h1>
-            <p>Pickup &amp; Delivery Management</p>
-        </div>
-    </div>
-
-    <!-- NAVIGATION -->
-    <nav class="lc-navigation" aria-label="Main navigation">
-
-        <span class="lc-nav-label">MAIN</span>
-
-        <!-- DASHBOARD -->
-        <a href="/dashboard-page" class="lc-nav-item">
-            <span class="lc-nav-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-5v-6h-5v6h-5A1.5 1.5 0 0 1 3 19.5z"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linejoin="round"/>
+        <!-- BRAND LOGO -->
+        <a href="/dashboard-page" class="sidebar-brand">
+            <div class="brand-icon-box">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                    <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                    <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
                 </svg>
-            </span>
-            <span>Dashboard</span>
+            </div>
+            <span>LaundryCare</span>
         </a>
 
-        <!-- CUSTOMERS -->
-        <a href="/customers-page" class="lc-nav-item">
-            <span class="lc-nav-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="8" r="3.2"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"/>
-                    <path d="M5.5 20c.7-3.4 2.8-5.2 6.5-5.2s5.8 1.8 6.5 5.2"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linecap="round"/>
+        <!-- MENU ITEMS -->
+        <nav class="sidebar-nav">
+            <!-- Dashboard -->
+            <a href="/dashboard-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
                 </svg>
-            </span>
-            <span>Customers</span>
-        </a>
+                <span>Dashboard</span>
+            </a>
 
-        <!-- LAUNDRY ORDERS -->
-        <a href="/laundry-orders-page" class="lc-nav-item">
-            <span class="lc-nav-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 4h12v16H6z"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linejoin="round"/>
-                    <path d="M9 8h6M9 12h6M9 16h4"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linecap="round"/>
+            {% if session.get('role', 'admin') in ['admin', 'staff'] %}
+            <!-- Orders -->
+            <a href="/laundry-orders-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                    <path d="M9 12h6M9 16h6"/>
                 </svg>
-            </span>
-            <span>Laundry Orders</span>
-        </a>
-
-        <!-- PICKUP SCHEDULES -->
-        <a href="/pickup-schedules-page" class="lc-nav-item">
-            <span class="lc-nav-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <rect x="4" y="5" width="16" height="15" rx="2"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"/>
-                    <path d="M8 3v4M16 3v4M4 9h16"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linecap="round"/>
-                </svg>
-            </span>
-            <span>Pickup Schedules</span>
-        </a>
-
-        <!-- DELIVERY RECORDS -->
-        <a href="/delivery-records-page"
-           class="lc-nav-item active"
-           aria-current="page">
-            <span class="lc-nav-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linejoin="round"/>
-                    <circle cx="7" cy="19" r="1.5"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"/>
-                    <circle cx="18" cy="19" r="1.5"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"/>
-                </svg>
-            </span>
-            <span>Delivery Records</span>
-        </a>
-
-        <!-- PAYMENTS -->
-        <a href="/payments-page" class="lc-nav-item">
-            <span class="lc-nav-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <rect x="3" y="5" width="18" height="14" rx="2"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"/>
-                    <path d="M3 10h18M7 15h4"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linecap="round"/>
-                </svg>
-            </span>
-            <span>Payments</span>
-        </a>
-
-    </nav>
-
-    <!-- ADMIN / LOGOUT -->
-    <div class="lc-sidebar-bottom">
-
-        <div class="lc-admin-profile">
-            <div class="lc-admin-avatar">A</div>
-
-            <div class="lc-admin-info">
-                <strong>Admin</strong>
-                <span>System Administrator</span>
-            </div>
-        </div>
-
-        <a href="/logout"
-           class="lc-logout"
-           aria-label="Sign out">
-
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.8"
-                      stroke-linecap="round"/>
-                <path d="M14 8l4 4-4 4M18 12H9"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.8"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"/>
-            </svg>
-
-            <span>Sign Out</span>
-        </a>
-
-    </div>
-
-</aside>
-
-
-<!-- =========================================================
-     MAIN APPLICATION
-========================================================= -->
-
-<main class="app-shell">
-
-    <!-- MOBILE TOP BAR -->
-
-    <div class="mobile-topbar">
-
-        <button
-            type="button"
-            class="mobile-menu-button"
-            id="mobileMenuButton"
-            aria-label="Open navigation menu"
-            aria-controls="sidebar"
-            aria-expanded="false"
-        >
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-            >
-                <path d="M4 6h16"></path>
-                <path d="M4 12h16"></path>
-                <path d="M4 18h16"></path>
-            </svg>
-        </button>
-
-        <div class="mobile-brand">
-            LaundryCare
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         TOP HEADER
-    ====================================================== -->
-
-    <header class="top-header">
-
-        <div class="header-context">
-
-            <span class="header-kicker">
-                DELIVERY OPERATIONS
-            </span>
-
-            <span class="header-divider"></span>
-
-            <span class="header-status">
-                <span class="status-dot"></span>
-                Control Center
-            </span>
-
-        </div>
-
-
-        <div class="header-actions">
-
-            <button
-                type="button"
-                class="icon-button"
-                aria-label="Notifications"
-            >
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
-                    <path d="M10 21h4"></path>
-                </svg>
-
-                <span class="notification-dot"></span>
-            </button>
-
-
-            <div class="header-user">
-
-                <div class="avatar">
-                    SA
-                </div>
-
-                <div class="header-user-info">
-
-                    <strong>
-                        Administrator
-                    </strong>
-
-                    <span>
-                        System Administrator
-                    </span>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </header>
-
-
-    <!-- =====================================================
-         PAGE CONTENT
-    ====================================================== -->
-
-    <section class="page-content">
-
-        <!-- =================================================
-             HERO
-        ================================================== -->
-
-        <section class="delivery-hero">
-
-            <div class="hero-main">
-
-                <div class="hero-label">
-
-                    <span class="hero-label-icon">
-
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path d="M3 7h11v10H3z"></path>
-                            <path d="M14 10h4l3 3v4h-7z"></path>
-                            <circle cx="7" cy="19" r="2"></circle>
-                            <circle cx="18" cy="19" r="2"></circle>
-                        </svg>
-
-                    </span>
-
-                    DELIVERY CONTROL CENTER
-
-                </div>
-
-
-                <h1>
-                    Delivery Records
-                </h1>
-
-                <p>
-                    Manage completed laundry deliveries and keep every
-                    customer handoff organized.
-                </p>
-
-
-                <div class="hero-meta">
-
-                    <div class="hero-meta-item">
-
-                        <span class="meta-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path d="M5 12h14"></path>
-                                <path d="m13 6 6 6-6 6"></path>
-                            </svg>
-                        </span>
-
-                        <span>
-                            Delivery-to-payment workflow
-                        </span>
-
-                    </div>
-
-
-                    <div class="hero-meta-item">
-
-                        <span class="meta-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path d="M12 3v18"></path>
-                                <path d="M3 12h18"></path>
-                            </svg>
-                        </span>
-
-                        <span>
-                            Operational record management
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- DECORATIVE DELIVERY ROUTE -->
-
-            <div
-                class="hero-route"
-                aria-hidden="true"
-            >
-
-                <div class="route-node route-node-start">
-                    <span></span>
-                </div>
-
-                <div class="route-line">
-                    <span class="route-pulse"></span>
-                </div>
-
-                <div class="route-node route-node-mid">
-                    <span></span>
-                </div>
-
-                <div class="route-line">
-                    <span class="route-pulse"></span>
-                </div>
-
-                <div class="route-node route-node-end">
-                    <span></span>
-                </div>
-
-                <div class="route-truck">
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.7"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path d="M3 7h11v10H3z"></path>
-                        <path d="M14 10h4l3 3v4h-7z"></path>
-                        <circle cx="7" cy="19" r="2"></circle>
-                        <circle cx="18" cy="19" r="2"></circle>
-                    </svg>
-
-                </div>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="hero-action"
-                id="newDeliveryButton"
-            >
-
-                <span>
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                    >
-                        <path d="M12 5v14"></path>
-                        <path d="M5 12h14"></path>
-                    </svg>
-                </span>
-
-                New Delivery Record
-
-            </button>
-
-        </section>
-
-
-        <!-- =================================================
-             WORKFLOW TRACKER
-        ================================================== -->
-
-        <section class="workflow-panel">
-
-            <div class="section-heading workflow-heading">
-
-                <div>
-
-                    <span class="section-eyebrow">
-                        SYSTEM WORKFLOW
-                    </span>
-
-                    <h2>
-                        Delivery Progress Tracker
-                    </h2>
-
-                    <p>
-                        LaundryCare's standard order-to-payment workflow.
-                    </p>
-
-                </div>
-
-                <div class="workflow-badge">
-                    Informational
-                </div>
-
-            </div>
-
-
-            <div class="workflow-rail">
-
-                <div class="workflow-step">
-
-                    <div class="step-circle">
-
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path d="M6 3h12"></path>
-                            <path d="M6 21h12"></path>
-                            <path d="M6 3c0 4 3 5 6 6 3-1 6-2 6-6"></path>
-                            <path d="M6 21c0-4 3-5 6-6 3 1 6 2 6 6"></path>
-                        </svg>
-
-                    </div>
-
-                    <div class="step-number">
-                        01
-                    </div>
-
-                    <strong>
-                        Laundry Order
-                    </strong>
-
-                    <span>
-                        Order registered
-                    </span>
-
-                </div>
-
-
-                <div class="workflow-connector">
-                    <span></span>
-                </div>
-
-
-                <div class="workflow-step">
-
-                    <div class="step-circle">
-
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <rect x="3" y="4" width="18" height="17" rx="2"></rect>
-                            <path d="M16 2v4"></path>
-                            <path d="M8 2v4"></path>
-                            <path d="M3 10h18"></path>
-                            <path d="M8 14h.01"></path>
-                            <path d="M12 14h.01"></path>
-                        </svg>
-
-                    </div>
-
-                    <div class="step-number">
-                        02
-                    </div>
-
-                    <strong>
-                        Pickup
-                    </strong>
-
-                    <span>
-                        Laundry collected
-                    </span>
-
-                </div>
-
-
-                <div class="workflow-connector">
-                    <span></span>
-                </div>
-
-
-                <div class="workflow-step">
-
-                    <div class="step-circle">
-
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <circle cx="12" cy="12" r="8"></circle>
-                            <path d="M12 8v8"></path>
-                            <path d="M9 10h5a2 2 0 0 1 0 4H9"></path>
-                        </svg>
-
-                    </div>
-
-                    <div class="step-number">
-                        03
-                    </div>
-
-                    <strong>
-                        Processing
-                    </strong>
-
-                    <span>
-                        Laundry prepared
-                    </span>
-
-                </div>
-
-
-                <div class="workflow-connector">
-                    <span></span>
-                </div>
-
-
-                <div class="workflow-step workflow-step-delivery">
-
-                    <div class="step-circle">
-
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path d="M3 7h11v10H3z"></path>
-                            <path d="M14 10h4l3 3v4h-7z"></path>
-                            <circle cx="7" cy="19" r="2"></circle>
-                            <circle cx="18" cy="19" r="2"></circle>
-                        </svg>
-
-                    </div>
-
-                    <div class="step-number">
-                        04
-                    </div>
-
-                    <strong>
-                        Delivery
-                    </strong>
-
-                    <span>
-                        Customer handoff
-                    </span>
-
-                </div>
-
-
-                <div class="workflow-connector">
-                    <span></span>
-                </div>
-
-
-                <div class="workflow-step workflow-step-payment">
-
-                    <div class="step-circle">
-
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <rect x="2.5" y="5" width="19" height="14" rx="2"></rect>
-                            <path d="M2.5 10h19"></path>
-                            <path d="M7 15h3"></path>
-                        </svg>
-
-                    </div>
-
-                    <div class="step-number">
-                        05
-                    </div>
-
-                    <strong>
-                        Payment
-                    </strong>
-
-                    <span>
-                        Payment record
-                    </span>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             COMMAND CENTER
-        ================================================== -->
-
-        <section class="command-center">
-
-            <div class="command-main">
-
-                <div class="command-header">
-
-                    <div class="command-icon">
-
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path d="M4 19V9"></path>
-                            <path d="M10 19V5"></path>
-                            <path d="M16 19v-7"></path>
-                            <path d="M22 19V3"></path>
-                        </svg>
-
-                    </div>
-
-                    <div>
-
-                        <span class="section-eyebrow">
-                            OPERATIONS
-                        </span>
-
-                        <h2>
-                            Delivery Command Center
-                        </h2>
-
-                    </div>
-
-                </div>
-
-
-                <p class="command-description">
-                    Keep delivery operations organized using the records
-                    currently stored in LaundryCare.
-                </p>
-
-
-                <div class="command-stats">
-
-                    <div class="command-stat">
-
-                        <span class="command-stat-label">
-                            Total Deliveries
-                        </span>
-
-                        <strong id="totalDeliveries">
-                            {{ deliveries|length }}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="command-stat">
-
-                        <span class="command-stat-label">
-                            Today's Deliveries
-                        </span>
-
-                        <strong id="todayDeliveries">
-                            0
-                        </strong>
-
-                    </div>
-
-
-                    <div class="command-stat">
-
-                        <span class="command-stat-label">
-                            Upcoming Deliveries
-                        </span>
-
-                        <strong id="upcomingDeliveries">
-                            0
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="command-side">
-
-                <div class="command-orbit">
-
-                    <div class="orbit-ring orbit-ring-one"></div>
-                    <div class="orbit-ring orbit-ring-two"></div>
-
-                    <div class="orbit-core">
-
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.7"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path d="M3 7h11v10H3z"></path>
-                            <path d="M14 10h4l3 3v4h-7z"></path>
-                            <circle cx="7" cy="19" r="2"></circle>
-                            <circle cx="18" cy="19" r="2"></circle>
-                        </svg>
-
-                    </div>
-
-                </div>
-
-
-                <div class="command-side-text">
-
-                    <span>
-                        DELIVERY
-                    </span>
-
-                    <strong>
-                        Control
-                    </strong>
-
-                    <small>
-                        Operational view
-                    </small>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             ADD DELIVERY
-        ================================================== -->
-
-        <section
-            class="create-card"
-            id="createDeliverySection"
-        >
-
-            <div class="create-card-header">
-
-                <div>
-
-                    <span class="section-eyebrow">
-                        NEW RECORD
-                    </span>
-
-                    <h2>
-                        Create Delivery Record
-                    </h2>
-
-                    <p>
-                        Record a completed laundry delivery for a customer.
-                    </p>
-
-                </div>
-
-
-                <div class="create-number">
-                    01
-                </div>
-
-            </div>
-
-
-            <form
-                method="POST"
-                action="/delivery-records-page"
-                id="deliveryForm"
-                novalidate
-            >
-
-                <div class="form-grid">
-
-                    <!-- CUSTOMER -->
-
-                    <div class="form-field">
-
-                        <label for="customer">
-                            Customer
-                            <span class="required">*</span>
-                        </label>
-
-                        <div class="input-wrapper">
-
-                            <span class="input-icon">
-
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <path d="M20 21a8 8 0 0 0-16 0"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-
-                            </span>
-
-                            <input
-                                type="text"
-                                id="customer"
-                                name="customer"
-                                placeholder="Enter customer name"
-                                value="{{ request.args.get('customer', '') }}"
-                                {% if request.args.get('customer') %}
-                                readonly
-                                {% endif %}
-                                autocomplete="name"
-                                required
-                                aria-describedby="customerError"
-                            >
-
-                        </div>
-
-                        <div
-                            class="field-error"
-                            id="customerError"
-                            role="alert"
-                        ></div>
-
-                    </div>
-
-
-                    <!-- DELIVERY DATE -->
-
-                    <div class="form-field">
-
-                        <label for="delivery_date">
-                            Delivery Date
-                            <span class="required">*</span>
-                        </label>
-
-                        <div class="input-wrapper">
-
-                            <span class="input-icon">
-
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <rect x="3" y="4" width="18" height="17" rx="2"></rect>
-                                    <path d="M16 2v4"></path>
-                                    <path d="M8 2v4"></path>
-                                    <path d="M3 10h18"></path>
-                                    <path d="M8 14h2"></path>
-                                    <path d="M14 14h2"></path>
-                                </svg>
-
-                            </span>
-
-                            <input
-                                type="date"
-                                id="delivery_date"
-                                name="delivery_date"
-                                required
-                                aria-describedby="deliveryDateError"
-                            >
-
-                        </div>
-
-                        <div
-                            class="field-error"
-                            id="deliveryDateError"
-                            role="alert"
-                        ></div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="form-footer">
-
-                    <div class="form-note">
-
-                        <span class="form-note-icon">
-
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <circle cx="12" cy="12" r="9"></circle>
-                                <path d="M12 10v6"></path>
-                                <path d="M12 7h.01"></path>
-                            </svg>
-
-                        </span>
-
-                        Delivery records are stored through the existing
-                        LaundryCare Flask system.
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="primary-button"
-                        id="submitDeliveryButton"
-                    >
-
-                        <span class="button-icon">
-
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                            >
-                                <path d="M12 5v14"></path>
-                                <path d="M5 12h14"></path>
-                            </svg>
-
-                        </span>
-
-                        <span class="button-text">
-                            Add Delivery Record
-                        </span>
-
-                        <span
-                            class="button-spinner"
-                            aria-hidden="true"
-                        ></span>
-
-                    </button>
-
-                </div>
-
-            </form>
-
-        </section>
-
-
-        <!-- =================================================
-             PAYMENT HANDOFF
-        ================================================== -->
-
-        <section class="handoff-strip">
-
-            <div class="handoff-icon">
-
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <rect x="2.5" y="5" width="19" height="14" rx="2"></rect>
-                    <path d="M2.5 10h19"></path>
-                    <path d="M7 15h3"></path>
-                </svg>
-
-            </div>
-
-
-            <div class="handoff-content">
-
-                <span class="handoff-eyebrow">
-                    PAYMENT HANDOFF
-                </span>
-
-                <strong>
-                    Delivery Complete → Payment Record
-                </strong>
-
-                <span>
-                    Use the payment action on a delivery record to continue
-                    the existing customer handoff workflow.
-                </span>
-
-            </div>
-
-
-            <div class="handoff-arrow">
-
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="M5 12h14"></path>
-                    <path d="m13 6 6 6-6 6"></path>
-                </svg>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             RECORDS
-        ================================================== -->
-
-        <section class="records-card">
-
-            <div class="records-header">
-
-                <div>
-
-                    <span class="section-eyebrow">
-                        DELIVERY LOG
-                    </span>
-
-                    <h2>
-                        Delivery Records
-                    </h2>
-
-                    <p>
-                        Track and manage customer delivery records.
-                    </p>
-
-                </div>
-
-
-                <div class="records-tools">
-
-                    <div class="search-box">
-
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true"
-                        >
-                            <circle cx="11" cy="11" r="7"></circle>
-                            <path d="m20 20-4-4"></path>
-                        </svg>
-
-                        <input
-                            type="search"
-                            id="deliverySearch"
-                            placeholder="Search delivery records..."
-                            autocomplete="off"
-                            aria-label="Search delivery records"
-                        >
-
-                        <button
-                            type="button"
-                            class="search-clear"
-                            id="clearSearch"
-                            aria-label="Clear search"
-                            hidden
-                        >
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                            >
-                                <path d="M6 6l12 12"></path>
-                                <path d="M18 6 6 18"></path>
-                            </svg>
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            {% if deliveries %}
-
-            <div
-                class="records-table-wrapper"
-                id="recordsTableWrapper"
-            >
-
-                <table class="records-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th scope="col">
-                                ID
-                            </th>
-
-                            <th scope="col">
-                                Customer
-                            </th>
-
-                            <th scope="col">
-                                Delivery Date
-                            </th>
-
-                            <th scope="col">
-                                Actions
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody id="deliveryTableBody">
-
-                        {% for delivery in deliveries %}
-
-                        <tr
-                            class="delivery-row"
-                            data-id="{{ delivery['id'] }}"
-                            data-customer="{{ delivery['customer']|e }}"
-                            data-date="{{ delivery['delivery_date']|e }}"
-                        >
-
-                            <!-- ID -->
-
-                            <td
-                                data-label="ID"
-                                class="id-cell"
-                            >
-
-                                <span class="delivery-id">
-                                    #{{ "%03d"|format(delivery["id"]) }}
-                                </span>
-
-                            </td>
-
-
-                            <!-- CUSTOMER -->
-
-                            <td
-                                data-label="Customer"
-                                class="customer-cell"
-                            >
-
-                                <div class="customer-profile">
-
-                                    <div
-                                        class="customer-avatar"
-                                        data-initials
-                                    >
-                                    </div>
-
-                                    <div class="customer-info">
-
-                                        <strong class="customer-name">
-                                            {{ delivery["customer"] }}
-                                        </strong>
-
-                                        <span class="customer-caption">
-                                            Delivery recipient
-                                        </span>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-
-                            <!-- DATE -->
-
-                            <td
-                                data-label="Delivery Date"
-                                class="date-cell"
-                            >
-
-                                <div class="delivery-date">
-
-                                    <span class="date-icon">
-
-                                        <svg
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            stroke-width="1.8"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                        >
-                                            <rect x="3" y="4" width="18" height="17" rx="2"></rect>
-                                            <path d="M16 2v4"></path>
-                                            <path d="M8 2v4"></path>
-                                            <path d="M3 10h18"></path>
-                                        </svg>
-
-                                    </span>
-
-                                    <span
-                                        class="formatted-date"
-                                        data-date="{{ delivery['delivery_date']|e }}"
-                                    >
-                                        {{ delivery["delivery_date"] }}
-                                    </span>
-
-                                </div>
-
-                            </td>
-
-
-                            <!-- ACTIONS -->
-
-                            <td
-                                data-label="Actions"
-                                class="actions-cell"
-                            >
-
-                                <div class="action-group">
-
-                                    <!-- VIEW DETAILS -->
-                                    <a
-                                        href="/delivery-records-page/details/{{ delivery['id'] }}"
-                                        class="action-button"
-                                        style="color: #2563eb; border: 1px solid rgba(37, 99, 235, 0.4); background: rgba(37, 99, 235, 0.05);"
-                                        aria-label="View delivery record #{{ delivery['id'] }}"
-                                    >
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width: 16px; height: 16px; margin-right: 4px;">
-                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg>
-                                        <span>View</span>
-                                    </a>
-
-                                    <!-- EDIT -->
-                                    <a
-                                        href="/delivery-records-page/edit/{{ delivery['id'] }}"
-                                        class="action-button action-edit"
-                                        style="color: #475569; border: 1px solid #cbd5e1; background: #f8fafc;"
-                                        aria-label="Edit delivery record #{{ delivery['id'] }}"
-                                    >
-
-                                        <svg
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            stroke-width="1.8"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            aria-hidden="true"
-                                            style="width: 16px; height: 16px; margin-right: 4px;"
-                                        >
-                                            <path d="M12 20h9"></path>
-                                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
-                                        </svg>
-
-                                        <span>
-                                            Edit
-                                        </span>
-
-                                    </a>
-
-
-                                    <!-- PROCEED TO PAYMENT -->
-
-                                    <a
-                                        href="/payments-page?customer={{ delivery['customer']|urlencode }}"
-                                        class="action-button action-payment"
-                                        aria-label="Proceed to payment for {{ delivery['customer']|e }}"
-                                    >
-
-                                        <svg
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            stroke-width="1.8"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            aria-hidden="true"
-                                        >
-                                            <rect x="2.5" y="5" width="19" height="14" rx="2"></rect>
-                                            <path d="M2.5 10h19"></path>
-                                            <path d="M7 15h3"></path>
-                                            <path d="M17 14v4"></path>
-                                            <path d="m15 16 2 2 2-2"></path>
-                                        </svg>
-
-                                        <span>
-                                            Proceed to Payment
-                                        </span>
-
-                                    </a>
-
-
-                                    <!-- DELETE (Fixed to bypass JS glitch) -->
-
-                                    <form
-                                        method="POST"
-                                        action="/delivery-records-page/delete/{{ delivery['id'] }}"
-                                        class="delete-form"
-                                        style="display: inline;"
-                                    >
-
-                                        <button
-                                            type="button"
-                                            class="action-button action-delete"
-                                            data-delete-button
-                                            data-id="{{ delivery['id'] }}"
-                                            data-customer="{{ delivery['customer']|e }}"
-                                            data-date="{{ delivery['delivery_date']|e }}"
-                                            aria-label="Delete delivery record #{{ delivery['id'] }}"
-                                        >
-
-                                            <svg
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                stroke-width="1.8"
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                aria-hidden="true"
-                                            >
-                                                <path d="M4 7h16"></path>
-                                                <path d="M10 11v6"></path>
-                                                <path d="M14 11v6"></path>
-                                                <path d="M6 7l1 14h10l1-14"></path>
-                                                <path d="M9 7V4h6v3"></path>
-                                            </svg>
-
-                                            <span>
-                                                Delete
-                                            </span>
-
-                                        </button>
-
-                                    </form>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-
-            <!-- SEARCH EMPTY -->
-
-            <div
-                class="search-empty"
-                id="searchEmpty"
-                hidden
-            >
-
-                <div class="search-empty-icon">
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.7"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <circle cx="11" cy="11" r="7"></circle>
-                        <path d="m20 20-4-4"></path>
-                    </svg>
-
-                </div>
-
-                <h3>
-                    No delivery records found
-                </h3>
-
-                <p>
-                    Try adjusting your search.
-                </p>
-
-            </div>
-
-            {% else %}
-
-            <!-- EMPTY STATE -->
-
-            <div class="empty-state">
-
-                <div class="empty-illustration">
-
-                    <div class="empty-ring"></div>
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path d="M3 7h11v10H3z"></path>
-                        <path d="M14 10h4l3 3v4h-7z"></path>
-                        <circle cx="7" cy="19" r="2"></circle>
-                        <circle cx="18" cy="19" r="2"></circle>
-                    </svg>
-
-                </div>
-
-
-                <h3>
-                    No delivery records yet
-                </h3>
-
-                <p>
-                    There are currently no completed laundry deliveries.
-                </p>
-
-
-                <button
-                    type="button"
-                    class="empty-action"
-                    id="emptyCreateButton"
-                >
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                    >
-                        <path d="M12 5v14"></path>
-                        <path d="M5 12h14"></path>
-                    </svg>
-
-                    Create Delivery Record
-
-                </button>
-
-            </div>
-
+                <span>Orders</span>
+            </a>
             {% endif %}
 
+            <!-- Deliveries (ACTIVE) -->
+            <a href="/delivery-records-page" class="active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="3" width="15" height="13"/>
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                    <circle cx="5.5" cy="18.5" r="2.5"/>
+                    <circle cx="18.5" cy="18.5" r="2.5"/>
+                </svg>
+                <span>Deliveries</span>
+            </a>
+
+            <!-- Pickups -->
+            <a href="/pickup-schedules-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                    <line x1="12" y1="14" x2="12" y2="18"/>
+                    <line x1="10" y1="16" x2="14" y2="16"/>
+                </svg>
+                <span>Pickups</span>
+            </a>
+
+            {% if session.get('role', 'admin') in ['admin', 'staff'] %}
+            <!-- Customers -->
+            <a href="/customers-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>Customers</span>
+            </a>
+            {% endif %}
+
+            {% if session.get('role', 'admin') == 'admin' %}
+            <!-- Staff -->
+            <a href="/staff-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Staff</span>
+            </a>
+            {% endif %}
+
+            {% if session.get('role', 'admin') == 'admin' %}
+            <!-- Reports -->
+            <a href="/payments-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <line x1="9" y1="18" x2="9" y2="15"/>
+                    <line x1="15" y1="18" x2="15" y2="9"/>
+                </svg>
+                <span>Reports</span>
+            </a>
+            {% endif %}
+
+            {% if session.get('role', 'admin') == 'admin' %}
+            <!-- Settings -->
+            <a href="/settings-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.51 1 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                <span>Settings</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <!-- SIDEBAR USER & LOGOUT -->
+        <div class="sidebar-footer" style="padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: auto; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.15);">
+            <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: {% if session.get('role') == 'rider' %}#ea580c{% elif session.get('role') == 'staff' %}#059669{% else %}#2563eb{% endif %}; color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    {{ (session.get('username') or 'A')[0]|upper }}
+                </div>
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <div style="font-size: 13px; font-weight: 600; color: #f8fafc;">{{ session.get('username', 'Admin')|capitalize }}</div>
+                    <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: {% if session.get('role') == 'rider' %}#fdba74{% elif session.get('role') == 'staff' %}#6ee7b7{% else %}#93c5fd{% endif %};">
+                        {{ session.get('role', 'admin')|upper }}
+                    </div>
+                </div>
+            </div>
+            <a href="/logout" title="Sign Out" onclick="return confirm('Sign out of LaundryCare?');" style="color: #94a3b8; display: flex; align-items: center; padding: 6px; border-radius: 6px; text-decoration: none;" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='#94a3b8'">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+            </a>
+        </div>
+    </aside>
+
+    <!-- =========================================================
+         MAIN APPLICATION AREA
+         ========================================================= -->
+    <main class="dashboard-main">
+
+        <!-- TOP HEADER -->
+        <div class="deliveries-top-header">
+            <div class="header-title-group">
+                <h1>Delivery Records</h1>
+                <p>Track and manage outgoing laundry deliveries</p>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <a href="/rider-app" class="btn-action-outline" style="background:#10b981; color:#ffffff; border:none; padding:10px 16px; border-radius:8px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(16,185,129,0.25);" title="Open Rider Mobile Web App View">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    <span>📱 Open Rider Mobile View</span>
+                </a>
+                <button type="button" class="btn-dispatch-action" id="openDispatchModalBtn">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <span>Dispatch Delivery</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- FLASH NOTIFICATIONS -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-alert flash-{{ category }}">
+                        <span>{{ message }}</span>
+                        <button type="button" onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:inherit;font-size:18px;">&times;</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- SEARCH & STATUS FILTERS TOOLBAR -->
+        <div class="filter-toolbar">
+            <!-- Search Input -->
+            <div class="search-input-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="deliverySearchInput" placeholder="Search by customer, tracking, address, rider..." onkeyup="filterDeliveriesTable()">
+            </div>
+
+            <!-- Status Filter Pills -->
+            <div class="status-filter-group">
+                <button type="button" class="filter-pill active" onclick="setStatusFilter('all', this)">All</button>
+                <button type="button" class="filter-pill" onclick="setStatusFilter('scheduled', this)">Scheduled</button>
+                <button type="button" class="filter-pill" onclick="setStatusFilter('out for delivery', this)">Out for Delivery</button>
+                <button type="button" class="filter-pill" onclick="setStatusFilter('delivered', this)">Delivered</button>
+                <button type="button" class="filter-pill" onclick="setStatusFilter('cancelled', this)">Cancelled</button>
+            </div>
+        </div>
+
+        <!-- 4 OPERATIONAL KPI STAT CARDS -->
+        <section class="deliveries-stats-grid">
+            <!-- Card 1: Total Deliveries -->
+            <div class="stat-kpi-card">
+                <div class="kpi-icon-box kpi-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="1" y="3" width="15" height="13"/>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                        <circle cx="5.5" cy="18.5" r="2.5"/>
+                        <circle cx="18.5" cy="18.5" r="2.5"/>
+                    </svg>
+                </div>
+                <div class="kpi-text-box">
+                    <span class="kpi-label">Total Deliveries</span>
+                    <span class="kpi-number">{{ stats.total if stats else (deliveries|length) }}</span>
+                </div>
+            </div>
+
+            <!-- Card 2: Out for Delivery -->
+            <div class="stat-kpi-card">
+                <div class="kpi-icon-box kpi-orange">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="kpi-text-box">
+                    <span class="kpi-label">Out for Delivery</span>
+                    <span class="kpi-number">{{ stats.out_for_delivery if stats else 0 }}</span>
+                </div>
+            </div>
+
+            <!-- Card 3: Scheduled -->
+            <div class="stat-kpi-card">
+                <div class="kpi-icon-box kpi-amber">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </div>
+                <div class="kpi-text-box">
+                    <span class="kpi-label">Scheduled</span>
+                    <span class="kpi-number">{{ stats.scheduled if stats else 0 }}</span>
+                </div>
+            </div>
+
+            <!-- Card 4: Delivered -->
+            <div class="stat-kpi-card">
+                <div class="kpi-icon-box kpi-green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <div class="kpi-text-box">
+                    <span class="kpi-label">Delivered</span>
+                    <span class="kpi-number">{{ stats.delivered if stats else 0 }}</span>
+                </div>
+            </div>
         </section>
 
 
-        <!-- =================================================
-             DELIVERY TIP
-        ================================================== -->
-
-        <section class="delivery-tip">
-
-            <div class="tip-icon">
-
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="M9 18h6"></path>
-                    <path d="M10 22h4"></path>
-                    <path d="M8.5 14.5A6 6 0 1 1 15.5 14.5c-.8.7-1.5 1.6-1.5 2.5h-4c0-.9-.7-1.8-1.5-2.5Z"></path>
-                </svg>
-
+        <!-- =====================================================
+             ACTIVE FLEET LOGISTICS & DRIVER STOP TIMELINE (PHASE 3)
+             ===================================================== -->
+        <div class="route-timeline-card">
+            <div class="route-timeline-header">
+                <div class="route-header-left">
+                    <div class="route-header-icon">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="route-title">Active Fleet Logistics &amp; Driver Stop Timeline</h3>
+                        <p class="route-subtitle">Real-time driver sequence, stop fulfillment checkpoints, and digital delivery tracking</p>
+                    </div>
+                </div>
+                <div class="driver-route-tabs">
+                    <button type="button" class="driver-tab-btn active" onclick="switchDriverRoute('mike', this)">Van 1 (Mike)</button>
+                    <button type="button" class="driver-tab-btn" onclick="switchDriverRoute('alex', this)">Moto 2 (Alex)</button>
+                    <button type="button" class="driver-tab-btn" onclick="switchDriverRoute('dave', this)">Moto 3 (Dave)</button>
+                    <button type="button" class="driver-tab-btn" onclick="switchDriverRoute('all', this)">All Stops</button>
+                </div>
             </div>
 
-
-            <div>
-
-                <span>
-                    DELIVERY TIP
-                </span>
-
-                <p>
-                    Confirm the customer's delivery details before completing
-                    the handoff and moving to payment.
-                </p>
-
+            <!-- Route Stats Strip -->
+            <div class="route-stats-strip">
+                <div class="route-stat-item">
+                    <span class="route-stat-label">Active Route Load</span>
+                    <span class="route-stat-val" id="routeStopsCount">4 Scheduled Stops</span>
+                </div>
+                <div class="route-stat-item">
+                    <span class="route-stat-label">Current Vehicle</span>
+                    <span class="route-stat-val" id="routeVehicle">Ford Transit (Van #1)</span>
+                </div>
+                <div class="route-stat-item">
+                    <span class="route-stat-label">On-Time Reliability</span>
+                    <span class="route-stat-val" style="color:#059669;">98.6% Target</span>
+                </div>
+                <div class="route-stat-item">
+                    <span class="route-stat-label">Estimated Route Distance</span>
+                    <span class="route-stat-val" id="routeDistance">14.8 km &bull; 42 mins remaining</span>
+                </div>
             </div>
 
-        </section>
+            <!-- Chronological Stops Flow -->
+            <div class="route-stops-timeline" id="routeStopsContainer">
+                <!-- Stop 1 -->
+                <div class="stop-node completed">
+                    <div class="stop-marker">
+                        <span class="stop-number">&#10003;</span>
+                    </div>
+                    <div class="stop-content">
+                        <div class="stop-time">09:30 AM &bull; Done</div>
+                        <div class="stop-customer">Maria Santos</div>
+                        <div class="stop-address">Sayre Hwy, Poblacion, Maramag</div>
+                        <span class="stop-status-pill pill-done">Delivered</span>
+                    </div>
+                </div>
+                <div class="stop-connector completed"></div>
 
+                <!-- Stop 2 -->
+                <div class="stop-node en-route">
+                    <div class="stop-marker">
+                        <span class="stop-number">2</span>
+                    </div>
+                    <div class="stop-content">
+                        <div class="stop-time">10:45 AM &bull; Active</div>
+                        <div class="stop-customer">John Doe</div>
+                        <div class="stop-address">CMU Campus, Musuan, Maramag</div>
+                        <span class="stop-status-pill pill-transit">En Route (5m away)</span>
+                    </div>
+                </div>
+                <div class="stop-connector"></div>
 
-        <!-- =================================================
-             FOOTER
-        ================================================== -->
+                <!-- Stop 3 -->
+                <div class="stop-node pending">
+                    <div class="stop-marker">
+                        <span class="stop-number">3</span>
+                    </div>
+                    <div class="stop-content">
+                        <div class="stop-time">11:30 AM &bull; Next</div>
+                        <div class="stop-customer">Robert Tan</div>
+                        <div class="stop-address">Purok 3, Dologon, Maramag</div>
+                        <span class="stop-status-pill pill-scheduled">Scheduled</span>
+                    </div>
+                </div>
+                <div class="stop-connector"></div>
 
-        <footer class="page-footer">
-
-            <span>
-                © 2026 LaundryCare. All rights reserved.
-            </span>
-
-            <span class="footer-security">
-
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                >
-                    <rect x="5" y="10" width="14" height="11" rx="2"></rect>
-                    <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-                </svg>
-
-                Secure Management System
-
-            </span>
-
-        </footer>
-
-    </section>
-
-</main>
-
-
-<!-- =========================================================
-     DELETE MODAL
-========================================================= -->
-
-<div
-    class="modal-overlay"
-    id="deleteModal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="deleteModalTitle"
-    aria-describedby="deleteModalDescription"
-    hidden
->
-
-    <div class="delete-modal">
-
-        <button
-            type="button"
-            class="modal-close"
-            id="closeDeleteModal"
-            aria-label="Close delete confirmation"
-        >
-
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-            >
-                <path d="M6 6l12 12"></path>
-                <path d="M18 6 6 18"></path>
-            </svg>
-
-        </button>
-
-
-        <div class="modal-danger-icon">
-
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            >
-                <path d="M4 7h16"></path>
-                <path d="M10 11v6"></path>
-                <path d="M14 11v6"></path>
-                <path d="M6 7l1 14h10l1-14"></path>
-                <path d="M9 7V4h6v3"></path>
-            </svg>
-
+                <!-- Stop 4 -->
+                <div class="stop-node pending">
+                    <div class="stop-marker">
+                        <span class="stop-number">4</span>
+                    </div>
+                    <div class="stop-content">
+                        <div class="stop-time">01:15 PM &bull; Afternoon</div>
+                        <div class="stop-customer">Elena Gomez</div>
+                        <div class="stop-address">Base Camp Junction, Maramag</div>
+                        <span class="stop-status-pill pill-scheduled">Scheduled</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-
-        <span class="modal-eyebrow">
-            PERMANENT ACTION
-        </span>
-
-
-        <h2 id="deleteModalTitle">
-            Delete Delivery Record?
-        </h2>
-
-
-        <p id="deleteModalDescription">
-            Are you sure you want to delete this delivery record?
-        </p>
-
-
-        <div class="delete-preview">
-
-            <div class="preview-row">
-
-                <span>
-                    Delivery
-                </span>
-
-                <strong id="deleteDeliveryId">
-                    —
-                </strong>
-
+        <!-- =====================================================
+             ALL DELIVERIES DATA TABLE CARD
+             ===================================================== -->
+        <div class="deliveries-table-card">
+            <div class="table-header-row">
+                <h2 class="table-heading">All Deliveries</h2>
+                <span class="table-record-count">Showing {{ deliveries|length }} records</span>
             </div>
 
-
-            <div class="preview-row">
-
-                <span>
-                    Customer
-                </span>
-
-                <strong id="deleteCustomer">
-                    —
-                </strong>
-
+            <div style="overflow-x: auto;">
+                <table class="deliveries-table" id="deliveriesTable">
+                    <thead>
+                        <tr>
+                            <th>Delivery ID</th>
+                            <th>Order ID</th>
+                            <th>Customer &amp; Address</th>
+                            <th>Assigned Rider</th>
+                            <th>Delivery Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if deliveries %}
+                            {% for d in deliveries %}
+                            {% set st = (d.status or 'Scheduled')|lower %}
+                            <tr class="delivery-row" 
+                                data-status="{{ st }}" 
+                                data-search="{{ d.customer }} {{ d.id }} {{ d.delivery_address or '' }} {{ d.assigned_rider or '' }} {{ d.order_id or '' }}"
+                                data-id="{{ d.id }}"
+                                data-customer="{{ d.customer }}"
+                                data-order-id="{{ d.order_id or '' }}"
+                                data-address="{{ d.delivery_address or '' }}"
+                                data-rider="{{ d.assigned_rider or '' }}"
+                                data-date="{{ d.delivery_date or '' }}"
+                                data-notes="{{ d.delivery_notes or '' }}"
+                                data-weight="{{ d.laundry_weight or '' }}"
+                                data-service="{{ d.service_type or '' }}">
+                                <td>
+                                    <span class="cell-del-id">#DEL-{{ "%04d"|format(d.id) }}</span>
+                                </td>
+                                <td>
+                                    {% if d.order_id %}
+                                        <a href="/laundry-orders-page" class="cell-order-tag" title="View Order #ORD-{{ "%04d"|format(d.order_id) }}">
+                                            #ORD-{{ "%04d"|format(d.order_id) }}
+                                        </a>
+                                    {% else %}
+                                        <span style="color:#94a3b8; font-size:13px;">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="customer-name">{{ d.customer }}</div>
+                                    <div class="customer-address" title="{{ d.delivery_address or 'No address specified' }}">
+                                        {{ d.delivery_address or 'No address specified' }}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if d.assigned_rider %}
+                                        <div class="rider-badge">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                                <circle cx="12" cy="7" r="4"/>
+                                            </svg>
+                                            <span>{{ d.assigned_rider }}</span>
+                                        </div>
+                                    {% else %}
+                                        <span class="rider-unassigned">Unassigned</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="date-text">{{ d.delivery_date or 'TBD' }}</span>
+                                </td>
+                                <td>
+                                    {% if st == 'delivered' %}
+                                        <span class="status-badge status-delivered">Delivered</span>
+                                    {% elif st == 'out for delivery' %}
+                                        <span class="status-badge status-out-for-delivery">Out for Delivery</span>
+                                    {% elif st == 'cancelled' %}
+                                        <span class="status-badge status-cancelled">Cancelled</span>
+                                    {% else %}
+                                        <span class="status-badge status-scheduled">Scheduled</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button type="button" class="btn-action-sm btn-action-view" onclick="openViewDeliveryModal(this)">
+                                            View
+                                        </button>
+                                        <button type="button" class="btn-action-sm btn-action-slip" onclick="openSlipModal(this)">
+                                            Print Slip
+                                        </button>
+                                        <button type="button" class="btn-action-sm btn-action-edit" onclick="openEditModal(this)">
+                                            Edit
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-table-state">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <rect x="1" y="3" width="15" height="13"/>
+                                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                                            <circle cx="5.5" cy="18.5" r="2.5"/>
+                                            <circle cx="18.5" cy="18.5" r="2.5"/>
+                                        </svg>
+                                        <p style="font-weight:600; font-size:15px; color:#0f172a; margin-bottom:4px;">No delivery records found</p>
+                                        <p style="font-size:13px;">Click "+ Dispatch Delivery" to schedule the first drop-off.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
             </div>
-
-
-            <div class="preview-row">
-
-                <span>
-                    Delivery Date
-                </span>
-
-                <strong id="deleteDate">
-                    —
-                </strong>
-
-            </div>
-
         </div>
 
-
-        <div class="modal-warning">
-
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            >
-                <path d="M12 3 2.5 20h19L12 3Z"></path>
-                <path d="M12 9v5"></path>
-                <path d="M12 17h.01"></path>
-            </svg>
-
-            This action cannot be undone.
-
-        </div>
-
-
-        <div class="modal-actions">
-
-            <button
-                type="button"
-                class="modal-button modal-cancel"
-                id="cancelDelete"
-            >
-                Cancel
-            </button>
-
-
-            <button
-                type="button"
-                class="modal-button modal-confirm-delete"
-                id="confirmDelete"
-            >
-
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                >
-                    <path d="M4 7h16"></path>
-                    <path d="M10 11v6"></path>
-                    <path d="M14 11v6"></path>
-                    <path d="M6 7l1 14h10l1-14"></path>
-                </svg>
-
-                Delete Record
-
-            </button>
-
-        </div>
-
-    </div>
+    </main>
 
 </div>
 
+<!-- =========================================================
+     MODAL 1: DISPATCH DELIVERY (CREATE NEW)
+     ========================================================= -->
+<div class="modal-overlay" id="dispatchModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 class="modal-title">Dispatch New Delivery</h3>
+            <button type="button" class="modal-close-btn" onclick="closeModal('dispatchModal')">&times;</button>
+        </div>
+        <form action="/delivery-records-page" method="POST">
+            <div class="modal-body">
+                <!-- Customer Name -->
+                <div class="form-group">
+                    <label class="form-label" for="new_customer">Customer Name *</label>
+                    <input type="text" id="new_customer" name="customer" class="form-control" list="customerList" placeholder="e.g. Maria Santos" required>
+                    <datalist id="customerList">
+                        {% for c in customers %}
+                            <option value="{{ c.name }}">{{ c.name }}</option>
+                        {% endfor %}
+                    </datalist>
+                </div>
 
-<script
-    src="{{ url_for('static', filename='js/delivery_records.js') }}"
-    defer
-></script>
+                <div class="modal-grid-2">
+                    <!-- Order ID Association -->
+                    <div class="form-group">
+                        <label class="form-label" for="new_order_id">Linked Order (Optional)</label>
+                        <select id="new_order_id" name="order_id" class="form-control" onchange="onOrderSelected(this)">
+                            <option value="">-- None / Custom --</option>
+                            {% for ord in orders %}
+                                <option value="{{ ord.id }}" data-customer="{{ ord.customer }}">
+                                    #ORD-{{ "%04d"|format(ord.id) }} ({{ ord.customer }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Delivery Date -->
+                    <div class="form-group">
+                        <label class="form-label" for="new_delivery_date">Delivery Date *</label>
+                        <input type="date" id="new_delivery_date" name="delivery_date" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- Dropoff Address -->
+                <div class="form-group">
+                    <label class="form-label" for="new_delivery_address">Dropoff Address *</label>
+                    <textarea id="new_delivery_address" name="delivery_address" class="form-control" placeholder="Complete address with apartment/unit number" rows="2" required></textarea>
+                </div>
+
+                <div class="modal-grid-2">
+                    <!-- Assigned Rider -->
+                    <div class="form-group">
+                        <label class="form-label" for="new_assigned_rider">Assigned Rider</label>
+                        <select id="new_assigned_rider" name="assigned_rider" class="form-control">
+                            <option value="">-- Select Courier --</option>
+                            <option value="Rider Mike">Rider Mike (Van 1)</option>
+                            <option value="Rider Alex">Rider Alex (Motorcycle 2)</option>
+                            <option value="Rider Dave">Rider Dave (Motorcycle 3)</option>
+                            <option value="Rider Christian">Rider Christian (Van 2)</option>
+                        </select>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="form-group">
+                        <label class="form-label" for="new_status">Status</label>
+                        <select id="new_status" name="status" class="form-control">
+                            <option value="Scheduled" selected>Scheduled</option>
+                            <option value="Out for Delivery">Out for Delivery</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Delivery Notes -->
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" for="new_delivery_notes">Delivery Notes</label>
+                    <input type="text" id="new_delivery_notes" name="delivery_notes" class="form-control" placeholder="e.g. Ring bell twice, leave at reception">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('dispatchModal')">Cancel</button>
+                <button type="submit" class="btn-primary">Dispatch Delivery</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =========================================================
+     MODAL 2: EDIT DELIVERY RECORD
+     ========================================================= -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 class="modal-title" id="editModalTitle">Edit Delivery Record</h3>
+            <button type="button" class="modal-close-btn" onclick="closeModal('editModal')">&times;</button>
+        </div>
+        <form id="editDeliveryForm" action="" method="POST">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="edit_customer">Customer Name *</label>
+                    <input type="text" id="edit_customer" name="customer" class="form-control" required>
+                </div>
+
+                <div class="modal-grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="edit_order_id">Linked Order</label>
+                        <select id="edit_order_id" name="order_id" class="form-control">
+                            <option value="">-- None --</option>
+                            {% for ord in orders %}
+                                <option value="{{ ord.id }}">#ORD-{{ "%04d"|format(ord.id) }} ({{ ord.customer }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="edit_delivery_date">Delivery Date *</label>
+                        <input type="date" id="edit_delivery_date" name="delivery_date" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="edit_delivery_address">Dropoff Address</label>
+                    <textarea id="edit_delivery_address" name="delivery_address" class="form-control" rows="2"></textarea>
+                </div>
+
+                <div class="modal-grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="edit_assigned_rider">Assigned Rider</label>
+                        <select id="edit_assigned_rider" name="assigned_rider" class="form-control">
+                            <option value="">-- Unassigned --</option>
+                            <option value="Rider Mike">Rider Mike (Van 1)</option>
+                            <option value="Rider Alex">Rider Alex (Motorcycle 2)</option>
+                            <option value="Rider Dave">Rider Dave (Motorcycle 3)</option>
+                            <option value="Rider Christian">Rider Christian (Van 2)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="edit_status">Status</label>
+                        <select id="edit_status" name="status" class="form-control">
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Out for Delivery">Out for Delivery</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" for="edit_delivery_notes">Delivery Notes</label>
+                    <input type="text" id="edit_delivery_notes" name="delivery_notes" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
+                <button type="button" class="btn-secondary" id="btnDeleteDelivery" style="color:#dc2626; border-color:#fca5a5;">
+                    Delete Record
+                </button>
+                <div style="display:flex; gap:10px;">
+                    <button type="button" class="btn-secondary" onclick="closeModal('editModal')">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =========================================================
+     MODAL 3: PRINTABLE DELIVERY SLIP
+     ========================================================= -->
+
+<!-- =========================================================
+     VIEW DELIVERY DETAILS MODAL
+     ========================================================= -->
+<div class="modal-overlay" id="viewDeliveryModal">
+    <div class="modal-dialog" style="max-width: 540px;">
+        <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 18px 24px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; border-radius: 10px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center;">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="1" y="3" width="15" height="13"/>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 8"/>
+                        <circle cx="5.5" cy="18.5" r="2.5"/>
+                        <circle cx="18.5" cy="18.5" r="2.5"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 17px; font-weight: 700; color: #0f172a;" id="viewDelTitle">Delivery Record Details</h3>
+                    <span style="font-size: 12px; color: #64748b; font-weight: 600;" id="viewDelCode">#DEL-0000</span>
+                </div>
+            </div>
+            <button type="button" class="btn-close-modal" onclick="closeModal('viewDeliveryModal')">&times;</button>
+        </div>
+        <div style="padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 12px 16px; background: #f1f5f9; border-radius: 10px;">
+                <span style="font-size: 13px; font-weight: 600; color: #475569;">Delivery Status:</span>
+                <span id="viewDelStatusBadge" class="status-badge status-scheduled">Scheduled</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+                <div style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Customer Name</div>
+                    <div style="font-size: 14px; font-weight: 700; color: #0f172a;" id="viewDelCustomer">-</div>
+                </div>
+                <div style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Linked Order ID</div>
+                    <div style="font-size: 14px; font-weight: 700; color: #2563eb;" id="viewDelOrderId">-</div>
+                </div>
+                <div style="grid-column: span 2; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Delivery Destination</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a;" id="viewDelAddress">-</div>
+                </div>
+                <div style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Assigned Rider</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a;" id="viewDelRider">-</div>
+                </div>
+                <div style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Delivery Date</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a;" id="viewDelDate">-</div>
+                </div>
+                <div style="grid-column: span 2; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Dispatch Notes</div>
+                    <div style="font-size: 13px; font-weight: 500; color: #334155;" id="viewDelNotes">-</div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                <button type="button" class="btn-modal-cancel" onclick="closeModal('viewDeliveryModal')">Close</button>
+                <button type="button" class="btn-action-sm btn-action-slip" id="viewDelSlipBtn">Print Slip</button>
+                <button type="button" class="btn-modal-submit" id="viewDelEditBtn">Edit Record</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="slipModal">
+    <div class="modal-card" style="max-width: 480px;">
+        <div class="modal-header">
+            <h3 class="modal-title">Official Delivery Slip</h3>
+            <button type="button" class="modal-close-btn" onclick="closeModal('slipModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="delivery-slip-paper" id="slipPrintArea">
+                <div class="slip-header">
+                    <div class="slip-logo">LaundryCare</div>
+                    <div class="slip-title">Official Delivery &amp; Receipt Slip</div>
+                </div>
+
+                <div class="slip-details-grid">
+                    <div>
+                        <div class="slip-label">Delivery Tracking ID</div>
+                        <div class="slip-val" id="slipDelId">#DEL-0001</div>
+                    </div>
+                    <div>
+                        <div class="slip-label">Linked Order</div>
+                        <div class="slip-val" id="slipOrdId">#ORD-0001</div>
+                    </div>
+                    <div>
+                        <div class="slip-label">Customer Name</div>
+                        <div class="slip-val" id="slipCustomer">Customer Name</div>
+                    </div>
+                    <div>
+                        <div class="slip-label">Scheduled Date</div>
+                        <div class="slip-val" id="slipDate">2026-09-20</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <div class="slip-label">Dropoff Destination</div>
+                    <div class="slip-val" id="slipAddress" style="font-weight:500; font-size:13.5px; line-height:1.4; margin-top:2px;">—</div>
+                </div>
+
+                <div class="slip-details-grid">
+                    <div>
+                        <div class="slip-label">Assigned Courier</div>
+                        <div class="slip-val" id="slipRider">Unassigned</div>
+                    </div>
+                    <div>
+                        <div class="slip-label">Service Type / Weight</div>
+                        <div class="slip-val" id="slipWeight">Standard</div>
+                    </div>
+                </div>
+
+                <div id="slipNotesWrapper" style="margin-bottom:16px; display:none;">
+                    <div class="slip-label">Rider Instructions</div>
+                    <div class="slip-val" id="slipNotes" style="font-weight: normal; font-style: italic; color:#475569;">—</div>
+                </div>
+
+                <div class="slip-barcode-area">
+                    <div class="slip-barcode-bars" id="slipBarcode">||| | |||| || | ||| |||| |</div>
+                    <div style="font-size: 11px; color:#64748b; font-weight:600; margin-top:4px;" id="slipBarcodeText">DEL-0001-TRACK</div>
+                </div>
+
+                <!-- Handover Verification & Interactive Digital Signature Pad -->
+                <div class="slip-sign-box" style="margin-top: 18px; padding-top: 16px; border-top: 1px dashed #cbd5e1; display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="flex: 1; margin-right: 16px; text-align: left;">
+                        <div style="font-weight: 700; font-size: 11.5px; color: #334155; margin-bottom: 6px;">Handover Proof Checklist:</div>
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #475569; margin-bottom: 4px;">
+                            <input type="checkbox" checked> Garment items counted &amp; verified
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #475569; margin-bottom: 4px;">
+                            <input type="checkbox" checked> Sealed waterproof laundry bag
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #475569;">
+                            <input type="checkbox" checked> Payment receipt confirmed
+                        </label>
+                    </div>
+                    <div style="width: 190px; text-align: center;">
+                        <div style="font-weight: 700; font-size: 11.5px; color: #334155; margin-bottom: 4px;">Customer Digital Signature:</div>
+                        <div style="border: 1px solid #cbd5e1; border-radius: 6px; background: #fafafa; position: relative; display: inline-block;">
+                            <canvas id="signatureCanvas" width="180" height="65" style="touch-action: none; cursor: crosshair; display: block;"></canvas>
+                            <button type="button" onclick="clearSignatureCanvas()" style="position: absolute; right: 3px; bottom: 3px; font-size: 9px; padding: 2px 6px; background: #e2e8f0; border: none; border-radius: 4px; cursor: pointer;">Clear</button>
+                        </div>
+                        <div style="font-size: 9.5px; color: #94a3b8; margin-top: 3px;">Sign with finger or stylus</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeModal('slipModal')">Close</button>
+            <button type="button" class="btn-primary" onclick="window.print()">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;">
+                    <polyline points="6 9 6 2 18 2 18 9"/>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                    <rect x="6" y="14" width="12" height="8"/>
+                </svg>
+                Print Slip
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     PAGE CLIENT JAVASCRIPT
+     ========================================================= -->
+<script>
+let currentStatusFilter = 'all';
+
+function setStatusFilter(status, buttonElement) {
+    currentStatusFilter = status.toLowerCase();
+    document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+    buttonElement.classList.add('active');
+    filterDeliveriesTable();
+}
+
+function filterDeliveriesTable() {
+    const searchVal = (document.getElementById('deliverySearchInput').value || '').toLowerCase().trim();
+    const rows = document.querySelectorAll('#deliveriesTable tbody tr.delivery-row');
+
+    rows.forEach(row => {
+        const rowStatus = (row.getAttribute('data-status') || '').toLowerCase();
+        const rowSearch = (row.getAttribute('data-search') || '').toLowerCase();
+
+        const matchesStatus = (currentStatusFilter === 'all' || rowStatus === currentStatusFilter);
+        const matchesSearch = (!searchVal || rowSearch.includes(searchVal));
+
+        if (matchesStatus && matchesSearch) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.add('open');
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.remove('open');
+}
+
+// Close on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('open');
+        }
+    });
+});
+
+// Setup New Dispatch Modal
+document.getElementById('openDispatchModalBtn').addEventListener('click', () => {
+    // Set default date to today
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('new_delivery_date');
+    if (dateInput && !dateInput.value) {
+        dateInput.value = today;
+    }
+    openModal('dispatchModal');
+});
+
+// Handle auto-population from Order Select
+function onOrderSelected(selectElem) {
+    const selectedOption = selectElem.options[selectElem.selectedIndex];
+    const customer = selectedOption.getAttribute('data-customer');
+    if (customer) {
+        document.getElementById('new_customer').value = customer;
+    }
+}
+
+// Open Edit Modal
+function openEditModal(button) {
+    const row = button.closest('tr.delivery-row');
+    if (!row) return;
+
+    const id = row.getAttribute('data-id');
+    const customer = row.getAttribute('data-customer') || '';
+    const orderId = row.getAttribute('data-order-id') || '';
+    const address = row.getAttribute('data-address') || '';
+    const rider = row.getAttribute('data-rider') || '';
+    const date = row.getAttribute('data-date') || '';
+    const notes = row.getAttribute('data-notes') || '';
+    const status = row.getAttribute('data-status') || 'Scheduled';
+
+    document.getElementById('editModalTitle').textContent = `Edit Delivery #DEL-${String(id).padStart(4, '0')}`;
+    document.getElementById('editDeliveryForm').action = `/delivery-records-page/edit/${id}`;
+    document.getElementById('edit_customer').value = customer;
+    document.getElementById('edit_order_id').value = orderId;
+    document.getElementById('edit_delivery_date').value = date;
+    document.getElementById('edit_delivery_address').value = address;
+    document.getElementById('edit_assigned_rider').value = rider;
+    document.getElementById('edit_delivery_notes').value = notes;
+
+    // Set Status dropdown matching title-cased or exact value
+    const statusSelect = document.getElementById('edit_status');
+    for (let opt of statusSelect.options) {
+        if (opt.value.toLowerCase() === status.toLowerCase()) {
+            opt.selected = true;
+            break;
+        }
+    }
+
+    // Configure Delete Action
+    const deleteBtn = document.getElementById('btnDeleteDelivery');
+    deleteBtn.onclick = () => {
+        if (confirm(`Are you sure you want to delete delivery #DEL-${String(id).padStart(4, '0')}?`)) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/delivery-records-page/delete/${id}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    };
+
+    openModal('editModal');
+}
+
+// Open Printable Delivery Slip
+
+function openViewDeliveryModal(button) {
+    const row = button.closest('tr.delivery-row');
+    if (!row) return;
+
+    const id = row.getAttribute('data-id');
+    const customer = row.getAttribute('data-customer') || 'N/A';
+    const orderId = row.getAttribute('data-order-id') || '';
+    const address = row.getAttribute('data-address') || 'Poblacion, Maramag, Bukidnon';
+    const rider = row.getAttribute('data-rider') || 'Unassigned';
+    const date = row.getAttribute('data-date') || 'TBD';
+    const notes = row.getAttribute('data-notes') || 'None';
+    const status = row.getAttribute('data-status') || 'Scheduled';
+
+    document.getElementById('viewDelCode').textContent = `#DEL-${String(id).padStart(4, '0')}`;
+    document.getElementById('viewDelCustomer').textContent = customer;
+    document.getElementById('viewDelOrderId').textContent = orderId ? `#ORD-${String(orderId).padStart(4, '0')}` : 'Direct Service';
+    document.getElementById('viewDelAddress').textContent = address;
+    document.getElementById('viewDelRider').textContent = rider;
+    document.getElementById('viewDelDate').textContent = date;
+    document.getElementById('viewDelNotes').textContent = notes;
+
+    const badge = document.getElementById('viewDelStatusBadge');
+    badge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    badge.className = 'status-badge status-' + status.toLowerCase().replace(/ /g, '-');
+
+    document.getElementById('viewDelSlipBtn').onclick = function() {
+        closeModal('viewDeliveryModal');
+        openSlipModal(button);
+    };
+    document.getElementById('viewDelEditBtn').onclick = function() {
+        closeModal('viewDeliveryModal');
+        openEditModal(button);
+    };
+
+    openModal('viewDeliveryModal');
+}
+
+function openSlipModal(button) {
+    const row = button.closest('tr.delivery-row');
+    if (!row) return;
+
+    const id = row.getAttribute('data-id');
+    const customer = row.getAttribute('data-customer') || 'Customer';
+    const orderId = row.getAttribute('data-order-id');
+    const address = row.getAttribute('data-address') || '—';
+    const rider = row.getAttribute('data-rider') || 'Unassigned';
+    const date = row.getAttribute('data-date') || '—';
+    const notes = row.getAttribute('data-notes') || '';
+    const weight = row.getAttribute('data-weight');
+    const service = row.getAttribute('data-service');
+
+    document.getElementById('slipDelId').textContent = `#DEL-${String(id).padStart(4, '0')}`;
+    document.getElementById('slipOrdId').textContent = orderId ? `#ORD-${String(orderId).padStart(4, '0')}` : '—';
+    document.getElementById('slipCustomer').textContent = customer;
+    document.getElementById('slipDate').textContent = date;
+    document.getElementById('slipAddress').textContent = address;
+    document.getElementById('slipRider').textContent = rider;
+    
+    let weightText = 'Standard Service';
+    if (service && weight) {
+        weightText = `${service} (${weight} kg)`;
+    } else if (weight) {
+        weightText = `${weight} kg`;
+    }
+    document.getElementById('slipWeight').textContent = weightText;
+
+    const notesWrapper = document.getElementById('slipNotesWrapper');
+    if (notes) {
+        document.getElementById('slipNotes').textContent = notes;
+        notesWrapper.style.display = 'block';
+    } else {
+        notesWrapper.style.display = 'none';
+    }
+
+    document.getElementById('slipBarcodeText').textContent = `DEL-${String(id).padStart(4, '0')}-TRACK`;
+
+    openModal('slipModal');
+}
+
+// Check URL query params for auto-dispatch from Orders page
+window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get('order_id');
+    const customer = params.get('customer');
+
+    if (orderId || customer) {
+        if (orderId) {
+            const orderSelect = document.getElementById('new_order_id');
+            if (orderSelect) orderSelect.value = orderId;
+        }
+        if (customer) {
+            const customerInput = document.getElementById('new_customer');
+            if (customerInput) customerInput.value = customer;
+        }
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = document.getElementById('new_delivery_date');
+        if (dateInput && !dateInput.value) {
+            dateInput.value = today;
+        }
+        openModal('dispatchModal');
+    }
+});
+
+    // Switch Driver Routes Interactive Logic
+    const routeDatasets = {
+        'mike': {
+            vehicle: 'Ford Transit (Van #1)',
+            stops: '4 Scheduled Stops',
+            dist: '14.8 km • 42 mins remaining',
+            html: `
+                <div class="stop-node completed">
+                    <div class="stop-marker"><span class="stop-number">&#10003;</span></div>
+                    <div class="stop-content">
+                        <div class="stop-time">09:30 AM &bull; Done</div>
+                        <div class="stop-customer">Maria Santos</div>
+                        <div class="stop-address">Sayre Hwy, Poblacion, Maramag</div>
+                        <span class="stop-status-pill pill-done">Delivered</span>
+                    </div>
+                </div>
+                <div class="stop-connector completed"></div>
+                <div class="stop-node en-route">
+                    <div class="stop-marker"><span class="stop-number">2</span></div>
+                    <div class="stop-content">
+                        <div class="stop-time">10:45 AM &bull; Active</div>
+                        <div class="stop-customer">John Doe</div>
+                        <div class="stop-address">CMU Campus, Musuan, Maramag</div>
+                        <span class="stop-status-pill pill-transit">En Route (5m away)</span>
+                    </div>
+                </div>
+                <div class="stop-connector"></div>
+                <div class="stop-node pending">
+                    <div class="stop-marker"><span class="stop-number">3</span></div>
+                    <div class="stop-content">
+                        <div class="stop-time">11:30 AM &bull; Next</div>
+                        <div class="stop-customer">Robert Tan</div>
+                        <div class="stop-address">Purok 3, Dologon, Maramag</div>
+                        <span class="stop-status-pill pill-scheduled">Scheduled</span>
+                    </div>
+                </div>
+                <div class="stop-connector"></div>
+                <div class="stop-node pending">
+                    <div class="stop-marker"><span class="stop-number">4</span></div>
+                    <div class="stop-content">
+                        <div class="stop-time">01:15 PM &bull; Afternoon</div>
+                        <div class="stop-customer">Elena Gomez</div>
+                        <div class="stop-address">Base Camp Junction, Maramag</div>
+                        <span class="stop-status-pill pill-scheduled">Scheduled</span>
+                    </div>
+                </div>
+            `
+        },
+        'alex': {
+            vehicle: 'Yamaha NMAX (Motorcycle #2)',
+            stops: '3 Express Stops',
+            dist: '8.4 km • 25 mins remaining',
+            html: `
+                <div class="stop-node completed">
+                    <div class="stop-marker"><span class="stop-number">&#10003;</span></div>
+                    <div class="stop-content">
+                        <div class="stop-time">10:00 AM &bull; Done</div>
+                        <div class="stop-customer">Sarah Lim</div>
+                        <div class="stop-address">South Poblacion, Maramag</div>
+                        <span class="stop-status-pill pill-done">Delivered</span>
+                    </div>
+                </div>
+                <div class="stop-connector completed"></div>
+                <div class="stop-node en-route">
+                    <div class="stop-marker"><span class="stop-number">2</span></div>
+                    <div class="stop-content">
+                        <div class="stop-time">11:10 AM &bull; In Transit</div>
+                        <div class="stop-customer">Carlos Ramos</div>
+                        <div class="stop-address">CMU Faculty Village, Musuan, Maramag</div>
+                        <span class="stop-status-pill pill-transit">En Route (2 mins)</span>
+                    </div>
+                </div>
+                <div class="stop-connector"></div>
+                <div class="stop-node pending">
+                    <div class="stop-marker"><span class="stop-number">3</span></div>
+                    <div class="stop-content">
+                        <div class="stop-time">12:00 PM &bull; Pending</div>
+                        <div class="stop-customer">Anna Lopez</div>
+                        <div class="stop-address">Camp 1, Maramag</div>
+                        <span class="stop-status-pill pill-scheduled">Scheduled</span>
+                    </div>
+                </div>
+            `
+        },
+        'dave': {
+            vehicle: 'Honda Click (Motorcycle #3)',
+            stops: '2 Scheduled Stops',
+            dist: '6.1 km • 18 mins remaining',
+            html: `
+                <div class="stop-node completed">
+                    <div class="stop-marker"><span class="stop-number">&#10003;</span></div>
+                    <div class="stop-content">
+                        <div class="stop-time">09:15 AM &bull; Done</div>
+                        <div class="stop-customer">Patricia Cruz</div>
+                        <div class="stop-address">North Poblacion, Maramag</div>
+                        <span class="stop-status-pill pill-done">Delivered</span>
+                    </div>
+                </div>
+                <div class="stop-connector completed"></div>
+                <div class="stop-node en-route">
+                    <div class="stop-marker"><span class="stop-number">2</span></div>
+                    <div class="stop-content">
+                        <div class="stop-time">10:50 AM &bull; In Transit</div>
+                        <div class="stop-customer">Miguel Diaz</div>
+                        <div class="stop-address">Anoling, Maramag</div>
+                        <span class="stop-status-pill pill-transit">En Route (8 mins)</span>
+                    </div>
+                </div>
+            `
+        },
+        'all': {
+            vehicle: 'All Active Couriers (3 Vehicles)',
+            stops: '9 Fleet Deliveries Today',
+            dist: '29.3 km total route coverage',
+            html: `
+                <div class="stop-node completed">
+                    <div class="stop-marker"><span class="stop-number">&#10003;</span></div>
+                    <div class="stop-content">
+                        <div class="stop-time">Batch A &bull; Done</div>
+                        <div class="stop-customer">3 Morning Stops</div>
+                        <div class="stop-address">Van 1, Moto 2, Moto 3</div>
+                        <span class="stop-status-pill pill-done">Completed</span>
+                    </div>
+                </div>
+                <div class="stop-connector completed"></div>
+                <div class="stop-node en-route">
+                    <div class="stop-marker"><span class="stop-number">LIVE</span></div>
+                    <div class="stop-content">
+                        <div class="stop-time">Current &bull; 3 Active</div>
+                        <div class="stop-customer">Midday Dispatch</div>
+                        <div class="stop-address">Poblacion, Musuan, Dologon</div>
+                        <span class="stop-status-pill pill-transit">En Route</span>
+                    </div>
+                </div>
+                <div class="stop-connector"></div>
+                <div class="stop-node pending">
+                    <div class="stop-marker"><span class="stop-number">3</span></div>
+                    <div class="stop-content">
+                        <div class="stop-time">Afternoon &bull; Scheduled</div>
+                        <div class="stop-customer">3 Remaining Drops</div>
+                        <div class="stop-address">Base Camp, Camp 1, Anoling</div>
+                        <span class="stop-status-pill pill-scheduled">On Track</span>
+                    </div>
+                </div>
+            `
+        }
+    };
+
+    function switchDriverRoute(driverKey, btn) {
+        document.querySelectorAll('.driver-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const data = routeDatasets[driverKey] || routeDatasets['mike'];
+        document.getElementById('routeVehicle').textContent = data.vehicle;
+        document.getElementById('routeStopsCount').textContent = data.stops;
+        document.getElementById('routeDistance').textContent = data.dist;
+        document.getElementById('routeStopsContainer').innerHTML = data.html;
+    }
+
+    // Digital Signature Pad Canvas Setup
+    let isSigning = false;
+    const canvas = document.getElementById('signatureCanvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+
+        function getCanvasPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            isSigning = true;
+            const pos = getCanvasPos(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isSigning) return;
+            const pos = getCanvasPos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        });
+
+        window.addEventListener('mouseup', () => { isSigning = false; });
+
+        canvas.addEventListener('touchstart', (e) => {
+            isSigning = true;
+            const pos = getCanvasPos(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            e.preventDefault();
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (!isSigning) return;
+            const pos = getCanvasPos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            e.preventDefault();
+        });
+
+        canvas.addEventListener('touchend', () => { isSigning = false; });
+    }
+
+    function clearSignatureCanvas() {
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+</script>
 
 </body>
 </html>

@@ -1,0 +1,10 @@
+{
+  "name": "LaundryCare Rider Portal",
+  "short_name": "Rider App",
+  "description": "LaundryCare Delivery Courier Logistics & Navigation PWA",
+  "start_url": "/rider-app",
+  "display": "standalone",
+  "background_color": "#f3f6f9",
+  "theme_color": "#0a1628",
+  "orientation": "portrait-primary"
+}

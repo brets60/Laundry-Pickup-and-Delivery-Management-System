@@ -1,609 +1,228 @@
 /* =========================================================
-   LAUNDRYCARE — SHARED SIDEBAR
-   Used by all main pages
-========================================================= */
+   LAUNDRYCARE — UNIFIED MODERN SIDEBAR
+   Matches Dashboard, Orders, and Deliveries design language
+   ========================================================= */
 
 :root {
-    --lc-sidebar-width: 304px;
-
-    --lc-sidebar-bg: #071b33;
-    --lc-sidebar-border: rgba(255, 255, 255, 0.08);
-
-    --lc-sidebar-text: #a8b6c9;
+    --lc-sidebar-width: 220px;
+    --sidebar-width: 220px;
+    --lc-sidebar-bg: #0a1628;
+    --lc-sidebar-border: rgba(255, 255, 255, 0.06);
+    --lc-sidebar-text: #889bb5;
     --lc-sidebar-heading: #ffffff;
-
-    --lc-sidebar-active-bg: linear-gradient(
-        90deg,
-        #2563eb 0%,
-        #0ea5c9 100%
-    );
-
+    --lc-sidebar-active-bg: #1877f2;
     --lc-sidebar-active-text: #ffffff;
-
-    --lc-sidebar-hover-bg: rgba(255, 255, 255, 0.07);
+    --lc-sidebar-hover-bg: rgba(255, 255, 255, 0.05);
 }
 
+/* Base Sidebar */
+.lc-sidebar,
+.dashboard-sidebar,
+.sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 220px !important;
+    min-width: 220px !important;
+    height: 100vh !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: #0a1628 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+    z-index: 1000 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 24px 14px !important;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
 
-/* =========================================================
-   SIDEBAR
-========================================================= */
+/* Adjust page content wrappers */
+.main-content,
+.dashboard-main,
+.content-wrapper,
+.app-container {
+    margin-left: 220px !important;
+}
 
-.lc-sidebar {
+/* Brand */
+.lc-brand,
+.sidebar-brand,
+.brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 0 8px 26px !important;
+    min-height: auto !important;
+    border-bottom: none !important;
+    text-decoration: none !important;
+    color: #ffffff !important;
+}
+
+.lc-brand-mark,
+.brand-icon-box,
+.brand-logo {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    background: #1877f2 !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+    flex-shrink: 0 !important;
+}
+
+.lc-brand-mark svg,
+.brand-icon-box svg,
+.brand-logo svg {
+    width: 18px !important;
+    height: 18px !important;
+    stroke: currentColor;
+    fill: none;
+}
+
+.lc-brand h1,
+.sidebar-brand span,
+.brand-title {
+    font-size: 19px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+}
+
+.lc-brand p,
+.brand-subtitle {
+    display: none !important;
+}
+
+.lc-nav-label,
+.nav-label {
+    display: none !important;
+}
+
+/* Navigation List */
+.lc-navigation,
+.sidebar-nav,
+.navigation {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    padding: 0 !important;
+    flex: 1 !important;
+}
+
+/* Navigation Item */
+.lc-nav-item,
+.sidebar-nav a,
+.nav-link {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 11px 14px !important;
+    min-height: auto !important;
+    border-radius: 8px !important;
+    color: #889bb5 !important;
+    font-size: 14.5px !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.lc-nav-item::before,
+.sidebar-nav a::before,
+.nav-link::before {
+    display: none !important;
+}
+
+.lc-nav-item:hover,
+.sidebar-nav a:hover,
+.nav-link:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    transform: none !important;
+}
+
+.lc-nav-item.active,
+.sidebar-nav a.active,
+.nav-link.active {
+    background: #1877f2 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+}
+
+.lc-nav-icon,
+.lc-nav-item svg,
+.sidebar-nav a svg,
+.nav-link svg {
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0 !important;
+}
+
+.lc-sidebar-bottom,
+.sidebar-bottom {
+    display: none !important;
+}
+
+/* Overlay for Mobile */
+.lc-sidebar-overlay {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
-
-    width: var(--lc-sidebar-width);
-    height: 100vh;
-
-    box-sizing: border-box;
-
-    display: flex;
-    flex-direction: column;
-
-    background: var(--lc-sidebar-bg);
-    border-right: 1px solid var(--lc-sidebar-border);
-
-    z-index: 1000;
-
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    font-family: inherit;
-}
-
-
-/* =========================================================
-   BRAND
-========================================================= */
-
-.lc-brand {
-    min-height: 122px;
-
-    padding: 28px 24px;
-
-    box-sizing: border-box;
-
-    display: flex;
-    align-items: center;
-
-    gap: 14px;
-
-    flex-shrink: 0;
-
-    border-bottom: 1px solid var(--lc-sidebar-border);
-}
-
-
-.lc-brand-mark {
-    width: 52px;
-    height: 52px;
-    min-width: 52px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 14px;
-
-    background: linear-gradient(
-        135deg,
-        #2563eb,
-        #06b6d4
-    );
-
-    color: #ffffff;
-
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
-}
-
-.lc-brand-mark svg {
-    width: 30px;
-    height: 30px;
-}
-
-
-.lc-brand-mark svg {
-    width: 27px;
-    height: 27px;
-
-    display: block;
-}
-
-
-.lc-brand h1 {
-    margin: 0;
-
-    color: var(--lc-sidebar-heading);
-
-    font-size: 20px;
-    line-height: 1.2;
-    font-weight: 800;
-
-    letter-spacing: -0.3px;
-}
-
-
-.lc-brand p {
-    margin: 5px 0 0;
-
-    color: #7f91a8;
-
-    font-size: 10px;
-    line-height: 1.3;
-
-    font-weight: 600;
-
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   MAIN LABEL
-========================================================= */
-
-.lc-nav-label {
-    display: block;
-
-    padding: 28px 28px 12px;
-
-    color: #71839a;
-
-    font-size: 11px;
-    line-height: 1;
-
-    font-weight: 700;
-
-    letter-spacing: 1px;
-}
-
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-.lc-navigation {
-    display: flex;
-    flex-direction: column;
-
-    gap: 6px;
-
-    padding: 0 14px;
-
-    flex: 1;
-}
-
-
-/* =========================================================
-   NAVIGATION ITEM
-========================================================= */
-
-.lc-nav-item {
-    min-height: 56px;
-
-    padding: 0 18px;
-
-    box-sizing: border-box;
-
-    display: flex;
-    align-items: center;
-
-    gap: 16px;
-
-    border-radius: 12px;
-
-    color: var(--lc-sidebar-text);
-
-    font-size: 15px;
-    font-weight: 600;
-
-    text-decoration: none;
-
-    transition:
-        background 0.18s ease,
-        color 0.18s ease,
-        transform 0.18s ease;
-
-    position: relative;
-}
-
-.lc-nav-item:hover {
-    background: var(--lc-sidebar-hover-bg);
-    color: #ffffff;
-}
-
-.lc-nav-item.active:hover {
-    background: linear-gradient(
-        90deg,
-        #2563eb 0%,
-        #0891b2 100%
-    );
-
-    color: #ffffff;
-}
-
-
-.lc-nav-item.active {
-    background: linear-gradient(
-        90deg,
-        #2563eb 0%,
-        #0891b2 100%
-    );
-
-    color: #ffffff;
-
-    box-shadow:
-        0 8px 18px rgba(37, 99, 235, 0.18);
-}
-
-.lc-nav-item.active::before {
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    top: 12px;
-    bottom: 12px;
-
-    width: 4px;
-
-    background: #ffffff;
-
-    border-radius: 0 4px 4px 0;
-}
-
-
-/* =========================================================
-   NAVIGATION ICON
-========================================================= */
-
-.lc-nav-icon {
-    width: 22px;
-    height: 22px;
-    min-width: 22px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-.lc-nav-icon svg {
-    width: 19px;
-    height: 19px;
-
-    display: block;
-
-    fill: none;
-
-    stroke: currentColor;
-    stroke-width: 1.8;
-
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-
-/* =========================================================
-   SIDEBAR BOTTOM
-========================================================= */
-
-.lc-sidebar-bottom {
-    margin-top: auto;
-
-    padding: 20px 14px 24px;
-
-    border-top: 1px solid var(--lc-sidebar-border);
-
-    flex-shrink: 0;
-}
-
-
-/* =========================================================
-   ADMIN PROFILE
-========================================================= */
-
-.lc-admin-profile {
-    display: flex;
-    align-items: center;
-
-    gap: 14px;
-
-    padding: 8px 10px 18px;
-}
-
-
-.lc-admin-avatar {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: linear-gradient(
-        135deg,
-        #2563eb,
-        #06b6d4
-    );
-
-    color: #ffffff;
-
-    font-size: 16px;
-    font-weight: 700;
-
-    box-shadow: 0 5px 14px rgba(37, 99, 235, 0.22);
-}
-
-
-.lc-admin-info {
-    min-width: 0;
-
-    display: flex;
-    flex-direction: column;
-
-    gap: 3px;
-}
-
-.lc-admin-info strong {
-    color: #ffffff;
-
-    font-size: 14px;
-    line-height: 1.2;
-
-    font-weight: 700;
-}
-
-.lc-admin-info span {
-    color: #7f91a8;
-
-    font-size: 11px;
-    line-height: 1.2;
-
-    font-weight: 500;
-}
-
-
-.lc-admin-info strong {
-    color: var(--lc-sidebar-heading);
-
-    font-size: 13px;
-    font-weight: 700;
-
-    line-height: 1.2;
-}
-
-
-.lc-admin-info span {
-    color: #94a3b8;
-
-    font-size: 10px;
-    font-weight: 500;
-
-    line-height: 1.2;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-.lc-logout {
-    width: 100%;
-    min-height: 48px;
-
-    padding: 0 12px;
-
-    box-sizing: border-box;
-
-    display: flex;
-    align-items: center;
-
-    gap: 14px;
-
-    border-radius: 10px;
-
-    color: #a8b6c9;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    text-decoration: none;
-
-    transition:
-        background 0.18s ease,
-        color 0.18s ease;
-}
-
-.lc-logout:hover {
-    background: var(--lc-sidebar-hover-bg);
-    color: #ffffff;
-}
-
-.lc-logout svg {
-    width: 20px;
-    height: 20px;
-
-    min-width: 20px;
-
-    display: block;
-
-    flex-shrink: 0;
-}
-
-
-.lc-logout:hover {
-    background: #f8fafc;
-    color: #dc2626;
-}
-
-
-/* =========================================================
-   OVERLAY
-========================================================= */
-
-.lc-sidebar-overlay {
-    display: none;
-
-    position: fixed;
-
-    inset: 0;
-
-    background: rgba(15, 23, 42, 0.35);
-
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 22, 40, 0.6);
+    backdrop-filter: blur(2px);
     z-index: 999;
 }
 
-
-.lc-sidebar-overlay.active {
-    display: block;
+/* Brand Box in Unified Sidebar */
+.brand-box {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 0 6px 26px !important;
+    text-decoration: none !important;
+    color: #ffffff !important;
+}
+.brand-logo-icon {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    background: #1877f2 !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+}
+.brand-logo-icon svg {
+    width: 18px !important;
+    height: 18px !important;
+    stroke: currentColor !important;
+}
+.brand-box span {
+    font-size: 19px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
 }
 
-
-/* =========================================================
-   MAIN CONTENT
-========================================================= */
-
-.lc-main {
-    margin-left: var(--lc-sidebar-width);
-
-    min-height: 100vh;
-
-    box-sizing: border-box;
-}
-
-
-/* =========================================================
-   ACCESSIBILITY
-========================================================= */
-
-.lc-nav-item:focus-visible,
-.lc-logout:focus-visible {
-    outline: 3px solid rgba(37, 99, 235, 0.25);
-
-    outline-offset: 2px;
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 760px) {
-
-    .lc-sidebar {
-        width: 260px;
-
-        transform: translateX(-100%);
-
-        transition: transform 0.25s ease;
-    }
-
-
-    .lc-sidebar.open {
-        transform: translateX(0);
-    }
-
-
-    .lc-main {
-        margin-left: 0;
-    }
-
-
-    .lc-sidebar-overlay {
-        display: none;
-    }
-
-
-    .lc-sidebar-overlay.active {
-        display: block;
-    }
-}
-
-
-/* =========================================================
-   SMALL MOBILE
-========================================================= */
-
-@media (max-width: 430px) {
-
-    .lc-sidebar {
-        width: min(260px, 86vw);
-    }
-
-
-    .lc-brand {
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-
-
-    .lc-brand h1 {
-        font-size: 17px;
-    }
-
-
-    .lc-brand p {
-        font-size: 9px;
-    }
-
-
-    .lc-nav-item {
-        font-size: 13px;
-    }
-}
-
-
-/* =========================================================
-   REDUCED MOTION
-========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-    .lc-sidebar,
-    .lc-nav-item,
-    .lc-logout {
-        transition: none;
-    }
-}
-
-/* SIGN OUT ICON SIZE */
-.lc-logout svg {
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
-    flex-shrink: 0;
-    display: block;
-}
-
-.lc-logout {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-/* SIGN OUT ICON SIZE */
-.lc-logout svg {
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
-    flex-shrink: 0;
-    display: block;
-}
-
-.lc-logout {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+/* Sidebar Footer User & Logout */
+.sidebar-footer {
+    padding: 14px 16px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    margin-top: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    background: rgba(0, 0, 0, 0.15) !important;
+    border-radius: 8px !important;
 }

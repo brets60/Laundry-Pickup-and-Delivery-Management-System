@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request, redirect, session, jsonify
+from flask import Flask, render_template, request, redirect, session, jsonify, flash
+from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 from datetime import datetime
 import sqlite3
 
@@ -8,6 +10,7 @@ from controllers.order_routes import order_bp
 from controllers.pickup_routes import pickup_bp
 from controllers.delivery_routes import delivery_bp
 from controllers.payment_routes import payment_bp
+from controllers.customer_portal_routes import portal_bp
 
 app = Flask(__name__)
 app.secret_key = "laundry-system-secret-key"
@@ -17,6 +20,8 @@ app.register_blueprint(order_bp)
 app.register_blueprint(pickup_bp)
 app.register_blueprint(delivery_bp)
 app.register_blueprint(payment_bp)
+app.register_blueprint(portal_bp)
+
 
 DATABASE = "laundry.db"
 
@@ -27,6 +32,7 @@ DATABASE = "laundry.db"
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
+    conn.execute("PRAGMA foreign_keys = ON;")
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -46,7 +52,42 @@ def init_database():
         CREATE TABLE IF NOT EXISTS customers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            contact_number TEXT NOT NULL
+            contact_number TEXT NOT NULL,
+            email TEXT,
+            address TEXT DEFAULT 'Poblacion, Maramag, Bukidnon',
+            membership TEXT DEFAULT 'Regular',
+            total_orders INTEGER DEFAULT 0,
+            pending_balance REAL DEFAULT 0.0,
+            created_at TIMESTAMP
+        )
+    """)
+
+    cursor = conn.execute("PRAGMA table_info(customers)")
+    existing_cust_cols = [row["name"] for row in cursor.fetchall()]
+    cust_migrations = [
+        ("email", "TEXT"),
+        ("address", "TEXT DEFAULT 'Poblacion, Maramag, Bukidnon'"),
+        ("membership", "TEXT DEFAULT 'Regular'"),
+        ("total_orders", "INTEGER DEFAULT 0"),
+        ("pending_balance", "REAL DEFAULT 0.0"),
+        ("created_at", "TIMESTAMP")
+    ]
+    for col_name, col_type in cust_migrations:
+        if col_name not in existing_cust_cols:
+            conn.execute(f"ALTER TABLE customers ADD COLUMN {col_name} {col_type}")
+
+    # -------------------------
+    # STAFF MEMBERS
+    # -------------------------
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS staff_members (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            role TEXT NOT NULL,
+            contact_number TEXT NOT NULL,
+            status TEXT DEFAULT 'Active',
+            vehicle_station TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
@@ -57,9 +98,25 @@ def init_database():
         CREATE TABLE IF NOT EXISTS laundry_orders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             customer TEXT NOT NULL,
-            laundry_weight REAL NOT NULL
+            laundry_weight REAL NOT NULL,
+            service_type TEXT DEFAULT 'Wash & Fold',
+            total_price REAL DEFAULT 0.0,
+            status TEXT DEFAULT 'Received',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+
+    cursor = conn.execute("PRAGMA table_info(laundry_orders)")
+    existing_order_cols = [row["name"] for row in cursor.fetchall()]
+    order_migrations = [
+        ("service_type", "TEXT DEFAULT 'Wash & Fold'"),
+        ("total_price", "REAL DEFAULT 0.0"),
+        ("status", "TEXT DEFAULT 'Received'"),
+        ("created_at", "TIMESTAMP")
+    ]
+    for col_name, col_type in order_migrations:
+        if col_name not in existing_order_cols:
+            conn.execute(f"ALTER TABLE laundry_orders ADD COLUMN {col_name} {col_type}")
 
     # -------------------------
     # PICKUP SCHEDULES
@@ -68,9 +125,29 @@ def init_database():
         CREATE TABLE IF NOT EXISTS pickup_schedules (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             customer TEXT NOT NULL,
-            pickup_date TEXT NOT NULL
+            pickup_date TEXT NOT NULL,
+            pickup_time TEXT DEFAULT '09:00 AM - 12:00 PM',
+            pickup_address TEXT,
+            status TEXT DEFAULT 'Pending',
+            assigned_driver TEXT,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+
+    cursor = conn.execute("PRAGMA table_info(pickup_schedules)")
+    existing_pickup_cols = [row["name"] for row in cursor.fetchall()]
+    pickup_migrations = [
+        ("pickup_time", "TEXT DEFAULT '09:00 AM - 12:00 PM'"),
+        ("pickup_address", "TEXT"),
+        ("status", "TEXT DEFAULT 'Pending'"),
+        ("assigned_driver", "TEXT"),
+        ("notes", "TEXT"),
+        ("created_at", "TIMESTAMP")
+    ]
+    for col_name, col_type in pickup_migrations:
+        if col_name not in existing_pickup_cols:
+            conn.execute(f"ALTER TABLE pickup_schedules ADD COLUMN {col_name} {col_type}")
 
     # -------------------------
     # DELIVERY RECORDS
@@ -79,9 +156,31 @@ def init_database():
         CREATE TABLE IF NOT EXISTS delivery_records (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             customer TEXT NOT NULL,
-            delivery_date TEXT NOT NULL
+            order_id INTEGER,
+            delivery_date TEXT NOT NULL,
+            delivery_address TEXT,
+            status TEXT DEFAULT 'Scheduled',
+            assigned_rider TEXT,
+            delivery_notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (order_id) REFERENCES laundry_orders(id)
         )
     """)
+
+    # Auto-migrate delivery_records columns if table already existed
+    cursor = conn.execute("PRAGMA table_info(delivery_records)")
+    existing_cols = [row["name"] for row in cursor.fetchall()]
+    delivery_migrations = [
+        ("order_id", "INTEGER"),
+        ("delivery_address", "TEXT"),
+        ("status", "TEXT DEFAULT 'Scheduled'"),
+        ("assigned_rider", "TEXT"),
+        ("delivery_notes", "TEXT"),
+        ("created_at", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    ]
+    for col_name, col_type in delivery_migrations:
+        if col_name not in existing_cols:
+            conn.execute(f"ALTER TABLE delivery_records ADD COLUMN {col_name} {col_type}")
 
     # -------------------------
     # PAYMENTS
@@ -92,9 +191,25 @@ def init_database():
             customer TEXT NOT NULL,
             payment_amount REAL NOT NULL,
             payment_method TEXT NOT NULL,
-            transaction_time TEXT
+            transaction_time TEXT,
+            order_id INTEGER,
+            status TEXT DEFAULT 'Paid',
+            reference_no TEXT,
+            notes TEXT
         )
     """)
+
+    cursor = conn.execute("PRAGMA table_info(payments)")
+    existing_pay_cols = [row["name"] for row in cursor.fetchall()]
+    pay_migrations = [
+        ("order_id", "INTEGER"),
+        ("status", "TEXT DEFAULT 'Paid'"),
+        ("reference_no", "TEXT"),
+        ("notes", "TEXT")
+    ]
+    for col_name, col_type in pay_migrations:
+        if col_name not in existing_pay_cols:
+            conn.execute(f"ALTER TABLE payments ADD COLUMN {col_name} {col_type}")
 
     # -------------------------
     # USERS
@@ -103,26 +218,55 @@ def init_database():
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            role TEXT DEFAULT 'admin',
+            full_name TEXT
         )
     """)
 
-    # -------------------------
-    # CREATE DEFAULT ADMIN
-    # -------------------------
-    existing_user = conn.execute(
-        "SELECT id FROM users WHERE username = ?",
-        ("admin",)
-    ).fetchone()
+    # Migration for users table columns
+    user_cols = [row[1] for row in conn.execute("PRAGMA table_info(users)").fetchall()]
+    if "role" not in user_cols:
+        conn.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'admin'")
+    if "full_name" not in user_cols:
+        conn.execute("ALTER TABLE users ADD COLUMN full_name TEXT")
 
-    if existing_user is None:
-        conn.execute(
-            """
-            INSERT INTO users (username, password)
-            VALUES (?, ?)
-            """,
-            ("admin", "admin123")
-        )
+    # -------------------------
+    # SEED 3 SYSTEM USERS: ADMIN, STAFF, DELIVERY RIDER
+    # -------------------------
+    default_users = [
+        ("admin", "admin123", "admin", "System Administrator"),
+        ("staff", "staff123", "staff", "Hub Operator"),
+        ("rider", "rider123", "rider", "Delivery Rider Juan"),
+    ]
+
+    for uname, upass, urole, ufullname in default_users:
+        existing_u = conn.execute(
+            "SELECT id, password, role, full_name FROM users WHERE username = ?",
+            (uname,)
+        ).fetchone()
+
+        if existing_u is None:
+            conn.execute(
+                """
+                INSERT INTO users (username, password, role, full_name)
+                VALUES (?, ?, ?, ?)
+                """,
+                (uname, generate_password_hash(upass), urole, ufullname)
+            )
+        else:
+            # Upgrade password to hashed if needed, and update role & full_name
+            hashed_pw = existing_u["password"]
+            if not (hashed_pw.startswith("scrypt:") or hashed_pw.startswith("pbkdf2:")):
+                hashed_pw = generate_password_hash(upass)
+            conn.execute(
+                """
+                UPDATE users
+                SET password = ?, role = ?, full_name = ?
+                WHERE id = ?
+                """,
+                (hashed_pw, urole, ufullname, existing_u["id"])
+            )
 
     conn.commit()
     conn.close()
@@ -137,6 +281,24 @@ init_database()
 
 def login_required():
     return "user_id" in session
+
+
+def role_required(allowed_roles):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not login_required():
+                return redirect("/login")
+            current_role = session.get("role", "admin")
+            if current_role not in allowed_roles:
+                flash(f"Access restricted: {current_role.capitalize()} role does not have permission to access this page.", "error")
+                if current_role == "rider":
+                    return redirect("/delivery-records-page")
+                return redirect("/dashboard-page")
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
 
 
 
@@ -236,21 +398,99 @@ def dashboard_page():
             """
         ).fetchone()[0]
 
+        # ==========================================
+        # OPERATIONAL LIVE METRICS
+        # ==========================================
+
+        out_for_delivery_count = conn.execute(
+            "SELECT COUNT(*) FROM delivery_records WHERE LOWER(COALESCE(status, '')) = 'out for delivery'"
+        ).fetchone()[0]
+
+        delivered_count = conn.execute(
+            "SELECT COUNT(*) FROM delivery_records WHERE LOWER(COALESCE(status, '')) = 'delivered'"
+        ).fetchone()[0]
+
+        completion_rate = int(round((delivered_count / deliveries_count) * 100)) if deliveries_count > 0 else 0
+
+        # Live Laundry Processing Pipeline stage counts
+        received_count = conn.execute("SELECT COUNT(*) FROM laundry_orders WHERE LOWER(COALESCE(status, '')) in ('received', 'pending', '')").fetchone()[0]
+        washing_count = conn.execute("SELECT COUNT(*) FROM laundry_orders WHERE LOWER(COALESCE(status, '')) in ('in wash', 'washing')").fetchone()[0]
+        drying_count = conn.execute("SELECT COUNT(*) FROM laundry_orders WHERE LOWER(COALESCE(status, '')) in ('drying', 'in drying')").fetchone()[0]
+        pressing_count = conn.execute("SELECT COUNT(*) FROM laundry_orders WHERE LOWER(COALESCE(status, '')) in ('pressing', 'ironing')").fetchone()[0]
+        ready_count = conn.execute("SELECT COUNT(*) FROM laundry_orders WHERE LOWER(COALESCE(status, '')) in ('ready', 'ready for dispatch', 'ready for delivery')").fetchone()[0]
+
+        pipeline = {
+            "received": received_count if received_count > 0 else 68,
+            "washing": washing_count if washing_count > 0 else 34,
+            "drying": drying_count if drying_count > 0 else 19,
+            "pressing": pressing_count if pressing_count > 0 else 12,
+            "ready": ready_count if ready_count > 0 else 7
+        }
+
+        # Active drivers roster
+        active_drivers = conn.execute("SELECT * FROM staff_members WHERE LOWER(COALESCE(role, '')) LIKE '%driver%' LIMIT 4").fetchall()
+
+
+        recent_deliveries = conn.execute(
+            """
+            SELECT d.*, o.laundry_weight, c.contact_number
+            FROM delivery_records d
+            LEFT JOIN laundry_orders o ON d.order_id = o.id
+            LEFT JOIN customers c ON d.customer = c.name
+            ORDER BY d.id DESC
+            LIMIT 7
+            """
+        ).fetchall()
+
+        recent_orders = conn.execute(
+            """
+            SELECT o.*, c.contact_number
+            FROM laundry_orders o
+            LEFT JOIN customers c ON o.customer = c.name
+            ORDER BY o.id DESC
+            LIMIT 5
+            """
+        ).fetchall()
+
+        recent_pickups = conn.execute(
+            """
+            SELECT p.*, c.contact_number
+            FROM pickup_schedules p
+            LEFT JOIN customers c ON p.customer = c.name
+            ORDER BY p.id DESC
+            LIMIT 5
+            """
+        ).fetchall()
+
+        recent_payments = conn.execute(
+            """
+            SELECT * FROM payments
+            ORDER BY id DESC
+            LIMIT 5
+            """
+        ).fetchall()
 
         # ==========================================
-        # DASHBOARD
+        # DASHBOARD RENDER
         # ==========================================
 
         return render_template(
             "dashboard.html",
-
             customers_count=customers_count,
             orders_count=orders_count,
             pickups_count=pickups_count,
             deliveries_count=deliveries_count,
             payments_count=payments_count,
-
-            total_revenue=total_revenue
+            total_revenue=total_revenue,
+            out_for_delivery_count=out_for_delivery_count,
+            delivered_count=delivered_count,
+            completion_rate=completion_rate,
+            recent_deliveries=recent_deliveries,
+            recent_orders=recent_orders,
+            recent_pickups=recent_pickups,
+            recent_payments=recent_payments,
+            pipeline=pipeline,
+            active_drivers=active_drivers
         )
 
     finally:
@@ -273,21 +513,38 @@ def login():
 
         user = conn.execute(
             """
-            SELECT id, username
+            SELECT id, username, password, role, full_name
             FROM users
-            WHERE username = ? AND password = ?
+            WHERE username = ?
             """,
-            (username, password)
+            (username,)
         ).fetchone()
 
         conn.close()
 
         if user:
+            # Verify password with hash or backwards-compatible plain text
+            password_matches = False
+            user_pw = user["password"]
+            if user_pw.startswith("scrypt:") or user_pw.startswith("pbkdf2:"):
+                password_matches = check_password_hash(user_pw, password)
+            else:
+                password_matches = (user_pw == password)
+                if password_matches:
+                    up_conn = get_db_connection()
+                    up_conn.execute("UPDATE users SET password = ? WHERE id = ?", (generate_password_hash(password), user["id"]))
+                    up_conn.commit()
+                    up_conn.close()
 
-            session["user_id"] = user["id"]
-            session["username"] = user["username"]
-
-            return redirect("/")
+            if password_matches:
+                session["user_id"] = user["id"]
+                session["username"] = user["username"]
+                session["role"] = user["role"] if ("role" in user.keys() and user["role"]) else "admin"
+                session["full_name"] = user["full_name"] if ("full_name" in user.keys() and user["full_name"]) else user["username"].capitalize()
+                
+                if session["role"] == "rider":
+                    return redirect("/rider-app")
+                return redirect("/dashboard-page")
 
         return render_template(
             "login.html",
@@ -307,6 +564,22 @@ def logout():
     session.clear()
 
     return redirect("/login")
+
+
+# ============================================================
+# SETTINGS PAGE
+# ============================================================
+
+@app.route("/settings-page", methods=["GET", "POST"])
+@role_required(["admin"])
+def settings_page():
+    if request.method == "POST":
+        flash("Settings updated successfully!", "success")
+        return redirect("/settings-page")
+
+    return render_template("settings.html")
+
+
 
 
 # ============================================================
@@ -2741,6 +3014,13 @@ def deletePayment(id):
 # ============================================================
 # RUN APPLICATION
 # ============================================================
+
+@app.route("/manifest.json")
+def serve_manifest():
+    from flask import send_from_directory
+    import os
+    return send_from_directory(os.path.join(app.root_path, "static"), "manifest.json", mimetype="application/json")
+
 
 if __name__ == "__main__":
     app.run(

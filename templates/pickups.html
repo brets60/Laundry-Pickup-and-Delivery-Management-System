@@ -1,1200 +1,940 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaundryCare | Pickup Schedules</title>
 
-    <title>Pickup Schedules - LaundryCare</title>
-
-    <link rel="stylesheet"
-      href="{{ url_for('static', filename='css/sidebar.css') }}">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/pickup_schedules.css') }}"
-    >
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pickup_schedules.css') }}?v=4.0">
 </head>
 
 <body>
 
-<!-- SIDEBAR OVERLAY -->
-<div class="lc-sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+<div class="dashboard-layout">
 
-<!-- SIDEBAR -->
-<aside class="lc-sidebar" id="sidebar" aria-label="Main navigation">
+    <!-- =========================================================
+         LEFT SIDEBAR (EXACT SAME AS DASHBOARD, ORDERS & DELIVERIES)
+         ========================================================= -->
+    <aside class="dashboard-sidebar">
 
-    <!-- BRAND -->
-    <div class="lc-brand">
-        <div class="lc-brand-mark">
-            <svg viewBox="0 0 48 48" aria-hidden="true">
-                <rect x="7" y="7" width="34" height="34" rx="10"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"/>
-                <path d="M16 24h16M24 16v16"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      stroke-linecap="round"/>
-            </svg>
-        </div>
-
-        <div>
-            <h1>LaundryCare</h1>
-            <p>Pickup &amp; Delivery Management</p>
-        </div>
-    </div>
-
-    <!-- NAVIGATION -->
-    <nav class="lc-navigation" aria-label="Main navigation">
-
-        <span class="lc-nav-label">MAIN</span>
-
-        <!-- DASHBOARD -->
-        <a href="/dashboard-page" class="lc-nav-item">
-            <span class="lc-nav-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-5v-6h-5v6h-5A1.5 1.5 0 0 1 3 19.5z"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linejoin="round"/>
+        <!-- BRAND LOGO -->
+        <a href="/dashboard-page" class="sidebar-brand">
+            <div class="brand-icon-box">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                    <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                    <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
                 </svg>
-            </span>
-            <span>Dashboard</span>
-        </a>
-
-        <!-- CUSTOMERS -->
-        <a href="/customers-page" class="lc-nav-item">
-            <span class="lc-nav-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="8" r="3.2"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"/>
-                    <path d="M5.5 20c.7-3.4 2.8-5.2 6.5-5.2s5.8 1.8 6.5 5.2"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linecap="round"/>
-                </svg>
-            </span>
-            <span>Customers</span>
-        </a>
-
-        <!-- LAUNDRY ORDERS -->
-        <a href="/laundry-orders-page" class="lc-nav-item">
-            <span class="lc-nav-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6 4h12v16H6z"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linejoin="round"/>
-                    <path d="M9 8h6M9 12h6M9 16h4"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linecap="round"/>
-                </svg>
-            </span>
-            <span>Laundry Orders</span>
-        </a>
-
-        <!-- PICKUP SCHEDULES -->
-        <a href="/pickup-schedules-page"
-           class="lc-nav-item active"
-           aria-current="page">
-            <span class="lc-nav-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <rect x="4" y="5" width="16" height="15" rx="2"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"/>
-                    <path d="M8 3v4M16 3v4M4 9h16"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linecap="round"/>
-                </svg>
-            </span>
-            <span>Pickup Schedules</span>
-        </a>
-
-        <!-- DELIVERY RECORDS -->
-        <a href="/delivery-records-page" class="lc-nav-item">
-            <span class="lc-nav-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linejoin="round"/>
-                    <circle cx="7" cy="19" r="1.5"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"/>
-                    <circle cx="18" cy="19" r="1.5"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"/>
-                </svg>
-            </span>
-            <span>Delivery Records</span>
-        </a>
-
-        <!-- PAYMENTS -->
-        <a href="/payments-page" class="lc-nav-item">
-            <span class="lc-nav-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <rect x="3" y="5" width="18" height="14" rx="2"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"/>
-                    <path d="M3 10h18M7 15h4"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linecap="round"/>
-                </svg>
-            </span>
-            <span>Payments</span>
-        </a>
-
-    </nav>
-
-    <!-- ADMIN / LOGOUT -->
-    <div class="lc-sidebar-bottom">
-
-        <div class="lc-admin-profile">
-            <div class="lc-admin-avatar">A</div>
-
-            <div class="lc-admin-info">
-                <strong>Admin</strong>
-                <span>System Administrator</span>
             </div>
-        </div>
-
-        <a href="/logout"
-           class="lc-logout"
-           aria-label="Sign out">
-
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.8"
-                      stroke-linecap="round"/>
-                <path d="M14 8l4 4-4 4M18 12H9"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.8"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"/>
-            </svg>
-
-            <span>Sign Out</span>
+            <span>LaundryCare</span>
         </a>
 
-    </div>
-
-</aside>
-
-
-<!-- MAIN CONTENT -->
-<main class="main-content">
-
-    <!-- TOP HEADER -->
-    <header class="top-header">
-
-        <div class="header-left">
-
-            <button
-                type="button"
-                class="mobile-menu-button"
-                id="mobileMenuButton"
-                aria-label="Open navigation menu"
-                aria-controls="sidebar"
-                aria-expanded="false"
-            >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M4 6h16"/>
-                    <path d="M4 12h16"/>
-                    <path d="M4 18h16"/>
+        <!-- MENU ITEMS -->
+        <nav class="sidebar-nav">
+            <!-- Dashboard -->
+            <a href="/dashboard-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
                 </svg>
-            </button>
+                <span>Dashboard</span>
+            </a>
 
-
-            <div class="header-page-info">
-                <span class="header-label">LAUNDRYCARE MANAGEMENT</span>
-                <strong>Pickup Schedules</strong>
-            </div>
-
-        </div>
-
-
-        <div class="header-right">
-
-            <button
-                type="button"
-                class="notification-button"
-                aria-label="Notifications"
-            >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
-                    <path d="M10 21h4"/>
+            {% if session.get('role', 'admin') in ['admin', 'staff'] %}
+            <!-- Orders -->
+            <a href="/laundry-orders-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                    <path d="M9 12h6M9 16h6"/>
                 </svg>
-
-                <span class="notification-dot"></span>
-            </button>
-
-
-            <div class="header-user">
-
-                <div class="header-avatar">
-                    SA
-                </div>
-
-                <div class="header-user-text">
-                    <strong>Administrator</strong>
-                    <span>System Administrator</span>
-                </div>
-
-            </div>
-
-        </div>
-
-    </header>
-
-
-    <div class="page-container">
-
-        <!-- FLASH MESSAGES -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-
-            {% if messages %}
-
-                <div class="flash-container" aria-live="polite">
-
-                    {% for category, message in messages %}
-
-                        <div
-                            class="flash-alert
-                            {% if category == 'error' or category == 'danger' %}
-                                flash-danger
-                            {% elif category == 'warning' %}
-                                flash-warning
-                            {% else %}
-                                flash-success
-                            {% endif %}"
-                        >
-
-                            <span class="flash-icon">
-
-                                {% if category == 'error' or category == 'danger' %}
-
-                                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                                        <circle cx="12" cy="12" r="9"/>
-                                        <path d="M12 8v5"/>
-                                        <path d="M12 16h.01"/>
-                                    </svg>
-
-                                {% elif category == 'warning' %}
-
-                                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                                        <path d="M12 3 2.5 20h19L12 3Z"/>
-                                        <path d="M12 9v4"/>
-                                        <path d="M12 16h.01"/>
-                                    </svg>
-
-                                {% else %}
-
-                                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                                        <circle cx="12" cy="12" r="9"/>
-                                        <path d="m8 12 2.5 2.5L16 9"/>
-                                    </svg>
-
-                                {% endif %}
-
-                            </span>
-
-                            <span class="flash-message">
-                                {{ message }}
-                            </span>
-
-                            <button
-                                type="button"
-                                class="flash-close"
-                                aria-label="Close notification"
-                            >
-                                &times;
-                            </button>
-
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
+                <span>Orders</span>
+            </a>
             {% endif %}
 
-        {% endwith %}
-
-
-        <!-- PAGE INTRO -->
-        <section class="page-intro">
-
-            <div>
-
-                <div class="breadcrumb">
-                    Management <span>/</span> Pickup Schedules
-                </div>
-
-                <h1 style="color: #ffffff;">Pickup Schedules</h1>
-
-                <p>
-                    Create, manage, and organize scheduled laundry pickups.
-                </p>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="primary-button page-action-button"
-                id="newPickupButton"
-            >
-
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 5v14"/>
-                    <path d="M5 12h14"/>
+            <!-- Deliveries -->
+            <a href="/delivery-records-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="3" width="15" height="13"/>
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                    <circle cx="5.5" cy="18.5" r="2.5"/>
+                    <circle cx="18.5" cy="18.5" r="2.5"/>
                 </svg>
+                <span>Deliveries</span>
+            </a>
 
-                <span>New Pickup Schedule</span>
+            <!-- Pickups (ACTIVE) -->
+            <a href="/pickup-schedules-page" class="active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                    <line x1="12" y1="14" x2="12" y2="18"/>
+                    <line x1="10" y1="16" x2="14" y2="16"/>
+                </svg>
+                <span>Pickups</span>
+            </a>
 
+            {% if session.get('role', 'admin') in ['admin', 'staff'] %}
+            <!-- Customers -->
+            <a href="/customers-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>Customers</span>
+            </a>
+            {% endif %}
+
+            {% if session.get('role', 'admin') == 'admin' %}
+            <!-- Staff -->
+            <a href="/staff-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Staff</span>
+            </a>
+            {% endif %}
+
+            {% if session.get('role', 'admin') == 'admin' %}
+            <!-- Reports -->
+            <a href="/payments-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <line x1="9" y1="18" x2="9" y2="15"/>
+                    <line x1="15" y1="18" x2="15" y2="9"/>
+                </svg>
+                <span>Reports</span>
+            </a>
+            {% endif %}
+
+            {% if session.get('role', 'admin') == 'admin' %}
+            <!-- Settings -->
+            <a href="/settings-page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.51 1 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                <span>Settings</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <!-- SIDEBAR USER & LOGOUT -->
+        <div class="sidebar-footer" style="padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: auto; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.15);">
+            <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: {% if session.get('role') == 'rider' %}#ea580c{% elif session.get('role') == 'staff' %}#059669{% else %}#2563eb{% endif %}; color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    {{ (session.get('username') or 'A')[0]|upper }}
+                </div>
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <div style="font-size: 13px; font-weight: 600; color: #f8fafc;">{{ session.get('username', 'Admin')|capitalize }}</div>
+                    <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: {% if session.get('role') == 'rider' %}#fdba74{% elif session.get('role') == 'staff' %}#6ee7b7{% else %}#93c5fd{% endif %};">
+                        {{ session.get('role', 'admin')|upper }}
+                    </div>
+                </div>
+            </div>
+            <a href="/logout" title="Sign Out" onclick="return confirm('Sign out of LaundryCare?');" style="color: #94a3b8; display: flex; align-items: center; padding: 6px; border-radius: 6px; text-decoration: none;" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='#94a3b8'">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+            </a>
+        </div>
+    </aside>
+
+    <!-- =========================================================
+         MAIN APPLICATION AREA
+         ========================================================= -->
+    <main class="dashboard-main">
+
+        <!-- TOP HEADER -->
+        <div class="pickups-top-header">
+            <div class="header-title-group">
+                <h1>Pickup Schedules</h1>
+                <p>Organize and track incoming laundry collection requests</p>
+            </div>
+            <button type="button" class="btn-schedule-action" id="openScheduleModalBtn">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>Schedule Pickup</span>
             </button>
+        </div>
 
+        <!-- SEARCH & STATUS FILTERS TOOLBAR -->
+        <div class="filter-toolbar">
+            <!-- Search Input -->
+            <div class="search-input-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="pickupSearchInput" placeholder="Search by customer, phone, address, driver..." onkeyup="filterPickupsTable()">
+            </div>
+
+            <!-- Status Filter Pills -->
+            <div class="status-filter-group">
+                <button type="button" class="filter-pill active" onclick="setStatusFilter('all', this)">All</button>
+                <button type="button" class="filter-pill" onclick="setStatusFilter('pending', this)">Pending</button>
+                <button type="button" class="filter-pill" onclick="setStatusFilter('assigned', this)">Assigned</button>
+                <button type="button" class="filter-pill" onclick="setStatusFilter('picked up', this)">Picked Up</button>
+                <button type="button" class="filter-pill" onclick="setStatusFilter('cancelled', this)">Cancelled</button>
+            </div>
+        </div>
+
+        <!-- 4 OPERATIONAL KPI STAT CARDS -->
+        <section class="pickups-stats-grid">
+            <!-- Card 1: Total Pickups -->
+            <div class="stat-kpi-card">
+                <div class="kpi-icon-box kpi-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </div>
+                <div class="kpi-text-box">
+                    <span class="kpi-label">Total Pickups</span>
+                    <span class="kpi-number">{{ stats.total if stats else (pickups|length) }}</span>
+                </div>
+            </div>
+
+            <!-- Card 2: Pending -->
+            <div class="stat-kpi-card">
+                <div class="kpi-icon-box kpi-amber">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="kpi-text-box">
+                    <span class="kpi-label">Pending</span>
+                    <span class="kpi-number">{{ stats.pending if stats else 0 }}</span>
+                </div>
+            </div>
+
+            <!-- Card 3: Assigned / In Transit -->
+            <div class="stat-kpi-card">
+                <div class="kpi-icon-box kpi-orange">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="1" y="3" width="15" height="13"/>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 8"/>
+                        <circle cx="5.5" cy="18.5" r="2.5"/>
+                        <circle cx="18.5" cy="18.5" r="2.5"/>
+                    </svg>
+                </div>
+                <div class="kpi-text-box">
+                    <span class="kpi-label">Assigned / In Transit</span>
+                    <span class="kpi-number">{{ stats.assigned if stats else 0 }}</span>
+                </div>
+            </div>
+
+            <!-- Card 4: Picked Up -->
+            <div class="stat-kpi-card">
+                <div class="kpi-icon-box kpi-green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <div class="kpi-text-box">
+                    <span class="kpi-label">Picked Up</span>
+                    <span class="kpi-number">{{ stats.picked_up if stats else 0 }}</span>
+                </div>
+            </div>
         </section>
 
 
-        <!-- WORKFLOW -->
-        <section class="workflow-card">
-
-            <div class="workflow-title">
-
-                <div class="workflow-icon">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M4 5h16"/>
-                        <path d="M4 12h16"/>
-                        <path d="M4 19h16"/>
-                        <circle cx="7" cy="5" r="1"/>
-                        <circle cx="12" cy="12" r="1"/>
-                        <circle cx="17" cy="19" r="1"/>
-                    </svg>
+        <!-- =====================================================
+             SCHEDULED PICKUP TIME-WINDOW BATCHES (PHASE 3)
+             ===================================================== -->
+        <div class="pickup-batches-grid">
+            <!-- Morning Batch -->
+            <div class="pickup-batch-card">
+                <div class="batch-card-header">
+                    <span class="batch-window-tag">09:00 AM - 12:00 PM</span>
+                    <span class="batch-load-badge">3 Requests</span>
                 </div>
-
-                <div>
-                    <strong>Pickup Workflow</strong>
-                    <span>Manage your laundry service process</span>
+                <h4 class="batch-title">Morning Musuan / CMU Run</h4>
+                <div class="batch-driver-info">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/></svg>
+                    <span>Courier: <strong>Rider Mike (Van 1)</strong></span>
                 </div>
-
+                <div class="batch-progress-bar">
+                    <div class="batch-progress-fill" style="width: 100%; background: #10b981;"></div>
+                </div>
+                <div style="font-size: 11.5px; color: #059669; font-weight: 700;">100% Collected (3/3 completed)</div>
             </div>
 
-
-            <div class="workflow-steps">
-
-                <div class="workflow-step">
-                    <span class="step-number">01</span>
-                    <span>Laundry Order</span>
+            <!-- Afternoon Batch -->
+            <div class="pickup-batch-card">
+                <div class="batch-card-header">
+                    <span class="batch-window-tag" style="background:#fef3c7; color:#b45309;">01:00 PM - 05:00 PM</span>
+                    <span class="batch-load-badge">4 Requests</span>
                 </div>
-
-                <span class="workflow-line"></span>
-
-                <div class="workflow-step active-step">
-                    <span class="step-number">02</span>
-                    <span>Pickup Schedule</span>
+                <h4 class="batch-title">Afternoon Dologon & Base Camp Circuit</h4>
+                <div class="batch-driver-info">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>Courier: <strong>Rider Alex (Moto 2)</strong></span>
                 </div>
-
-                <span class="workflow-line"></span>
-
-                <div class="workflow-step">
-                    <span class="step-number">03</span>
-                    <span>Pickup</span>
+                <div class="batch-progress-bar">
+                    <div class="batch-progress-fill" style="width: 50%; background: #2563eb;"></div>
                 </div>
-
-                <span class="workflow-line"></span>
-
-                <div class="workflow-step">
-                    <span class="step-number">04</span>
-                    <span>Processing</span>
-                </div>
-
-                <span class="workflow-line"></span>
-
-                <div class="workflow-step">
-                    <span class="step-number">05</span>
-                    <span>Delivery</span>
-                </div>
-
+                <div style="font-size: 11.5px; color: #2563eb; font-weight: 700;">In Progress (2/4 bags picked up)</div>
             </div>
 
-        </section>
-
-
-        <!-- STATISTICS -->
-        <section class="stats-grid">
-
-            <article class="stat-card">
-
-                <div class="stat-icon blue">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <rect x="3" y="4" width="18" height="17" rx="2"/>
-                        <path d="M16 2v4"/>
-                        <path d="M8 2v4"/>
-                        <path d="M3 10h18"/>
-                    </svg>
+            <!-- Evening Batch -->
+            <div class="pickup-batch-card">
+                <div class="batch-card-header">
+                    <span class="batch-window-tag" style="background:#f1f5f9; color:#475569;">05:00 PM - 08:00 PM</span>
+                    <span class="batch-load-badge">2 Requests</span>
                 </div>
-
-                <div class="stat-content">
-                    <span>Total Pickups</span>
-                    <strong id="totalPickups">0</strong>
-                    <small>Registered schedules</small>
+                <h4 class="batch-title">Poblacion Commercial Run</h4>
+                <div class="batch-driver-info">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg>
+                    <span>Courier: <strong>Rider Dave (Moto 3)</strong></span>
                 </div>
-
-            </article>
-
-
-            <article class="stat-card">
-
-                <div class="stat-icon cyan">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="12" r="9"/>
-                        <path d="M12 7v5l3 2"/>
-                    </svg>
+                <div class="batch-progress-bar">
+                    <div class="batch-progress-fill" style="width: 0%; background: #94a3b8;"></div>
                 </div>
+                <div style="font-size: 11.5px; color: #64748b; font-weight: 600;">Scheduled for evening dispatch</div>
+            </div>
+        </div>
 
-                <div class="stat-content">
-                    <span>Upcoming Pickups</span>
-                    <strong id="upcomingPickups">0</strong>
-                    <small>Future schedules</small>
-                </div>
-
-            </article>
-
-
-            <article class="stat-card">
-
-                <div class="stat-icon green">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M4 5h16"/>
-                        <path d="M4 12h16"/>
-                        <path d="M4 19h16"/>
-                        <path d="M8 2v3"/>
-                        <path d="M16 2v3"/>
-                    </svg>
-                </div>
-
-                <div class="stat-content">
-                    <span>Today's Pickups</span>
-                    <strong id="todayPickups">0</strong>
-                    <small>Scheduled for today</small>
-                </div>
-
-            </article>
-
-        </section>
-
-
-        <!-- ADD PICKUP FORM -->
-        <section class="form-card" id="pickupFormSection">
-
-            <div class="card-heading">
-
-                <div>
-                    <h2>Schedule New Pickup</h2>
-                    <p>Create a pickup schedule for a customer.</p>
-                </div>
-
-                <div class="heading-icon">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M4 5h16"/>
-                        <path d="M4 12h16"/>
-                        <path d="M4 19h16"/>
-                        <path d="M8 2v3"/>
-                        <path d="M16 2v3"/>
-                    </svg>
-                </div>
-
+        <!-- =====================================================
+             ALL PICKUP SCHEDULES DATA TABLE CARD
+             ===================================================== -->
+        <div class="pickups-table-card">
+            <div class="table-header-row">
+                <h2 class="table-heading">All Pickup Requests</h2>
+                <span class="table-record-count">Showing {{ pickups|length }} schedules</span>
             </div>
 
-
-            <form
-                id="pickupForm"
-                method="POST"
-                action="/pickup-schedules-page"
-                novalidate
-            >
-
-                <div class="form-grid">
-
-                    <!-- CUSTOMER -->
-                    <div class="form-group">
-
-                        <label for="customer">
-                            Customer
-                            <span class="required">*</span>
-                        </label>
-
-                        <div class="input-wrapper">
-
-                            <span class="input-icon">
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M20 21a8 8 0 0 0-16 0"/>
-                                    <circle cx="12" cy="7" r="4"/>
-                                </svg>
-                            </span>
-
-                            <input
-                                type="text"
-                                id="customer"
-                                name="customer"
-                                placeholder="Enter customer name"
-                                value="{{ request.args.get('customer', '') }}"
-                                {% if request.args.get('customer') %}
-                                readonly
-                                {% endif %}
-                                required
-                                autocomplete="name"
-                            >
-
-                        </div>
-
-                        <div class="field-error" id="customerError" role="alert"></div>
-
-                    </div>
-
-
-                    <!-- PICKUP DATE -->
-                    <div class="form-group">
-
-                        <label for="pickup_date">
-                            Pickup Date
-                            <span class="required">*</span>
-                        </label>
-
-                        <div class="input-wrapper">
-
-                            <span class="input-icon">
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                    <rect x="3" y="4" width="18" height="17" rx="2"/>
-                                    <path d="M16 2v4"/>
-                                    <path d="M8 2v4"/>
-                                    <path d="M3 10h18"/>
-                                </svg>
-                            </span>
-
-                            <input
-                                type="date"
-                                id="pickup_date"
-                                name="pickup_date"
-                                required
-                            >
-
-                        </div>
-
-                        <div class="field-error" id="pickupDateError" role="alert"></div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="form-footer">
-
-                    <div class="form-note">
-
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <circle cx="12" cy="12" r="9"/>
-                            <path d="M12 11v5"/>
-                            <path d="M12 8h.01"/>
-                        </svg>
-
-                        <span>Fields marked with <strong>*</strong> are required.</span>
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="primary-button submit-button"
-                        id="submitPickupButton"
-                    >
-
-                        <svg
-                            class="button-icon"
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                        >
-                            <path d="M12 5v14"/>
-                            <path d="M5 12h14"/>
-                        </svg>
-
-                        <span class="button-text">Add Pickup Schedule</span>
-
-                        <span class="button-spinner" aria-hidden="true"></span>
-
-                    </button>
-
-                </div>
-
-            </form>
-
-        </section>
-
-
-        <!-- PICKUP RECORDS -->
-        <section class="records-card">
-
-            <div class="records-header">
-
-                <div class="card-heading records-title">
-
-                    <div>
-                        <h2>Pickup Records</h2>
-                        <p>View and manage all scheduled laundry pickups.</p>
-                    </div>
-
-                </div>
-
-
-                <div class="search-wrapper">
-
-                    <span class="search-icon">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <circle cx="11" cy="11" r="7"/>
-                            <path d="m20 20-4-4"/>
-                        </svg>
-                    </span>
-
-                    <input
-                        type="search"
-                        id="pickupSearch"
-                        placeholder="Search pickup schedules..."
-                        aria-label="Search pickup schedules"
-                        autocomplete="off"
-                    >
-
-                    <button
-                        type="button"
-                        class="search-clear"
-                        id="searchClear"
-                        aria-label="Clear search"
-                    >
-                        &times;
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            {% if pickups %}
-
-                <div class="table-wrapper">
-
-                    <table class="pickup-table" id="pickupTable">
-
-                        <thead>
-
-                            <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">Customer</th>
-                                <th scope="col">Pickup Date</th>
-                                <th scope="col">Actions</th>
+            <div style="overflow-x: auto;">
+                <table class="pickups-table" id="pickupsTable">
+                    <thead>
+                        <tr>
+                            <th>Pickup ID</th>
+                            <th>Customer Name &amp; Contact</th>
+                            <th>Pickup Address</th>
+                            <th>Time Slot &amp; Date</th>
+                            <th>Assigned Driver</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if pickups %}
+                            {% for p in pickups %}
+                            {% set st = (p.status or 'Pending')|lower %}
+                            <tr class="pickup-row" 
+                                data-status="{{ st }}" 
+                                data-search="{{ p.customer }} {{ p.id }} {{ p.contact_number or '' }} {{ p.pickup_address or '' }} {{ p.assigned_driver or '' }}"
+                                data-id="{{ p.id }}"
+                                data-customer="{{ p.customer }}"
+                                data-contact="{{ p.contact_number or '09123456789' }}"
+                                data-date="{{ p.pickup_date or '' }}"
+                                data-time="{{ p.pickup_time or '09:00 AM - 12:00 PM' }}"
+                                data-address="{{ p.pickup_address or 'Poblacion, Maramag, Bukidnon' }}"
+                                data-driver="{{ p.assigned_driver or '' }}"
+                                data-notes="{{ p.notes or '' }}">
+                                <td>
+                                    <span class="cell-pick-id">#PCK-{{ "%04d"|format(p.id) }}</span>
+                                </td>
+                                <td>
+                                    <div class="customer-name">{{ p.customer }}</div>
+                                    <div class="customer-phone">{{ p.contact_number or '09123456789' }}</div>
+                                </td>
+                                <td>
+                                    <div class="customer-address" title="{{ p.pickup_address or 'Standard Pickup Point' }}">
+                                        {{ p.pickup_address or 'Standard Pickup Point' }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="time-slot-text">{{ p.pickup_time or '09:00 AM - 12:00 PM' }}</div>
+                                    <div class="date-subtext">{{ p.pickup_date }}</div>
+                                </td>
+                                <td>
+                                    {% if p.assigned_driver %}
+                                        <div class="driver-badge">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                                <circle cx="12" cy="7" r="4"/>
+                                            </svg>
+                                            <span>{{ p.assigned_driver }}</span>
+                                        </div>
+                                    {% else %}
+                                        <span class="driver-unassigned">Unassigned</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if st in ['picked up', 'completed'] %}
+                                        <span class="status-badge status-picked-up">Picked Up</span>
+                                    {% elif st in ['assigned', 'in transit'] %}
+                                        <span class="status-badge status-assigned">Assigned</span>
+                                    {% elif st == 'cancelled' %}
+                                        <span class="status-badge status-cancelled">Cancelled</span>
+                                    {% else %}
+                                        <span class="status-badge status-pending">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button type="button" class="btn-action-sm btn-action-view" onclick="openViewPickupModal(this)">
+                                            View
+                                        </button>
+                                        <button type="button" class="btn-action-sm btn-action-tag" onclick="openTagModal(this)">
+                                            Print Tag
+                                        </button>
+                                        <button type="button" class="btn-action-sm btn-action-edit" onclick="openEditModal(this)">
+                                            Edit
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
-
-                        </thead>
-
-
-                        <tbody id="pickupTableBody">
-
-                            {% for pickup in pickups %}
-
-                                <tr
-                                    class="pickup-row"
-                                    data-id="{{ pickup['id'] }}"
-                                    data-customer="{{ pickup['customer']|e }}"
-                                    data-date="{{ pickup['pickup_date']|e }}"
-                                >
-
-                                    <!-- ID -->
-                                    <td data-label="ID">
-
-                                        <span class="order-id-badge">
-                                            #{{ "%03d"|format(pickup["id"]) }}
-                                        </span>
-
-                                    </td>
-
-
-                                    <!-- CUSTOMER -->
-                                    <td data-label="Customer">
-
-                                        <div class="customer-cell">
-
-                                            <div
-                                                class="customer-avatar"
-                                                data-initials="{{ pickup['customer']|e }}"
-                                            >
-                                            </div>
-
-                                            <div class="customer-details">
-                                                <strong>
-                                                    {{ pickup["customer"] }}
-                                                </strong>
-
-                                                <span>
-                                                    Customer
-                                                </span>
-                                            </div>
-
-                                        </div>
-
-                                    </td>
-
-
-                                    <!-- DATE -->
-                                    <td data-label="Pickup Date">
-
-                                        <div class="date-cell">
-
-                                            <span class="date-icon">
-
-                                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                                    <rect x="3" y="4" width="18" height="17" rx="2"/>
-                                                    <path d="M16 2v4"/>
-                                                    <path d="M8 2v4"/>
-                                                    <path d="M3 10h18"/>
-                                                </svg>
-
-                                            </span>
-
-                                            <div class="date-details">
-
-                                                <strong
-                                                    class="formatted-date"
-                                                    data-date="{{ pickup['pickup_date']|e }}"
-                                                >
-                                                    {{ pickup["pickup_date"] }}
-                                                </strong>
-
-                                                <span
-                                                    class="date-status"
-                                                    data-status-date="{{ pickup['pickup_date']|e }}"
-                                                >
-                                                    Scheduled pickup
-                                                </span>
-
-                                            </div>
-
-                                        </div>
-
-                                    </td>
-
-
-                                    <!-- ACTIONS -->
-                                    <td data-label="Actions">
-
-                                        <div class="action-buttons">
-
-                                            <a href="/pickup-schedules-page/details/{{ pickup['id'] }}" class="action-button" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.25);">
-    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-        <circle cx="12" cy="12" r="3"></circle>
-    </svg>
-    <span>View</span>
-</a>
-
-                                            <!-- EDIT -->
-                                            <a
-                                                href="/pickup-schedules-page/edit/{{ pickup['id'] }}"
-                                                class="action-button "
-                                                aria-label="Edit pickup schedule #{{ pickup['id'] }}"
-                                            >
-
-                                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                                    <path d="M12 20h9"/>
-                                                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/>
-                                                </svg>
-
-                                                <span>Edit</span>
-
-                                            </a>
-
-
-                                            <!-- DELETE -->
-                                            <form
-                                                method="POST"
-                                                action="/pickup-schedules-page/delete/{{ pickup['id'] }}"
-                                                class="delete-form"
-                                            >
-
-                                                <button
-                                                    type="button"
-                                                    class="action-button delete-action delete-trigger"
-                                                    data-id="{{ pickup['id'] }}"
-                                                    data-customer="{{ pickup['customer']|e }}"
-                                                    data-date="{{ pickup['pickup_date']|e }}"
-                                                    data-delete-url="/pickup-schedules-page/delete/{{ pickup['id'] }}"
-                                                    aria-label="Delete pickup schedule #{{ pickup['id'] }}"
-                                                >
-
-                                                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                                                        <path d="M4 7h16"/>
-                                                        <path d="M10 11v6"/>
-                                                        <path d="M14 11v6"/>
-                                                        <path d="M6 7l1 14h10l1-14"/>
-                                                        <path d="M9 7V4h6v3"/>
-                                                    </svg>
-
-                                                    <span>Delete</span>
-
-                                                </button>
-
-                                            </form>
-
-
-                                            <!-- DELIVERY -->
-                                            <button
-                                                type="button"
-                                                class="action-button delivery-action delivery-trigger"
-                                                data-customer="{{ pickup['customer']|e }}"
-                                                data-id="{{ pickup['id'] }}"
-                                                aria-label="Proceed to delivery for pickup #{{ pickup['id'] }}"
-                                            >
-
-                                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                                    <path d="M3 6h11v11H3z"/>
-                                                    <path d="M14 10h4l3 3v4h-7z"/>
-                                                    <circle cx="7" cy="19" r="2"/>
-                                                    <circle cx="18" cy="19" r="2"/>
-                                                </svg>
-
-                                                <span>Proceed to Delivery</span>
-
-                                            </button>
-
-                                        </div>
-
-                                    </td>
-
-                                </tr>
-
                             {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-table-state">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                            <line x1="16" y1="2" x2="16" y2="6"/>
+                                            <line x1="8" y1="2" x2="8" y2="6"/>
+                                        </svg>
+                                        <p style="font-weight:600; font-size:15px; color:#0f172a; margin-bottom:4px;">No pickup schedules found</p>
+                                        <p style="font-size:13px;">Click "+ Schedule Pickup" to book the first collection.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-                        </tbody>
+    </main>
 
-                    </table>
+</div>
 
-
-                    <!-- SEARCH EMPTY -->
-                    <div
-                        class="search-empty"
-                        id="searchEmpty"
-                        hidden
-                    >
-
-                        <div class="empty-icon small-empty-icon">
-
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                                <circle cx="11" cy="11" r="7"/>
-                                <path d="m20 20-4-4"/>
-                            </svg>
-
-                        </div>
-
-                        <h3>No pickup schedules found</h3>
-
-                        <p>
-                            Try searching with another ID, customer name, or pickup date.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            {% else %}
-
-                <!-- TRUE EMPTY STATE -->
-                <div class="empty-state">
-
-                    <div class="empty-icon">
-
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <rect x="3" y="4" width="18" height="17" rx="2"/>
-                            <path d="M16 2v4"/>
-                            <path d="M8 2v4"/>
-                            <path d="M3 10h18"/>
-                            <path d="M12 13v4"/>
-                            <path d="M9 15h6"/>
-                        </svg>
-
-                    </div>
-
-                    <h3>No pickup schedules yet</h3>
-
-                    <p>
-                        There are currently no scheduled laundry pickups.
-                    </p>
-
-                    <button
-                        type="button"
-                        class="primary-button"
-                        id="emptyCreateButton"
-                    >
-
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 5v14"/>
-                            <path d="M5 12h14"/>
-                        </svg>
-
-                        <span>Create Pickup Schedule</span>
-
-                    </button>
-
-                </div>
-
-            {% endif %}
-
-        </section>
-
-
-        <!-- FOOTER -->
-        <footer class="page-footer">
-
-            <span>
-                © 2026 LaundryCare. All rights reserved.
-            </span>
-
-            <span class="footer-security">
-
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <rect x="5" y="10" width="14" height="11" rx="2"/>
-                    <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
-                </svg>
-
-                Secure Management System
-
-            </span>
-
-        </footer>
-
-    </div>
-
-</main>
-
-
-<!-- DELETE CONFIRMATION MODAL -->
-<div
-    class="modal-overlay"
-    id="deleteModal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="deleteModalTitle"
-    hidden
->
-
+<!-- =========================================================
+     MODAL 1: SCHEDULE NEW PICKUP
+     ========================================================= -->
+<div class="modal-overlay" id="scheduleModal">
     <div class="modal-card">
-
-        <button
-            type="button"
-            class="modal-close"
-            id="deleteModalClose"
-            aria-label="Close delete confirmation"
-        >
-            &times;
-        </button>
-
-
-        <div class="modal-icon danger-modal-icon">
-
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 7h16"/>
-                <path d="M10 11v6"/>
-                <path d="M14 11v6"/>
-                <path d="M6 7l1 14h10l1-14"/>
-                <path d="M9 7V4h6v3"/>
-            </svg>
-
+        <div class="modal-header">
+            <h3 class="modal-title">Book Laundry Pickup</h3>
+            <button type="button" class="modal-close-btn" onclick="closeModal('scheduleModal')">&times;</button>
         </div>
+        <form action="/pickup-schedules-page" method="POST">
+            <div class="modal-body">
+                <!-- Customer Name -->
+                <div class="form-group">
+                    <label class="form-label" for="new_customer">Customer Name *</label>
+                    <input type="text" id="new_customer" name="customer" class="form-control" list="customerList" placeholder="e.g. Maria Santos" required>
+                    <datalist id="customerList">
+                        {% for c in customers %}
+                            <option value="{{ c.name }}">{{ c.name }}</option>
+                        {% endfor %}
+                    </datalist>
+                </div>
 
+                <div class="modal-grid-2">
+                    <!-- Pickup Date -->
+                    <div class="form-group">
+                        <label class="form-label" for="new_pickup_date">Pickup Date *</label>
+                        <input type="date" id="new_pickup_date" name="pickup_date" class="form-control" required>
+                    </div>
 
-        <h2 id="deleteModalTitle">
-            Delete Pickup Schedule?
-        </h2>
+                    <!-- Time Slot -->
+                    <div class="form-group">
+                        <label class="form-label" for="new_pickup_time">Time Slot</label>
+                        <select id="new_pickup_time" name="pickup_time" class="form-control">
+                            <option value="09:00 AM - 11:00 AM" selected>09:00 AM - 11:00 AM (Morning)</option>
+                            <option value="11:00 AM - 01:00 PM">11:00 AM - 01:00 PM (Midday)</option>
+                            <option value="02:00 PM - 04:00 PM">02:00 PM - 04:00 PM (Afternoon)</option>
+                            <option value="04:00 PM - 06:00 PM">04:00 PM - 06:00 PM (Late Afternoon)</option>
+                            <option value="06:00 PM - 08:00 PM">06:00 PM - 08:00 PM (Evening)</option>
+                        </select>
+                    </div>
+                </div>
 
-        <p>
-            Are you sure you want to delete this pickup schedule?
-            This action cannot be undone.
-        </p>
+                <!-- Pickup Address -->
+                <div class="form-group">
+                    <label class="form-label" for="new_pickup_address">Collection Address</label>
+                    <textarea id="new_pickup_address" name="pickup_address" class="form-control" placeholder="Building, unit, street address and landmarks" rows="2"></textarea>
+                </div>
 
+                <div class="modal-grid-2">
+                    <!-- Assigned Driver -->
+                    <div class="form-group">
+                        <label class="form-label" for="new_assigned_driver">Assigned Driver</label>
+                        <select id="new_assigned_driver" name="assigned_driver" class="form-control">
+                            <option value="">-- Assign Courier --</option>
+                            <option value="Driver Alex">Driver Alex (Van 1)</option>
+                            <option value="Driver Mike">Driver Mike (Motorcycle 1)</option>
+                            <option value="Driver Dave">Driver Dave (Motorcycle 2)</option>
+                            <option value="Driver Christian">Driver Christian (Van 2)</option>
+                        </select>
+                    </div>
 
-        <div class="modal-record-summary">
+                    <!-- Status -->
+                    <div class="form-group">
+                        <label class="form-label" for="new_status">Status</label>
+                        <select id="new_status" name="status" class="form-control">
+                            <option value="Pending" selected>Pending</option>
+                            <option value="Assigned">Assigned</option>
+                            <option value="Picked Up">Picked Up</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
 
-            <div>
-                <span>Pickup ID</span>
-                <strong id="deletePickupId">#000</strong>
+                <!-- Notes -->
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" for="new_notes">Special Instructions</label>
+                    <input type="text" id="new_notes" name="notes" class="form-control" placeholder="e.g. 2 bags, buzzer code #14, call before arrival">
+                </div>
             </div>
-
-            <div>
-                <span>Customer</span>
-                <strong id="deleteCustomer">Customer</strong>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('scheduleModal')">Cancel</button>
+                <button type="submit" class="btn-primary">Confirm Booking</button>
             </div>
+        </form>
+    </div>
+</div>
 
-            <div>
-                <span>Pickup Date</span>
-                <strong id="deletePickupDate">Date</strong>
-            </div>
-
+<!-- =========================================================
+     MODAL 2: EDIT PICKUP SCHEDULE
+     ========================================================= -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 class="modal-title" id="editModalTitle">Edit Pickup Schedule</h3>
+            <button type="button" class="modal-close-btn" onclick="closeModal('editModal')">&times;</button>
         </div>
+        <form id="editPickupForm" action="" method="POST">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="edit_customer">Customer Name *</label>
+                    <input type="text" id="edit_customer" name="customer" class="form-control" required>
+                </div>
 
+                <div class="modal-grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="edit_pickup_date">Pickup Date *</label>
+                        <input type="date" id="edit_pickup_date" name="pickup_date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="edit_pickup_time">Time Slot</label>
+                        <select id="edit_pickup_time" name="pickup_time" class="form-control">
+                            <option value="09:00 AM - 11:00 AM">09:00 AM - 11:00 AM</option>
+                            <option value="11:00 AM - 01:00 PM">11:00 AM - 01:00 PM</option>
+                            <option value="02:00 PM - 04:00 PM">02:00 PM - 04:00 PM</option>
+                            <option value="04:00 PM - 06:00 PM">04:00 PM - 06:00 PM</option>
+                            <option value="06:00 PM - 08:00 PM">06:00 PM - 08:00 PM</option>
+                        </select>
+                    </div>
+                </div>
 
-        <div class="modal-actions">
+                <div class="form-group">
+                    <label class="form-label" for="edit_pickup_address">Collection Address</label>
+                    <textarea id="edit_pickup_address" name="pickup_address" class="form-control" rows="2"></textarea>
+                </div>
 
-            <button
-                type="button"
-                class="modal-button cancel-modal-button"
-                id="cancelDeleteButton"
-            >
-                Cancel
-            </button>
+                <div class="modal-grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="edit_assigned_driver">Assigned Driver</label>
+                        <select id="edit_assigned_driver" name="assigned_driver" class="form-control">
+                            <option value="">-- Unassigned --</option>
+                            <option value="Driver Alex">Driver Alex (Van 1)</option>
+                            <option value="Driver Mike">Driver Mike (Motorcycle 1)</option>
+                            <option value="Driver Dave">Driver Dave (Motorcycle 2)</option>
+                            <option value="Driver Christian">Driver Christian (Van 2)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="edit_status">Status</label>
+                        <select id="edit_status" name="status" class="form-control">
+                            <option value="Pending">Pending</option>
+                            <option value="Assigned">Assigned</option>
+                            <option value="Picked Up">Picked Up</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
 
-            <form
-                method="POST"
-                id="deleteModalForm"
-            >
-
-                <button
-                    type="submit"
-                    class="modal-button confirm-delete-button"
-                >
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M4 7h16"/>
-                        <path d="M10 11v6"/>
-                        <path d="M14 11v6"/>
-                        <path d="M6 7l1 14h10l1-14"/>
-                        <path d="M9 7V4h6v3"/>
-                    </svg>
-
-                    Delete Schedule
-
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" for="edit_notes">Special Instructions</label>
+                    <input type="text" id="edit_notes" name="notes" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
+                <button type="button" class="btn-secondary" id="btnDeletePickup" style="color:#dc2626; border-color:#fca5a5;">
+                    Delete Booking
                 </button>
-
-            </form>
-
-        </div>
-
+                <div style="display:flex; gap:10px;">
+                    <button type="button" class="btn-secondary" onclick="closeModal('editModal')">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </form>
     </div>
-
 </div>
 
+<!-- =========================================================
+     MODAL 3: PRINTABLE PICKUP INTAKE TAG
+     ========================================================= -->
 
-<!-- DELIVERY MODAL -->
-<div
-    class="modal-overlay"
-    id="deliveryModal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="deliveryModalTitle"
-    hidden
->
-
-    <div class="modal-card delivery-modal-card">
-
-        <button
-            type="button"
-            class="modal-close"
-            id="deliveryModalClose"
-            aria-label="Close delivery dialog"
-        >
-            &times;
-        </button>
-
-
-        <div class="modal-icon success-modal-icon">
-
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M3 6h11v11H3z"/>
-                <path d="M14 10h4l3 3v4h-7z"/>
-                <circle cx="7" cy="19" r="2"/>
-                <circle cx="18" cy="19" r="2"/>
-            </svg>
-
+<!-- =========================================================
+     VIEW PICKUP DETAILS MODAL
+     ========================================================= -->
+<div class="modal-overlay" id="viewPickupModal">
+    <div class="modal-dialog" style="max-width: 540px;">
+        <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 18px 24px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; border-radius: 10px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center;">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 17px; font-weight: 700; color: #0f172a;">Pickup Request Details</h3>
+                    <span style="font-size: 12px; color: #64748b; font-weight: 600;" id="viewPickCode">#PCK-0000</span>
+                </div>
+            </div>
+            <button type="button" class="btn-close-modal" onclick="closeModal('viewPickupModal')">&times;</button>
         </div>
-
-
-        <h2 id="deliveryModalTitle">
-            Proceed to Delivery
-        </h2>
-
-        <p id="deliveryMessage">
-            Continue to the Delivery Records page for this customer.
-        </p>
-
-
-        <div class="delivery-customer-card">
-
-            <div class="delivery-mini-avatar" id="deliveryAvatar">
-                C
+        <div style="padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 12px 16px; background: #f1f5f9; border-radius: 10px;">
+                <span style="font-size: 13px; font-weight: 600; color: #475569;">Pickup Status:</span>
+                <span id="viewPickStatusBadge" class="status-badge status-pending">Pending</span>
             </div>
 
-            <div>
-                <span>Customer</span>
-                <strong id="deliveryCustomer">Customer</strong>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+                <div style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Customer Name</div>
+                    <div style="font-size: 14px; font-weight: 700; color: #0f172a;" id="viewPickCustomer">-</div>
+                </div>
+                <div style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Assigned Driver</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a;" id="viewPickDriver">-</div>
+                </div>
+                <div style="grid-column: span 2; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Pickup Address</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a;" id="viewPickAddress">-</div>
+                </div>
+                <div style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Pickup Date</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a;" id="viewPickDate">-</div>
+                </div>
+                <div style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Time Window</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #2563eb;" id="viewPickTime">-</div>
+                </div>
+                <div style="grid-column: span 2; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Special Instructions</div>
+                    <div style="font-size: 13px; font-weight: 500; color: #334155;" id="viewPickNotes">-</div>
+                </div>
             </div>
 
+            <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                <button type="button" class="btn-modal-cancel" onclick="closeModal('viewPickupModal')">Close</button>
+                <button type="button" class="btn-action-sm btn-action-tag" id="viewPickTagBtn">Print Tag</button>
+                <button type="button" class="btn-modal-submit" id="viewPickEditBtn">Edit Schedule</button>
+            </div>
         </div>
+    </div>
+</div>
 
+<div class="modal-overlay" id="tagModal">
+    <div class="modal-card" style="max-width: 480px;">
+        <div class="modal-header">
+            <h3 class="modal-title">Official Laundry Pickup Tag</h3>
+            <button type="button" class="modal-close-btn" onclick="closeModal('tagModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="pickup-tag-paper" id="tagPrintArea">
+                <div class="tag-header">
+                    <div class="tag-logo">LaundryCare</div>
+                    <div class="tag-title">Collection &amp; Intake Bag Tag</div>
+                </div>
 
-        <div class="modal-actions">
+                <div class="tag-grid">
+                    <div>
+                        <div class="tag-label">Pickup Tracking ID</div>
+                        <div class="tag-val" id="tagPickId">#PCK-0001</div>
+                    </div>
+                    <div>
+                        <div class="tag-label">Pickup Date</div>
+                        <div class="tag-val" id="tagDate">2026-09-20</div>
+                    </div>
+                    <div>
+                        <div class="tag-label">Customer Name</div>
+                        <div class="tag-val" id="tagCustomer">Customer Name</div>
+                    </div>
+                    <div>
+                        <div class="tag-label">Contact Number</div>
+                        <div class="tag-val" id="tagPhone">09123456789</div>
+                    </div>
+                </div>
 
-            <button
-                type="button"
-                class="modal-button cancel-modal-button"
-                id="cancelDeliveryButton"
-            >
-                Cancel
-            </button>
+                <div style="margin-bottom: 14px;">
+                    <div class="tag-label">Collection Location</div>
+                    <div class="tag-val" id="tagAddress" style="font-weight:500; font-size:13px; line-height:1.4; margin-top:2px;">—</div>
+                </div>
 
-            <button
-                type="button"
-                class="modal-button confirm-delivery-button"
-                id="continueDeliveryButton"
-            >
+                <div class="tag-grid">
+                    <div>
+                        <div class="tag-label">Time Window</div>
+                        <div class="tag-val" id="tagTime">09:00 AM - 11:00 AM</div>
+                    </div>
+                    <div>
+                        <div class="tag-label">Assigned Courier</div>
+                        <div class="tag-val" id="tagDriver">Driver Alex</div>
+                    </div>
+                </div>
 
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M5 12h14"/>
-                    <path d="m13 6 6 6-6 6"/>
+                <div id="tagNotesWrapper" style="margin-bottom:14px; display:none;">
+                    <div class="tag-label">Special Notes</div>
+                    <div class="tag-val" id="tagNotes" style="font-weight: normal; font-style: italic; color:#475569;">—</div>
+                </div>
+
+                <div class="tag-barcode-area">
+                    <div class="tag-barcode-bars" id="tagBarcode">|||| | ||| || |||| | |||</div>
+                    <div style="font-size: 11px; color:#64748b; font-weight:600; margin-top:4px;" id="tagBarcodeText">PCK-0001-TAG</div>
+                </div>
+
+                <div class="tag-sign-box">
+                    <div>
+                        <div>Driver Collected</div>
+                        <div class="tag-sign-line">LaundryCare Staff</div>
+                    </div>
+                    <div>
+                        <div>Customer Handover</div>
+                        <div class="tag-sign-line">Customer Signature</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeModal('tagModal')">Close</button>
+            <button type="button" class="btn-primary" onclick="window.print()">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;">
+                    <polyline points="6 9 6 2 18 2 18 9"/>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                    <rect x="6" y="14" width="12" height="8"/>
                 </svg>
-
-                Continue to Delivery
-
+                Print Bag Tag
             </button>
-
         </div>
-
     </div>
-
 </div>
 
+<!-- =========================================================
+     PAGE CLIENT JAVASCRIPT
+     ========================================================= -->
+<script>
+let currentStatusFilter = 'all';
 
-<script
-    src="{{ url_for('static', filename='js/pickup_schedules.js') }}"
-    defer
-></script>
+function setStatusFilter(status, buttonElement) {
+    currentStatusFilter = status.toLowerCase();
+    document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+    buttonElement.classList.add('active');
+    filterPickupsTable();
+}
+
+function filterPickupsTable() {
+    const searchVal = (document.getElementById('pickupSearchInput').value || '').toLowerCase().trim();
+    const rows = document.querySelectorAll('#pickupsTable tbody tr.pickup-row');
+
+    rows.forEach(row => {
+        const rowStatus = (row.getAttribute('data-status') || '').toLowerCase();
+        const rowSearch = (row.getAttribute('data-search') || '').toLowerCase();
+
+        const matchesStatus = (currentStatusFilter === 'all' || rowStatus === currentStatusFilter);
+        const matchesSearch = (!searchVal || rowSearch.includes(searchVal));
+
+        if (matchesStatus && matchesSearch) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.add('open');
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.remove('open');
+}
+
+// Close on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('open');
+        }
+    });
+});
+
+// Setup New Schedule Modal
+document.getElementById('openScheduleModalBtn').addEventListener('click', () => {
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('new_pickup_date');
+    if (dateInput && !dateInput.value) {
+        dateInput.value = today;
+    }
+    openModal('scheduleModal');
+});
+
+// Open Edit Modal
+function openEditModal(button) {
+    const row = button.closest('tr.pickup-row');
+    if (!row) return;
+
+    const id = row.getAttribute('data-id');
+    const customer = row.getAttribute('data-customer') || '';
+    const date = row.getAttribute('data-date') || '';
+    const time = row.getAttribute('data-time') || '09:00 AM - 11:00 AM';
+    const address = row.getAttribute('data-address') || '';
+    const driver = row.getAttribute('data-driver') || '';
+    const notes = row.getAttribute('data-notes') || '';
+    const status = row.getAttribute('data-status') || 'Pending';
+
+    document.getElementById('editModalTitle').textContent = `Edit Pickup #PCK-${String(id).padStart(4, '0')}`;
+    document.getElementById('editPickupForm').action = `/pickup-schedules-page/edit/${id}`;
+    document.getElementById('edit_customer').value = customer;
+    document.getElementById('edit_pickup_date').value = date;
+    document.getElementById('edit_pickup_address').value = address;
+    document.getElementById('edit_assigned_driver').value = driver;
+    document.getElementById('edit_notes').value = notes;
+
+    // Time select
+    const timeSelect = document.getElementById('edit_pickup_time');
+    for (let opt of timeSelect.options) {
+        if (opt.value === time) {
+            opt.selected = true;
+            break;
+        }
+    }
+
+    // Status select
+    const statusSelect = document.getElementById('edit_status');
+    for (let opt of statusSelect.options) {
+        if (opt.value.toLowerCase() === status.toLowerCase()) {
+            opt.selected = true;
+            break;
+        }
+    }
+
+    // Configure Delete Action
+    const deleteBtn = document.getElementById('btnDeletePickup');
+    deleteBtn.onclick = () => {
+        if (confirm(`Are you sure you want to delete pickup schedule #PCK-${String(id).padStart(4, '0')}?`)) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/pickup-schedules-page/delete/${id}`;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    };
+
+    openModal('editModal');
+}
+
+// Open Printable Pickup Tag
+
+function openViewPickupModal(button) {
+    const row = button.closest('tr.pickup-row');
+    if (!row) return;
+
+    const id = row.getAttribute('data-id');
+    const customer = row.getAttribute('data-customer') || 'N/A';
+    const date = row.getAttribute('data-date') || 'TBD';
+    const time = row.getAttribute('data-time') || '09:00 AM - 11:00 AM';
+    const address = row.getAttribute('data-address') || 'Poblacion, Maramag, Bukidnon';
+    const driver = row.getAttribute('data-driver') || 'Unassigned';
+    const notes = row.getAttribute('data-notes') || 'None';
+    const status = row.getAttribute('data-status') || 'Pending';
+
+    document.getElementById('viewPickCode').textContent = `#PCK-${String(id).padStart(4, '0')}`;
+    document.getElementById('viewPickCustomer').textContent = customer;
+    document.getElementById('viewPickDriver').textContent = driver;
+    document.getElementById('viewPickAddress').textContent = address;
+    document.getElementById('viewPickDate').textContent = date;
+    document.getElementById('viewPickTime').textContent = time;
+    document.getElementById('viewPickNotes').textContent = notes;
+
+    const badge = document.getElementById('viewPickStatusBadge');
+    badge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    badge.className = 'status-badge status-' + status.toLowerCase().replace(/ /g, '-');
+
+    document.getElementById('viewPickTagBtn').onclick = function() {
+        closeModal('viewPickupModal');
+        openTagModal(button);
+    };
+    document.getElementById('viewPickEditBtn').onclick = function() {
+        closeModal('viewPickupModal');
+        openEditModal(button);
+    };
+
+    openModal('viewPickupModal');
+}
+
+function openTagModal(button) {
+    const row = button.closest('tr.pickup-row');
+    if (!row) return;
+
+    const id = row.getAttribute('data-id');
+    const customer = row.getAttribute('data-customer') || 'Customer';
+    const contact = row.getAttribute('data-contact') || '—';
+    const date = row.getAttribute('data-date') || '—';
+    const time = row.getAttribute('data-time') || '—';
+    const address = row.getAttribute('data-address') || '—';
+    const driver = row.getAttribute('data-driver') || 'Unassigned';
+    const notes = row.getAttribute('data-notes') || '';
+
+    document.getElementById('tagPickId').textContent = `#PCK-${String(id).padStart(4, '0')}`;
+    document.getElementById('tagCustomer').textContent = customer;
+    document.getElementById('tagPhone').textContent = contact;
+    document.getElementById('tagDate').textContent = date;
+    document.getElementById('tagTime').textContent = time;
+    document.getElementById('tagAddress').textContent = address;
+    document.getElementById('tagDriver').textContent = driver;
+
+    const notesWrapper = document.getElementById('tagNotesWrapper');
+    if (notes) {
+        document.getElementById('tagNotes').textContent = notes;
+        notesWrapper.style.display = 'block';
+    } else {
+        notesWrapper.style.display = 'none';
+    }
+
+    document.getElementById('tagBarcodeText').textContent = `PCK-${String(id).padStart(4, '0')}-TAG`;
+
+    openModal('tagModal');
+}
+</script>
 
 </body>
 </html>

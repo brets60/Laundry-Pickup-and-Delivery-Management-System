@@ -15,6 +15,8 @@
 
     <title>Sign In | LaundryCare</title>
 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+
     <style>
         /* =========================================================
            ROOT / THEME
@@ -1816,9 +1818,56 @@
 
                         </svg>
 
-                    </button>
-
                 </form>
+
+                <!-- =================================================
+                     QUICK DEMO ROLE SELECTOR (ADMIN, STAFF, RIDER)
+                ================================================== -->
+                <div class="demo-accounts-card" style="margin-top: 20px; padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                        <span>Quick Demo Sign In</span>
+                        <span style="font-size: 10px; font-weight: 500; color: #94a3b8;">1-Click Role Fill</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <button type="button" onclick="setDemoUser('admin', 'admin123', this)" class="demo-role-btn" style="padding: 8px 6px; font-size: 12px; font-weight: 600; border-radius: 8px; border: 1px solid #bfdbfe; background: #eff6ff; color: #1d4ed8; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                            <span>🛡️ Admin</span>
+                            <span style="font-size: 10px; font-weight: 400; color: #60a5fa;">admin123</span>
+                        </button>
+                        <button type="button" onclick="setDemoUser('staff', 'staff123', this)" class="demo-role-btn" style="padding: 8px 6px; font-size: 12px; font-weight: 600; border-radius: 8px; border: 1px solid #a7f3d0; background: #ecfdf5; color: #047857; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                            <span>👔 Staff</span>
+                            <span style="font-size: 10px; font-weight: 400; color: #34d399;">staff123</span>
+                        </button>
+                        <button type="button" onclick="setDemoUser('rider', 'rider123', this)" class="demo-role-btn" style="padding: 8px 6px; font-size: 12px; font-weight: 600; border-radius: 8px; border: 1px solid #fed7aa; background: #fff7ed; color: #c2410c; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                            <span>🛵 Rider</span>
+                            <span style="font-size: 10px; font-weight: 400; color: #fb923c;">rider123</span>
+                        </button>
+                    </div>
+                </div>
+
+                <script>
+                function setDemoUser(u, p, btn) {
+                    const uInput = document.getElementById('username');
+                    const pInput = document.getElementById('password');
+                    if (uInput && pInput) {
+                        uInput.value = u;
+                        pInput.value = p;
+                        uInput.focus();
+                    }
+                    document.querySelectorAll('.demo-role-btn').forEach(b => b.style.outline = 'none');
+                    if (btn) btn.style.outline = '2px solid currentColor';
+                }
+                </script>
+
+                <!-- CUSTOMER SELF-SERVICE PORTAL BAR -->
+                <div style="margin-top: 18px; padding: 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 12px; font-weight: 700; color: #1e40af; margin-bottom: 6px;">Are you a LaundryCare Customer?</div>
+                    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                        <a href="/book-pickup" style="font-size: 12px; font-weight: 700; color: #ffffff; background: #2563eb; padding: 7px 14px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">🧺 Book Pickup</a>
+                        <a href="/track" style="font-size: 12px; font-weight: 700; color: #1d4ed8; background: #ffffff; border: 1px solid #93c5fd; padding: 7px 14px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">🔍 Track Order</a>
+                    </div>
+                </div>
+
+
 
 
                 <!-- SECURITY -->
