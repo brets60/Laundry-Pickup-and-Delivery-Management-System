@@ -4,23 +4,27 @@
    ========================================================================== */
 
 :root {
-    /* Brand Color Palette */
+    /* Executive SaaS Brand Palette */
     --primary: #2563eb;
     --primary-hover: #1d4ed8;
     --primary-light: #eff6ff;
     --primary-border: #bfdbfe;
+    --primary-glow: rgba(37, 99, 235, 0.20);
 
     --secondary: #0ea5e9;
     --secondary-hover: #0284c7;
     --secondary-light: #f0f9ff;
+    --secondary-accent: #06b6d4;
 
     --accent: #6366f1;
+    --accent-light: #eef2ff;
 
     /* Neutrals & Surfaces */
     --bg-page: #f8fafc;
     --bg-card: #ffffff;
-    --bg-sidebar: #0f172a;
-    --bg-sidebar-hover: #1e293b;
+    --bg-card-hover: #fafafa;
+    --bg-sidebar: #0a1628;
+    --bg-sidebar-hover: #112240;
     --bg-input: #ffffff;
 
     /* Text Colors */
@@ -32,7 +36,8 @@
     /* Borders */
     --border-color: #e2e8f0;
     --border-subtle: #f1f5f9;
-    --border-focus: #3b82f6;
+    --border-focus: #2563eb;
+    --border-card: rgba(226, 232, 240, 0.85);
 
     /* Functional Colors */
     --success: #10b981;
@@ -41,7 +46,7 @@
     --success-text: #065f46;
 
     --warning: #f59e0b;
-    --warning-light: #fffbeb;
+    --warning-light: #fef3c7;
     --warning-border: #fde68a;
     --warning-text: #92400e;
 
@@ -51,28 +56,42 @@
     --danger-text: #991b1b;
 
     --info: #0284c7;
-    --info-light: #f0f9ff;
-    --info-border: #bae6fd;
-    --info-text: #075985;
+    --info-light: #eff6ff;
+    --info-border: #bfdbfe;
+    --info-text: #1d4ed8;
+
+    /* Zone Colors */
+    --zone-cmu-bg: #f5f3ff;
+    --zone-cmu-border: #ddd6fe;
+    --zone-cmu-text: #6d28d9;
+
+    --zone-poblacion-bg: #f0f9ff;
+    --zone-poblacion-border: #bae6fd;
+    --zone-poblacion-text: #0369a1;
+
+    --zone-dologon-bg: #ecfdf5;
+    --zone-dologon-border: #99f6e4;
+    --zone-dologon-text: #0f766e;
 
     /* Layout Dimensions */
     --sidebar-width: 280px;
     --header-height: 70px;
-    --radius-sm: 6px;
+    --radius-sm: 8px;
     --radius-md: 10px;
-    --radius-lg: 16px;
-    --radius-xl: 24px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
     --radius-full: 9999px;
 
-    /* Elevation Shadows */
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-    --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.05);
-    --shadow-md: 0 6px 18px rgba(15, 23, 42, 0.07);
-    --shadow-lg: 0 14px 34px rgba(15, 23, 42, 0.10);
-    --shadow-xl: 0 24px 50px rgba(15, 23, 42, 0.14);
+    /* Multi-Tier SaaS Shadows */
+    --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-sm: 0 2px 8px -1px rgba(15, 23, 42, 0.06), 0 1px 3px -1px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 6px 20px -2px rgba(15, 23, 42, 0.07), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.10), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+    --shadow-xl: 0 20px 48px -6px rgba(15, 23, 42, 0.14), 0 8px 20px -3px rgba(15, 23, 42, 0.07);
 
     /* Transitions */
     --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Global Reset & Base */
@@ -530,14 +549,25 @@ textarea.form-control {
 .badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.25rem 0.65rem;
+    gap: 0.45rem;
+    padding: 0.32rem 0.75rem;
     border-radius: var(--radius-full);
-    font-size: 0.75rem;
+    font-size: 0.725rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     line-height: 1;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: var(--transition);
+}
+
+.badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+    background-color: currentColor;
 }
 
 .badge-scheduled, .badge-pending {
@@ -546,7 +576,7 @@ textarea.form-control {
     border: 1px solid var(--warning-border);
 }
 
-.badge-out, .badge-processing {
+.badge-out, .badge-processing, .badge-in-transit {
     background-color: var(--info-light);
     color: var(--info-text);
     border: 1px solid var(--info-border);
@@ -562,6 +592,38 @@ textarea.form-control {
     background-color: var(--danger-light);
     color: var(--danger-text);
     border: 1px solid var(--danger-border);
+}
+
+/* Zone Sector Badges */
+.zone-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.7rem;
+    border-radius: var(--radius-full);
+    font-size: 0.725rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.zone-cmu {
+    background: var(--zone-cmu-bg);
+    color: var(--zone-cmu-text);
+    border: 1px solid var(--zone-cmu-border);
+}
+
+.zone-poblacion {
+    background: var(--zone-poblacion-bg);
+    color: var(--zone-poblacion-text);
+    border: 1px solid var(--zone-poblacion-border);
+}
+
+.zone-dologon {
+    background: var(--zone-dologon-bg);
+    color: var(--zone-dologon-text);
+    border: 1px solid var(--zone-dologon-border);
 }
 
 /* Universal Flash Alerts */

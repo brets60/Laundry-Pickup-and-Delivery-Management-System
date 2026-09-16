@@ -276,12 +276,19 @@ body {
 
 .mock-stat-card {
     background: #ffffff;
-    border-radius: 16px;
+    border-radius: 14px;
     padding: 20px 22px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.025);
-    border: 1px solid #edf2f7;
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+    border: 1px solid rgba(226, 232, 240, 0.85);
     display: flex;
     flex-direction: column;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mock-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+    border-color: #bfdbfe;
 }
 
 .stat-header-row {
@@ -358,10 +365,10 @@ body {
 /* Live Deliveries & Orders Table Card */
 .table-card {
     background: #ffffff;
-    border-radius: 16px;
+    border-radius: 14px;
     padding: 22px 24px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.025);
-    border: 1px solid #edf2f7;
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+    border: 1px solid rgba(226, 232, 240, 0.85);
 }
 
 .table-card-title {
@@ -441,37 +448,56 @@ body {
 
 /* Status Pill Badges */
 .badge-pill {
-    padding: 4px 10px;
-    border-radius: 14px;
-    font-size: 11.5px;
+    padding: 3px 9px;
+    border-radius: 9999px;
+    font-size: 11px;
     font-weight: 700;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.badge-pill::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    display: inline-block;
+    background-color: currentColor;
 }
 
 .badge-delivered {
-    background: #10b981;
-    color: #ffffff;
+    background: #ecfdf5 !important;
+    color: #047857 !important;
+    border: 1px solid #a7f3d0 !important;
 }
 
 .badge-out {
-    background: #1877f2;
-    color: #ffffff;
+    background: #eff6ff !important;
+    color: #1d4ed8 !important;
+    border: 1px solid #bfdbfe !important;
 }
 
 .badge-scheduled {
-    background: #f59e0b;
-    color: #ffffff;
+    background: #fef3c7 !important;
+    color: #b45309 !important;
+    border: 1px solid #fde68a !important;
 }
 
 .badge-pending {
-    background: #64748b;
-    color: #ffffff;
+    background: #f8fafc !important;
+    color: #475569 !important;
+    border: 1px solid #cbd5e1 !important;
 }
 
 .badge-picked {
-    background: #06b6d4;
-    color: #ffffff;
+    background: #f0fdfa !important;
+    color: #0f766e !important;
+    border: 1px solid #99f6e4 !important;
 }
 
 .badge-sub-text {
@@ -509,10 +535,10 @@ body {
 /* Right Column Cards */
 .right-card {
     background: #ffffff;
-    border-radius: 16px;
+    border-radius: 14px;
     padding: 22px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.025);
-    border: 1px solid #edf2f7;
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+    border: 1px solid rgba(226, 232, 240, 0.85);
     margin-bottom: 20px;
 }
 
