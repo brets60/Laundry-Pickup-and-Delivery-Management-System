@@ -398,9 +398,18 @@
              ALL DELIVERIES DATA TABLE CARD
              ===================================================== -->
         <div class="deliveries-table-card">
-            <div class="table-header-row">
-                <h2 class="table-heading">All Deliveries</h2>
-                <span class="table-record-count">Showing {{ deliveries|length }} records</span>
+            <div class="table-header-row" style="flex-wrap:wrap; gap:8px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <h2 class="table-heading" style="margin-bottom:0;">All Deliveries</h2>
+                    <span class="table-record-count">Showing {{ deliveries|length }} records</span>
+                </div>
+                <div class="state-preview-bar">
+                    <span style="font-weight:700;">Wireframe State:</span>
+                    <a href="/delivery-records-page" class="state-pill {{ 'active' if not request.args.get('state') else '' }}">Populated</a>
+                    <a href="/delivery-records-page?state=empty" class="state-pill {{ 'active' if request.args.get('state') == 'empty' else '' }}">Empty State</a>
+                    <a href="/delivery-records-page?state=loading" class="state-pill {{ 'active' if request.args.get('state') == 'loading' else '' }}">Loading State</a>
+                    <a href="/delivery-records-page?state=error" class="state-pill {{ 'active' if request.args.get('state') == 'error' else '' }}">Error State</a>
+                </div>
             </div>
 
             <div style="overflow-x: auto;">
@@ -418,7 +427,48 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if deliveries %}
+                        {% if request.args.get('state') == 'loading' %}
+                            <tr>
+                                <td colspan="8">
+                                    <div class="loading-table-state">
+                                        <div style="font-size:12px; font-weight:700; color:#2563eb; display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                            <span class="pulse-beacon pulse-beacon-blue"></span>
+                                            <span>Loading delivery routes from database...</span>
+                                        </div>
+                                        <div class="skeleton-shimmer" style="height: 38px; width: 100%;"></div>
+                                        <div class="skeleton-shimmer" style="height: 38px; width: 94%;"></div>
+                                        <div class="skeleton-shimmer" style="height: 38px; width: 97%;"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% elif request.args.get('state') == 'error' %}
+                            <tr>
+                                <td colspan="8">
+                                    <div class="error-table-state">
+                                        <div style="font-size: 32px; margin-bottom: 6px;">⚠️</div>
+                                        <h4 style="font-size: 15px; font-weight: 800; color:#991b1b; margin-bottom: 4px;">Failed to Load Delivery Records</h4>
+                                        <p style="font-size: 13px; color: #b91c1c;">Dispatch telemetry service unreachable. (HTTP 500)</p>
+                                        <a href="/delivery-records-page" class="btn-action-outline btn-interactive" style="margin-top: 14px; display: inline-block; background:#ffffff; border-color:#fca5a5; color:#b91c1c; font-weight:700; text-decoration:none; padding:6px 14px; border-radius:6px;">↺ Retry Delivery Query</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% elif request.args.get('state') == 'empty' %}
+                            <tr>
+                                <td colspan="8">
+                                    <div class="empty-table-state">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <rect x="1" y="3" width="15" height="13"/>
+                                            <polygon points="16 8 20 8 23 11 23 16 16 16 8"/>
+                                            <circle cx="5.5" cy="18.5" r="2.5"/>
+                                            <circle cx="18.5" cy="18.5" r="2.5"/>
+                                        </svg>
+                                        <p style="font-weight:700; font-size:15px; color:#0f172a; margin-bottom:4px;">No delivery records found</p>
+                                        <p style="font-size:13px; color:#64748b; margin-bottom:12px;">Click "+ Dispatch Delivery" to schedule the first drop-off.</p>
+                                        <button type="button" class="btn-primary btn-interactive" onclick="document.getElementById('openDispatchModalBtn').click()" style="background:#2563eb; color:#ffffff; padding:8px 18px; border-radius:8px; font-weight:700; border:none; cursor:pointer;">+ Dispatch First Delivery</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% elif deliveries %}
                             {% for d in deliveries %}
                             {% set st = (d.status or 'Scheduled')|lower %}
                             {% set addr_l = (d.delivery_address or '')|lower %}

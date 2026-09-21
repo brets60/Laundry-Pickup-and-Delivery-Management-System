@@ -255,9 +255,18 @@
              ALL CUSTOMERS DATA TABLE CARD
              ===================================================== -->
         <div class="customers-table-card">
-            <div class="table-header-row">
-                <h2 class="table-heading">Client Directory</h2>
-                <span class="table-record-count">Showing {{ customers|length }} registered clients</span>
+            <div class="table-header-row" style="flex-wrap:wrap; gap:8px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <h2 class="table-heading" style="margin-bottom:0;">Client Directory</h2>
+                    <span class="table-record-count">Showing {{ customers|length }} registered clients</span>
+                </div>
+                <div class="state-preview-bar">
+                    <span style="font-weight:700;">Wireframe State:</span>
+                    <a href="/customers-page" class="state-pill {{ 'active' if not request.args.get('state') else '' }}">Populated</a>
+                    <a href="/customers-page?state=empty" class="state-pill {{ 'active' if request.args.get('state') == 'empty' else '' }}">Empty State</a>
+                    <a href="/customers-page?state=loading" class="state-pill {{ 'active' if request.args.get('state') == 'loading' else '' }}">Loading State</a>
+                    <a href="/customers-page?state=error" class="state-pill {{ 'active' if request.args.get('state') == 'error' else '' }}">Error State</a>
+                </div>
             </div>
 
             <div style="overflow-x: auto;">
@@ -274,7 +283,46 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if customers %}
+                        {% if request.args.get('state') == 'loading' %}
+                            <tr>
+                                <td colspan="7">
+                                    <div class="loading-table-state">
+                                        <div style="font-size:12px; font-weight:700; color:#2563eb; display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                            <span class="pulse-beacon pulse-beacon-blue"></span>
+                                            <span>Loading client directory from database...</span>
+                                        </div>
+                                        <div class="skeleton-shimmer" style="height: 38px; width: 100%;"></div>
+                                        <div class="skeleton-shimmer" style="height: 38px; width: 94%;"></div>
+                                        <div class="skeleton-shimmer" style="height: 38px; width: 97%;"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% elif request.args.get('state') == 'error' %}
+                            <tr>
+                                <td colspan="7">
+                                    <div class="error-table-state">
+                                        <div style="font-size: 32px; margin-bottom: 6px;">⚠️</div>
+                                        <h4 style="font-size: 15px; font-weight: 800; color:#991b1b; margin-bottom: 4px;">Failed to Load Customers</h4>
+                                        <p style="font-size: 13px; color: #b91c1c;">CRM database timeout. (HTTP 500)</p>
+                                        <a href="/customers-page" class="btn-action-outline btn-interactive" style="margin-top: 14px; display: inline-block; background:#ffffff; border-color:#fca5a5; color:#b91c1c; font-weight:700; text-decoration:none; padding:6px 14px; border-radius:6px;">↺ Retry Customer Query</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% elif request.args.get('state') == 'empty' %}
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-table-state">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="12" cy="7" r="4"/>
+                                        </svg>
+                                        <p style="font-weight:700; font-size:15px; color:#0f172a; margin-bottom:4px;">No customer records found</p>
+                                        <p style="font-size:13px; color:#64748b; margin-bottom:12px;">Click "+ Add Customer" to register your first client.</p>
+                                        <button type="button" class="btn-primary btn-interactive" onclick="document.getElementById('openAddCustomerBtn').click()" style="background:#2563eb; color:#ffffff; padding:8px 18px; border-radius:8px; font-weight:700; border:none; cursor:pointer;">+ Register First Customer</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% elif customers %}
                             {% for c in customers %}
                             {% set mb = (c.membership or 'Regular')|lower %}
                             <tr class="customer-row" 
@@ -344,8 +392,16 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="6" style="text-align:center; padding: 40px; color:#64748b;">
-                                    No customers found. Click "+ Add Customer" to register.
+                                <td colspan="7">
+                                    <div class="empty-table-state">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="12" cy="7" r="4"/>
+                                        </svg>
+                                        <p style="font-weight:700; font-size:15px; color:#0f172a; margin-bottom:4px;">No customer records found</p>
+                                        <p style="font-size:13px; color:#64748b; margin-bottom:12px;">Click "+ Add Customer" to register your first client.</p>
+                                        <button type="button" class="btn-primary btn-interactive" onclick="document.getElementById('openAddCustomerBtn').click()" style="background:#2563eb; color:#ffffff; padding:8px 18px; border-radius:8px; font-weight:700; border:none; cursor:pointer;">+ Register First Customer</button>
+                                    </div>
                                 </td>
                             </tr>
                         {% endif %}

@@ -256,7 +256,16 @@
              ALL LAUNDRY ORDERS TABLE CARD
              ===================================================== -->
         <div class="orders-table-card">
-            <h2 class="table-heading">All Laundry Orders</h2>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:14px; gap:8px;">
+                <h2 class="table-heading" style="margin-bottom:0;">All Laundry Orders</h2>
+                <div class="state-preview-bar">
+                    <span style="font-weight:700;">Wireframe State:</span>
+                    <a href="/laundry-orders-page" class="state-pill {{ 'active' if not request.args.get('state') else '' }}">Populated</a>
+                    <a href="/laundry-orders-page?state=empty" class="state-pill {{ 'active' if request.args.get('state') == 'empty' else '' }}">Empty State</a>
+                    <a href="/laundry-orders-page?state=loading" class="state-pill {{ 'active' if request.args.get('state') == 'loading' else '' }}">Loading State</a>
+                    <a href="/laundry-orders-page?state=error" class="state-pill {{ 'active' if request.args.get('state') == 'error' else '' }}">Error State</a>
+                </div>
+            </div>
 
             <div style="overflow-x: auto;">
                 <table class="orders-table anim-stagger-rows" id="ordersTable">
@@ -273,7 +282,48 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if orders %}
+                        {% if request.args.get('state') == 'loading' %}
+                            <tr>
+                                <td colspan="8">
+                                    <div class="loading-table-state">
+                                        <div style="font-size:12px; font-weight:700; color:#2563eb; display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                            <span class="pulse-beacon pulse-beacon-blue"></span>
+                                            <span>Loading laundry orders from database...</span>
+                                        </div>
+                                        <div class="skeleton-shimmer" style="height: 38px; width: 100%;"></div>
+                                        <div class="skeleton-shimmer" style="height: 38px; width: 94%;"></div>
+                                        <div class="skeleton-shimmer" style="height: 38px; width: 97%;"></div>
+                                        <div class="skeleton-shimmer" style="height: 38px; width: 88%;"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% elif request.args.get('state') == 'error' %}
+                            <tr>
+                                <td colspan="8">
+                                    <div class="error-table-state">
+                                        <div style="font-size: 32px; margin-bottom: 6px;">⚠️</div>
+                                        <h4 style="font-size: 15px; font-weight: 800; color:#991b1b; margin-bottom: 4px;">Failed to Load Laundry Orders</h4>
+                                        <p style="font-size: 13px; color: #b91c1c;">Database query timeout or network failure occurred. (HTTP 500)</p>
+                                        <a href="/laundry-orders-page" class="btn-action-outline btn-interactive" style="margin-top: 14px; display: inline-block; background:#ffffff; border-color:#fca5a5; color:#b91c1c; font-weight:700; text-decoration:none; padding:6px 14px; border-radius:6px;">↺ Retry Fetching Orders</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% elif request.args.get('state') == 'empty' or not orders or orders|length == 0 %}
+                            <tr>
+                                <td colspan="8">
+                                    <div class="empty-table-state">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                                            <path d="M9 12h6M9 16h6"/>
+                                        </svg>
+                                        <p style="font-weight:700; font-size:15px; color:#0f172a; margin-bottom:4px;">No laundry orders found</p>
+                                        <p style="font-size:13px; color:#64748b; margin-bottom:12px;">There are currently 0 active orders in the database. Intake customer laundry to begin.</p>
+                                        <button type="button" class="btn-primary btn-interactive" onclick="document.getElementById('openOrderModalBtn').click()" style="background:#2563eb; color:#ffffff; padding:8px 18px; border-radius:8px; font-weight:700; border:none; cursor:pointer;">+ Create First Order</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
                             {% for order in orders %}
                             {% set st = (order.status or 'Received')|lower %}
                             <tr class="order-row" data-status="{{ st }}" data-search="{{ order.customer }} {{ order.id }} {{ order.contact_number or '' }} {{ order.service_type or '' }}">
@@ -357,128 +407,6 @@
                                 </td>
                             </tr>
                             {% endfor %}
-                        {% else %}
-                            <!-- SAMPLE DEMO ROWS MATCHING MOCKUP -->
-                            <tr class="order-row" data-status="received" data-search="John Doe Wash & Fold">
-                                <td><span class="cell-ord-id">#ORD-1024</span></td>
-                                <td>
-                                    <div class="customer-name">John Doe</div>
-                                    <div class="customer-phone">09123456789</div>
-                                </td>
-                                <td><span class="service-type-text">Wash &amp; Fold</span></td>
-                                <td><span class="weight-text">8.5 kg</span></td>
-                                <td><span class="price-text">₱425.00</span></td>
-                                <td><span class="status-pill status-received">Received</span></td>
-                                <td>
-                                    <div class="mini-timeline" title="Status: Intake Received">
-                                        <div class="mini-step active"><span class="mini-dot"></span><span>Recv</span></div>
-                                        <div class="mini-line"></div>
-                                        <div class="mini-step"><span class="mini-dot"></span><span>Wash</span></div>
-                                        <div class="mini-line"></div>
-                                        <div class="mini-step"><span class="mini-dot"></span><span>Ready</span></div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons-cell">
-                                        <button type="button" class="btn-action-outline btn-action-view btn-interactive" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
-                                            View
-                                        </button>
-                                        <button type="button" class="btn-action-outline btn-interactive" onclick="openPrintModal('ORD-1024', 'John Doe', '8.5 kg', 'Wash & Fold', '₱425.00')">Print Tag</button>
-                                        <a href="/laundry-orders-page" class="btn-action-outline btn-interactive">Edit</a>
-                                        <a href="/delivery-records-page" class="btn-action-outline btn-action-dispatch btn-interactive">Dispatch</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="order-row" data-status="in wash" data-search="John Doe Dry Cleaning">
-                                <td><span class="cell-ord-id">#ORD-1025</span></td>
-                                <td>
-                                    <div class="customer-name">John Doe</div>
-                                    <div class="customer-phone">09123456789</div>
-                                </td>
-                                <td><span class="service-type-text">Dry Cleaning</span></td>
-                                <td><span class="weight-text">8.5 kg</span></td>
-                                <td><span class="price-text">₱425.00</span></td>
-                                <td><span class="status-pill status-in-wash">In Wash</span></td>
-                                <td>
-                                    <div class="mini-timeline" title="Status: In Wash Cycle">
-                                        <div class="mini-step done"><span class="mini-dot"></span><span>Recv</span></div>
-                                        <div class="mini-line"></div>
-                                        <div class="mini-step active"><span class="mini-dot"></span><span>Wash</span></div>
-                                        <div class="mini-line"></div>
-                                        <div class="mini-step"><span class="mini-dot"></span><span>Ready</span></div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons-cell">
-                                        <button type="button" class="btn-action-outline btn-action-view btn-interactive" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
-                                            View
-                                        </button>
-                                        <button type="button" class="btn-action-outline btn-interactive" onclick="openPrintModal('ORD-1025', 'John Doe', '8.5 kg', 'Dry Cleaning', '₱425.00')">Print Tag</button>
-                                        <a href="/laundry-orders-page" class="btn-action-outline btn-interactive">Edit</a>
-                                        <a href="/delivery-records-page" class="btn-action-outline btn-action-dispatch btn-interactive">Dispatch</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="order-row" data-status="ready" data-search="John Doe Dry Cleaning">
-                                <td><span class="cell-ord-id">#ORD-1026</span></td>
-                                <td>
-                                    <div class="customer-name">John Doe</div>
-                                    <div class="customer-phone">09123456789</div>
-                                </td>
-                                <td><span class="service-type-text">Dry Cleaning</span></td>
-                                <td><span class="weight-text">8.5 kg</span></td>
-                                <td><span class="price-text">₱425.00</span></td>
-                                <td><span class="status-pill status-ready">Ready</span></td>
-                                <td>
-                                    <div class="mini-timeline" title="Status: Ready for Pickup/Dispatch">
-                                        <div class="mini-step done"><span class="mini-dot"></span><span>Recv</span></div>
-                                        <div class="mini-line done"></div>
-                                        <div class="mini-step done"><span class="mini-dot"></span><span>Wash</span></div>
-                                        <div class="mini-line"></div>
-                                        <div class="mini-step active"><span class="mini-dot"></span><span>Ready</span></div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons-cell">
-                                        <button type="button" class="btn-action-outline btn-action-view btn-interactive" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
-                                            View
-                                        </button>
-                                        <button type="button" class="btn-action-outline btn-interactive" onclick="openPrintModal('ORD-1026', 'John Doe', '8.5 kg', 'Dry Cleaning', '₱425.00')">Print Tag</button>
-                                        <a href="/laundry-orders-page" class="btn-action-outline btn-interactive">Edit</a>
-                                        <a href="/delivery-records-page" class="btn-action-outline btn-action-dispatch btn-interactive">Dispatch</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="order-row" data-status="completed" data-search="John Doe Dry Cleaning">
-                                <td><span class="cell-ord-id">#ORD-1028</span></td>
-                                <td>
-                                    <div class="customer-name">John Doe</div>
-                                    <div class="customer-phone">09123456789</div>
-                                </td>
-                                <td><span class="service-type-text">Dry Cleaning</span></td>
-                                <td><span class="weight-text">8.5 kg</span></td>
-                                <td><span class="price-text">₱425.00</span></td>
-                                <td><span class="status-pill status-completed">Completed</span></td>
-                                <td>
-                                    <div class="mini-timeline" title="Status: Completed">
-                                        <div class="mini-step done"><span class="mini-dot"></span><span>Recv</span></div>
-                                        <div class="mini-line done"></div>
-                                        <div class="mini-step done"><span class="mini-dot"></span><span>Wash</span></div>
-                                        <div class="mini-line done"></div>
-                                        <div class="mini-step done"><span class="mini-dot"></span><span>Done</span></div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons-cell">
-                                        <button type="button" class="btn-action-outline btn-action-view btn-interactive" onclick="openViewOrderModal('{{ order.id }}', 'ORD-{{ "%04d"|format(order.id) }}', '{{ order.customer }}', '{{ order.contact_number or 'N/A' }}', '{{ order.service_type or 'Wash & Fold' }}', '{{ order.laundry_weight }} kg', '₱{{ "{:,.2f}".format(order.total_price if order.total_price else (order.laundry_weight * 50.0)) }}', '{{ order.status or 'Received' }}', '{{ order.created_at or 'Today' }}')">
-                                            View
-                                        </button>
-                                        <button type="button" class="btn-action-outline btn-interactive" onclick="openPrintModal('ORD-1028', 'John Doe', '8.5 kg', 'Dry Cleaning', '₱425.00')">Print Tag</button>
-                                        <a href="/laundry-orders-page" class="btn-action-outline btn-interactive">Edit</a>
-                                        <a href="/delivery-records-page" class="btn-action-outline btn-action-dispatch btn-interactive">Dispatch</a>
-                                    </div>
-                                </td>
-                            </tr>
                         {% endif %}
                     </tbody>
                 </table>
