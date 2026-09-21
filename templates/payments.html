@@ -409,6 +409,12 @@
                                         <button type="button" class="btn-action-sm btn-interactive" onclick="openEditModal(this)">
                                             Edit
                                         </button>
+                                        <button type="button" class="btn-action-sm btn-action-delete btn-interactive"
+                                                data-delete-url="/payments-page/delete/{{ p.id }}"
+                                                data-item-name="Transaction #{{ p.reference_no or ('TXN-%04d'|format(p.id)) }}"
+                                                style="color:#dc2626; border-color:#fca5a5;">
+                                            Delete
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -696,12 +702,10 @@ function openEditModal(button) {
 
     const deleteBtn = document.getElementById('btnDeletePayment');
     deleteBtn.onclick = () => {
-        if (confirm(`Are you sure you want to delete transaction #${row.getAttribute('data-ref')}?`)) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/payments-page/delete/${id}`;
-            document.body.appendChild(form);
-            form.submit();
+        closeModal('editModal');
+        const row = document.querySelector(`tr.payment-row[data-id="${id}"]`);
+        if (window.handleAsyncDelete) {
+            window.handleAsyncDelete(`/payments-page/delete/${id}`, row, `Transaction #${row ? row.getAttribute('data-ref') : id}`);
         }
     };
 

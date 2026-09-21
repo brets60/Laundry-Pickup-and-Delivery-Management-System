@@ -3021,6 +3021,39 @@ def serve_manifest():
     return send_from_directory(os.path.join(app.root_path, "static"), "manifest.json", mimetype="application/json")
 
 
+def is_async_request():
+    return (
+        request.is_json
+        or request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        or 'application/json' in request.headers.get('Accept', '')
+    )
+
+
+# ============================================================
+# GLOBAL ERROR HANDLERS (Week 8 / Deliverable 3)
+# ============================================================
+
+@app.errorhandler(404)
+def handle_404_error(e):
+    if is_async_request():
+        return jsonify({
+            "status": 404,
+            "error": "The requested record or page was not found."
+        }), 404
+    msg = getattr(e, 'description', None) if hasattr(e, 'description') and e.description != 'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.' else None
+    return render_template('404.html', message=msg), 404
+
+
+@app.errorhandler(500)
+def handle_500_error(e):
+    if is_async_request():
+        return jsonify({
+            "status": 500,
+            "error": "An internal server error occurred. Please try again."
+        }), 500
+    return render_template('500.html'), 500
+
+
 if __name__ == "__main__":
     app.run(
         debug=True,

@@ -436,10 +436,18 @@
                         </div>
                     </div>
 
-                    <!-- Submit -->
-                    <button type="submit" class="primary-button submit-button">
-                        Save Changes
-                    </button>
+                    <!-- Submit & Destructive Action -->
+                    <div style="grid-column: 1 / -1; display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:14px; border-top:1px solid rgba(88, 137, 181, 0.2);">
+                        <button type="button" class="btn-action-delete"
+                                data-delete-url="/laundry-orders-page/delete/{{ order['id'] }}"
+                                data-item-name="Order #ORD-{{ "%04d"|format(order['id']) }}"
+                                style="background:rgba(220,38,38,0.12); border:1px solid #f87171; color:#f87171; padding:10px 18px; border-radius:8px; font-weight:700; cursor:pointer;">
+                            Delete Order
+                        </button>
+                        <button type="submit" class="primary-button submit-button">
+                            Save Changes
+                        </button>
+                    </div>
                 </div>
             </form>
         </section>

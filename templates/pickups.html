@@ -485,6 +485,12 @@
                                         <button type="button" class="btn-action-sm btn-action-edit btn-interactive" onclick="openEditModal(this)">
                                             Edit
                                         </button>
+                                        <button type="button" class="btn-action-sm btn-action-delete btn-interactive"
+                                                data-delete-url="/pickup-schedules-page/delete/{{ p.id }}"
+                                                data-item-name="Pickup #PCK-{{ "%04d"|format(p.id) }}"
+                                                style="color:#dc2626; border-color:#fca5a5;">
+                                            Delete
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -934,12 +940,10 @@ function openEditModal(button) {
     // Configure Delete Action
     const deleteBtn = document.getElementById('btnDeletePickup');
     deleteBtn.onclick = () => {
-        if (confirm(`Are you sure you want to delete pickup schedule #PCK-${String(id).padStart(4, '0')}?`)) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/pickup-schedules-page/delete/${id}`;
-            document.body.appendChild(form);
-            form.submit();
+        closeModal('editModal');
+        const row = document.querySelector(`tr.pickup-row[data-id="${id}"]`);
+        if (window.handleAsyncDelete) {
+            window.handleAsyncDelete(`/pickup-schedules-page/delete/${id}`, row, `Pickup #PCK-${String(id).padStart(4, '0')}`);
         }
     };
 

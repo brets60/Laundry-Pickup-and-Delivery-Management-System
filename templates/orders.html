@@ -403,6 +403,12 @@
                                         <a href="/delivery-records-page?order_id={{ order.id }}&customer={{ order.customer }}" class="btn-action-outline btn-action-dispatch btn-interactive" title="Dispatch order with rider">
                                             Dispatch
                                         </a>
+                                        <button type="button" class="btn-action-outline btn-action-delete btn-interactive"
+                                                data-delete-url="/laundry-orders-page/delete/{{ order.id }}"
+                                                data-item-name="Order #ORD-{{ "%04d"|format(order.id) }}"
+                                                style="color:#dc2626; border-color:#fca5a5;" title="Delete order">
+                                            Delete
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

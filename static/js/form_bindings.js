@@ -283,11 +283,154 @@
     }
 
     /**
+     * Display an accessible, themed Destructive Action Confirmation Modal.
+     * Prevents accidental one-click deletions (Week 8 Task 3).
+     * @param {Object} options
+     * @param {string} options.title - Header title
+     * @param {string} options.message - Consequence message
+     * @param {string} [options.confirmBtnText] - Confirm button label
+     * @param {Function} options.onConfirm - Callback receiving (button, overlay)
+     */
+    function confirmDestructiveAction({ title, message, confirmBtnText = 'Yes, Delete', onConfirm }) {
+        let existing = document.getElementById('lcConfirmModal');
+        if (existing) existing.remove();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'lcConfirmModal';
+        overlay.className = 'lc-confirm-overlay';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-labelledby', 'lcConfirmTitle');
+
+        overlay.innerHTML = `
+            <div class="lc-confirm-card">
+                <div class="lc-confirm-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <h3 class="lc-confirm-title" id="lcConfirmTitle">${title}</h3>
+                <p class="lc-confirm-msg">${message}</p>
+                <div class="lc-confirm-actions">
+                    <button type="button" class="lc-confirm-btn lc-confirm-btn-cancel" id="lcCancelBtn">Cancel</button>
+                    <button type="button" class="lc-confirm-btn lc-confirm-btn-danger" id="lcDangerConfirmBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                        ${confirmBtnText}
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        const cancelBtn = overlay.querySelector('#lcCancelBtn');
+        const confirmBtn = overlay.querySelector('#lcDangerConfirmBtn');
+
+        const dismiss = () => {
+            overlay.classList.add('closing');
+            setTimeout(() => overlay.remove(), 200);
+        };
+
+        cancelBtn.addEventListener('click', dismiss);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) dismiss();
+        });
+
+        // Focus cancel by default for safety
+        cancelBtn.focus();
+
+        confirmBtn.addEventListener('click', () => {
+            if (typeof onConfirm === 'function') {
+                onConfirm(confirmBtn, overlay);
+            }
+        });
+    }
+
+    /**
+     * Executes an asynchronous deletion with pending spinner, toast, and row removal.
+     * @param {string} url - Target delete route
+     * @param {HTMLElement|null} rowEl - Table row to animate out
+     * @param {string} itemName - Descriptive name of the item
+     */
+    function handleAsyncDelete(url, rowEl, itemName = 'Record') {
+        confirmDestructiveAction({
+            title: `Delete ${itemName}?`,
+            message: `Are you sure you want to permanently delete this ${itemName.toLowerCase()}? This action cannot be undone.`,
+            confirmBtnText: 'Yes, Delete',
+            onConfirm: async (confirmBtn, overlay) => {
+                confirmBtn.disabled = true;
+                confirmBtn.setAttribute('aria-busy', 'true');
+                confirmBtn.innerHTML = `<span class="btn-spinner"></span> Deleting...`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    const data = await response.json().catch(() => null);
+
+                    if (response.status === 200) {
+                        const msg = data?.message || `${itemName} deleted successfully.`;
+                        showToast(msg, 'success');
+                        overlay.remove();
+
+                        if (rowEl) {
+                            rowEl.classList.add('row-fade-out');
+                            setTimeout(() => {
+                                rowEl.remove();
+                            }, 350);
+                        } else {
+                            setTimeout(() => window.location.reload(), 700);
+                        }
+                    } else if (response.status === 404) {
+                        showToast(data?.error || 'Record was not found or has already been deleted.', 'error');
+                        overlay.remove();
+                    } else {
+                        showToast(data?.error || 'Failed to delete record. Please try again.', 'error');
+                        overlay.remove();
+                    }
+                } catch (err) {
+                    console.error('Async delete error:', err);
+                    showToast('Network error while deleting record.', 'error');
+                    overlay.remove();
+                }
+            }
+        });
+    }
+
+    /**
+     * Bind click events on all delete buttons with [data-delete-url] or destructive triggers
+     */
+    function initAsyncDeletes() {
+        document.addEventListener('click', function (e) {
+            const deleteTrigger = e.target.closest('[data-delete-url], .btn-action-delete, .btn-delete');
+            if (deleteTrigger && deleteTrigger.dataset.deleteUrl) {
+                e.preventDefault();
+                const url = deleteTrigger.dataset.deleteUrl;
+                const rowEl = deleteTrigger.closest('tr, .data-row, .order-row, .delivery-row, .pickup-row, .customer-row, .payment-row');
+                const itemName = deleteTrigger.dataset.itemName || 'Record';
+                handleAsyncDelete(url, rowEl, itemName);
+            }
+        });
+    }
+
+    /**
      * Auto-bind all matching forms on page load
      */
     function initAsyncForms() {
         const selector = 'form[data-async-form], form.async-form';
         document.querySelectorAll(selector).forEach(bindAsyncForm);
+        initAsyncDeletes();
     }
 
     if (document.readyState === 'loading') {
@@ -299,4 +442,7 @@
     // Expose binding helper
     window.bindAsyncForm = bindAsyncForm;
     window.initAsyncForms = initAsyncForms;
+    window.confirmDestructiveAction = confirmDestructiveAction;
+    window.handleAsyncDelete = handleAsyncDelete;
 })();
+

@@ -29,11 +29,11 @@ def manage_orders():
     if request.method == 'POST':
         is_async = is_async_request()
         data = request.get_json(silent=True) if request.is_json else request.form
-        customer = (data.get('customer') or '').strip()
-        laundry_weight = (data.get('laundry_weight') or '').strip()
-        service_type = (data.get('service_type') or 'Wash & Fold').strip()
-        status = (data.get('status') or 'Received').strip()
-        price_input = (data.get('total_price') or '').strip()
+        customer = str(data.get('customer') or '').strip()
+        laundry_weight = str(data.get('laundry_weight') or '').strip()
+        service_type = str(data.get('service_type') or 'Wash & Fold').strip()
+        status = str(data.get('status') or 'Received').strip()
+        price_input = str(data.get('total_price') or '').strip()
 
         # Structured Validation
         errors = {}
@@ -146,7 +146,9 @@ def order_details(order_id):
     conn.close()
 
     if order is None:
-        return "Order Not Found", 404
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Order not found or has been deleted."}), 404
+        return render_template('404.html', message=f"Order #ORD-{order_id:04d} was not found or has been removed."), 404
 
     return render_template('order_details.html', order=order)
 
@@ -166,7 +168,9 @@ def print_order_tag(order_id):
     conn.close()
 
     if order is None:
-        return "Order Not Found", 404
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Order not found."}), 404
+        return render_template('404.html', message=f"Order tag for #ORD-{order_id:04d} cannot be printed because the record does not exist."), 404
 
     return render_template('order_details.html', order=order, print_mode=True)
 
@@ -181,16 +185,18 @@ def edit_order(order_id):
 
     if order is None:
         conn.close()
-        return "Order Not Found", 404
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Order not found."}), 404
+        return render_template('404.html', message=f"Cannot edit Order #ORD-{order_id:04d} because it does not exist."), 404
 
     if request.method in ['POST', 'PUT']:
         is_async = is_async_request()
         data = request.get_json(silent=True) if request.is_json else request.form
-        customer = (data.get('customer') or '').strip()
-        laundry_weight = (data.get('laundry_weight') or '').strip()
-        service_type = (data.get('service_type') or 'Wash & Fold').strip()
-        status = (data.get('status') or 'Received').strip()
-        price_input = (data.get('total_price') or '').strip()
+        customer = str(data.get('customer') or '').strip()
+        laundry_weight = str(data.get('laundry_weight') or '').strip()
+        service_type = str(data.get('service_type') or 'Wash & Fold').strip()
+        status = str(data.get('status') or 'Received').strip()
+        price_input = str(data.get('total_price') or '').strip()
 
         errors = {}
         if not customer:
@@ -260,10 +266,26 @@ def edit_order(order_id):
 # ==========================================
 # 4. DELETE ORDER
 # ==========================================
-@order_bp.route('/laundry-orders-page/delete/<int:order_id>', methods=['POST'])
+@order_bp.route('/laundry-orders-page/delete/<int:order_id>', methods=['POST', 'DELETE'])
 def delete_order(order_id):
     conn = get_db_connection()
+    order = conn.execute("SELECT * FROM laundry_orders WHERE id = ?", (order_id,)).fetchone()
+    if order is None:
+        conn.close()
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Order not found or already deleted."}), 404
+        flash("Order not found or already deleted.", "warning")
+        return redirect('/laundry-orders-page')
+
     conn.execute("DELETE FROM laundry_orders WHERE id = ?", (order_id,))
     conn.commit()
     conn.close()
+
+    if is_async_request():
+        return jsonify({
+            "status": 200,
+            "message": f"Order #ORD-{order_id:04d} deleted successfully.",
+            "id": order_id
+        }), 200
+
     return redirect('/laundry-orders-page')

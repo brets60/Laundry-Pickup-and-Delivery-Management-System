@@ -49,13 +49,13 @@ def manage_payments():
     if request.method == 'POST':
         is_async = is_async_request()
         data = request.get_json(silent=True) if request.is_json else request.form
-        customer = (data.get('customer') or '').strip()
-        payment_amount_raw = (data.get('payment_amount') or '').strip()
-        payment_method = (data.get('payment_method') or '').strip()
+        customer = str(data.get('customer') or '').strip()
+        payment_amount_raw = str(data.get('payment_amount') or '').strip()
+        payment_method = str(data.get('payment_method') or '').strip()
         order_id_val = data.get('order_id')
-        status = (data.get('status') or 'Paid').strip()
-        reference_no = (data.get('reference_no') or '').strip()
-        notes = (data.get('notes') or '').strip()
+        status = str(data.get('status') or 'Paid').strip()
+        reference_no = str(data.get('reference_no') or '').strip()
+        notes = str(data.get('notes') or '').strip()
 
         # Structured Validation
         errors = {}
@@ -173,7 +173,9 @@ def payment_details(payment_id):
     conn.close()
 
     if payment is None:
-        return "Payment Not Found", 404
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Payment record not found or has been deleted."}), 404
+        return render_template('404.html', message=f"Payment transaction #{payment_id} was not found or has been removed."), 404
 
     return render_template('payment_details.html', payment=payment)
 
@@ -188,16 +190,18 @@ def edit_payment(payment_id):
 
     if payment is None:
         conn.close()
-        return "Payment Not Found", 404
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Payment record not found."}), 404
+        return render_template('404.html', message=f"Cannot edit payment #{payment_id} because the record does not exist."), 404
 
     if request.method in ['POST', 'PUT']:
         is_async = is_async_request()
         data = request.get_json(silent=True) if request.is_json else request.form
-        customer = (data.get('customer') or '').strip()
-        payment_amount_raw = (data.get('payment_amount') or '').strip()
-        payment_method = (data.get('payment_method') or '').strip()
-        status = (data.get('status') or 'Paid').strip()
-        notes = (data.get('notes') or '').strip()
+        customer = str(data.get('customer') or '').strip()
+        payment_amount_raw = str(data.get('payment_amount') or '').strip()
+        payment_method = str(data.get('payment_method') or '').strip()
+        status = str(data.get('status') or 'Paid').strip()
+        notes = str(data.get('notes') or '').strip()
 
         errors = {}
         if not customer:
@@ -255,10 +259,32 @@ def edit_payment(payment_id):
 # ==========================================
 # 4. DELETE PAYMENT
 # ==========================================
-@payment_bp.route('/payments-page/delete/<int:payment_id>', methods=['POST'])
+@payment_bp.route('/payments-page/delete/<int:payment_id>', methods=['POST', 'DELETE'])
 def delete_payment(payment_id):
+    if not is_authenticated():
+        if is_async_request():
+            return jsonify({"status": 401, "error": "Unauthorized"}), 401
+        return redirect('/login')
+
     conn = get_db_connection()
+    payment = conn.execute("SELECT * FROM payments WHERE id = ?", (payment_id,)).fetchone()
+    if payment is None:
+        conn.close()
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Payment record not found or already deleted."}), 404
+        flash("Payment record not found or already deleted.", "warning")
+        return redirect('/payments-page')
+
+    ref_no = payment['reference_no'] or f"#{payment_id}"
     conn.execute("DELETE FROM payments WHERE id = ?", (payment_id,))
     conn.commit()
     conn.close()
+
+    if is_async_request():
+        return jsonify({
+            "status": 200,
+            "message": f"Payment {ref_no} deleted successfully.",
+            "id": payment_id
+        }), 200
+
     return redirect('/payments-page')

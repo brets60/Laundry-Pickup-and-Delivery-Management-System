@@ -132,7 +132,9 @@ def pickup_details(pickup_id):
     ).fetchone()
     conn.close()
     if pickup is None:
-        return "Pickup Schedule Not Found", 404
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Pickup schedule not found or has been deleted."}), 404
+        return render_template('404.html', message=f"Pickup schedule #{pickup_id:04d} was not found or has been removed."), 404
     return render_template('pickup_details.html', pickup=pickup)
 
 
@@ -148,7 +150,7 @@ def edit_pickup(pickup_id):
         conn.close()
         if is_async_request():
             return jsonify({"status": 404, "error": "Pickup schedule not found."}), 404
-        return "Pickup Schedule Not Found", 404
+        return render_template('404.html', message=f"Cannot edit Pickup schedule #{pickup_id:04d} because it does not exist."), 404
 
     if request.method in ['POST', 'PUT']:
         is_async = is_async_request()
@@ -211,10 +213,26 @@ def edit_pickup(pickup_id):
 # ============================================================
 # 4. DELETE PICKUP SCHEDULE
 # ============================================================
-@pickup_bp.route('/pickup-schedules-page/delete/<int:pickup_id>', methods=['POST'])
+@pickup_bp.route('/pickup-schedules-page/delete/<int:pickup_id>', methods=['POST', 'DELETE'])
 def delete_pickup(pickup_id):
     conn = get_db_connection()
+    pickup = conn.execute("SELECT * FROM pickup_schedules WHERE id = ?", (pickup_id,)).fetchone()
+    if pickup is None:
+        conn.close()
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Pickup schedule not found or already deleted."}), 404
+        flash("Pickup schedule not found or already deleted.", "warning")
+        return redirect('/pickup-schedules-page')
+
     conn.execute("DELETE FROM pickup_schedules WHERE id = ?", (pickup_id,))
     conn.commit()
     conn.close()
+
+    if is_async_request():
+        return jsonify({
+            "status": 200,
+            "message": f"Pickup schedule #{pickup_id:04d} deleted successfully.",
+            "id": pickup_id
+        }), 200
+
     return redirect('/pickup-schedules-page')

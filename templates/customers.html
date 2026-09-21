@@ -386,6 +386,12 @@
                                         <a href="/customers-page/details/{{ c.id }}" class="btn-action-sm btn-interactive">
                                             History
                                         </a>
+                                        <button type="button" class="btn-action-sm btn-action-delete btn-interactive"
+                                                data-delete-url="/customers-page/delete/{{ c.id }}"
+                                                data-item-name="Customer {{ c.name }}"
+                                                style="color:#dc2626; border-color:#fca5a5;">
+                                            Delete
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -699,12 +705,10 @@ function openEditModal(button) {
 
     const deleteBtn = document.getElementById('btnDeleteCustomer');
     deleteBtn.onclick = () => {
-        if (confirm(`Are you sure you want to delete customer ${name}?`)) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/customers-page/delete/${id}`;
-            document.body.appendChild(form);
-            form.submit();
+        closeModal('editModal');
+        const row = document.querySelector(`tr.customer-row[data-id="${id}"]`);
+        if (window.handleAsyncDelete) {
+            window.handleAsyncDelete(`/customers-page/delete/${id}`, row, `Customer ${name}`);
         }
     };
 

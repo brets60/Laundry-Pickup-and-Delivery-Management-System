@@ -110,7 +110,9 @@ def customer_details(customer_id):
     customer = conn.execute("SELECT * FROM customers WHERE id = ?", (customer_id,)).fetchone()
     if customer is None:
         conn.close()
-        return "Customer Not Found", 404
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Customer not found or has been deleted."}), 404
+        return render_template('404.html', message=f"Customer #{customer_id} was not found or has been removed."), 404
 
     orders = conn.execute("SELECT * FROM laundry_orders WHERE customer = ? ORDER BY id DESC", (customer['name'],)).fetchall()
     conn.close()
@@ -127,7 +129,9 @@ def edit_customer(customer_id):
 
     if customer is None:
         conn.close()
-        return "Customer Not Found", 404
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Customer not found."}), 404
+        return render_template('404.html', message=f"Cannot edit customer #{customer_id} because the profile does not exist."), 404
 
     if request.method in ['POST', 'PUT']:
         is_async = is_async_request()
@@ -184,12 +188,28 @@ def edit_customer(customer_id):
 # ==========================================
 # 4. DELETE CUSTOMER
 # ==========================================
-@customer_bp.route('/customers-page/delete/<int:customer_id>', methods=['POST'])
+@customer_bp.route('/customers-page/delete/<int:customer_id>', methods=['POST', 'DELETE'])
 def delete_customer(customer_id):
     conn = get_db_connection()
+    customer = conn.execute("SELECT * FROM customers WHERE id = ?", (customer_id,)).fetchone()
+    if customer is None:
+        conn.close()
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Customer not found or already deleted."}), 404
+        flash("Customer not found or already deleted.", "warning")
+        return redirect('/customers-page')
+
     conn.execute("DELETE FROM customers WHERE id = ?", (customer_id,))
     conn.commit()
     conn.close()
+
+    if is_async_request():
+        return jsonify({
+            "status": 200,
+            "message": f"Customer '{customer['name']}' deleted successfully.",
+            "id": customer_id
+        }), 200
+
     return redirect('/customers-page')
 
 

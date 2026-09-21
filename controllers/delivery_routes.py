@@ -173,8 +173,9 @@ def delivery_details(delivery_id):
     conn.close()
 
     if delivery is None:
-        flash("Delivery record not found.", "warning")
-        return redirect('/delivery-records-page')
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Delivery record not found."}), 404
+        return render_template('404.html', message=f"Delivery record #{delivery_id:03d} was not found or has been removed."), 404
 
     return render_template('delivery_details.html', delivery=delivery)
 
@@ -279,18 +280,37 @@ def edit_delivery(delivery_id):
 # ============================================================
 # 4. DELETE DELIVERY RECORD
 # ============================================================
-@delivery_bp.route('/delivery-records-page/delete/<int:delivery_id>', methods=['POST'])
+@delivery_bp.route('/delivery-records-page/delete/<int:delivery_id>', methods=['POST', 'DELETE'])
 def delete_delivery(delivery_id):
+    is_async = is_async_request()
     if not is_authenticated():
+        if is_async:
+            return jsonify({"status": 401, "error": "Unauthorized"}), 401
         return redirect('/login')
 
     conn = get_db_connection()
+    delivery = conn.execute("SELECT * FROM delivery_records WHERE id = ?", (delivery_id,)).fetchone()
+    if delivery is None:
+        conn.close()
+        if is_async:
+            return jsonify({"status": 404, "error": "Delivery record not found or already deleted."}), 404
+        flash("Delivery record not found or already deleted.", "warning")
+        return redirect('/delivery-records-page')
+
     try:
         conn.execute("DELETE FROM delivery_records WHERE id = ?", (delivery_id,))
         conn.commit()
+        if is_async:
+            return jsonify({
+                "status": 200,
+                "message": f"Delivery record #{delivery_id:03d} deleted successfully.",
+                "id": delivery_id
+            }), 200
         flash(f"Delivery record #{delivery_id} was deleted successfully.", "info")
     except Exception as e:
-        flash(f"Error deleting record: {str(e)}", "danger")
+        if is_async:
+            return jsonify({"status": 500, "error": "Failed to delete delivery record."}), 500
+        flash("Failed to delete delivery record.", "danger")
     finally:
         conn.close()
 

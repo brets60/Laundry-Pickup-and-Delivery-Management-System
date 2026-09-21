@@ -558,6 +558,12 @@
                                         <button type="button" class="btn-action-sm btn-action-edit btn-interactive" onclick="openEditModal(this)">
                                             Edit
                                         </button>
+                                        <button type="button" class="btn-action-sm btn-action-delete btn-interactive"
+                                                data-delete-url="/delivery-records-page/delete/{{ d.id }}"
+                                                data-item-name="Delivery #DEL-{{ "%04d"|format(d.id) }}"
+                                                style="color:#dc2626; border-color:#fca5a5;">
+                                            Delete
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -1023,12 +1029,10 @@ function openEditModal(button) {
     // Configure Delete Action
     const deleteBtn = document.getElementById('btnDeleteDelivery');
     deleteBtn.onclick = () => {
-        if (confirm(`Are you sure you want to delete delivery #DEL-${String(id).padStart(4, '0')}?`)) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/delivery-records-page/delete/${id}`;
-            document.body.appendChild(form);
-            form.submit();
+        closeModal('editModal');
+        const row = document.querySelector(`tr.delivery-row[data-id="${id}"]`);
+        if (window.handleAsyncDelete) {
+            window.handleAsyncDelete(`/delivery-records-page/delete/${id}`, row, `Delivery #DEL-${String(id).padStart(4, '0')}`);
         }
     };
 
