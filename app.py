@@ -232,12 +232,17 @@ def init_database():
         conn.execute("ALTER TABLE users ADD COLUMN full_name TEXT")
 
     # -------------------------
-    # SEED 3 SYSTEM USERS: ADMIN, STAFF, DELIVERY RIDER
+    # SEED 5 SYSTEM USERS & ROLES
     # -------------------------
     default_users = [
-        ("admin", "admin123", "admin", "System Administrator"),
-        ("staff", "staff123", "staff", "Hub Operator"),
-        ("rider", "rider123", "rider", "Delivery Rider Juan"),
+        ("admin", "admin123", "admin", "John Michael Bretaña (Manager)"),
+        ("johnmichael", "admin123", "admin", "John Michael Bretaña"),
+        ("hazil", "cashier123", "staff", "Hazil Enoc"),
+        ("marvin", "driver123", "rider", "Marvin Oclarino"),
+        ("tristan", "driver123", "rider", "Tristan Dave Plaza"),
+        ("mark", "operator123", "staff", "Mark Ephraim Nicor"),
+        ("staff", "staff123", "staff", "Hazil Enoc & Mark Ephraim Nicor"),
+        ("rider", "rider123", "rider", "Marvin Oclarino & Tristan Dave Plaza"),
     ]
 
     for uname, upass, urole, ufullname in default_users:
@@ -266,6 +271,41 @@ def init_database():
                 WHERE id = ?
                 """,
                 (hashed_pw, urole, ufullname, existing_u["id"])
+            )
+
+    # -------------------------
+    # SEED OFFICIAL 5-MEMBER STAFF ROSTER
+    # -------------------------
+    official_staff = [
+        ("John Michael Bretaña", "Manager", "0917-123-4567", "Active", "Main Office / Branch Manager"),
+        ("Hazil Enoc", "Store Cashier", "0918-234-5678", "Active", "Front Counter / Cashier Desk"),
+        ("Marvin Oclarino", "Delivery Driver", "0919-345-6789", "Active", "Delivery Van 1 (Toyota HiAce)"),
+        ("Tristan Dave Plaza", "Delivery Driver", "0920-456-7890", "On Route", "Motorcycle Courier 1 (Honda Click)"),
+        ("Mark Ephraim Nicor", "Laundry Operator", "0921-567-8901", "Active", "Washing & Ironing Station A"),
+    ]
+
+    for s_name, s_role, s_contact, s_status, s_station in official_staff:
+        existing_s = conn.execute(
+            "SELECT id FROM staff_members WHERE name = ?",
+            (s_name,)
+        ).fetchone()
+
+        if existing_s is None:
+            conn.execute(
+                """
+                INSERT INTO staff_members (name, role, contact_number, status, vehicle_station)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (s_name, s_role, s_contact, s_status, s_station)
+            )
+        else:
+            conn.execute(
+                """
+                UPDATE staff_members
+                SET role = ?, contact_number = ?, status = ?, vehicle_station = ?
+                WHERE id = ?
+                """,
+                (s_role, s_contact, s_status, s_station, existing_s["id"])
             )
 
     conn.commit()

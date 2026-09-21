@@ -85,35 +85,35 @@ During Week 08, our 5-member engineering team utilized AI tooling (Claude / Chat
 
 During the Deliverable 3 presentation and oral defense, each member can speak to their specific architectural contributions:
 
-### 1. John Michael D. Bretaña (Lead Architect — Backend & Error Handlers)
+### 1. John Michael D. Bretaña (Manager & Lead Architect)
 - **Question:** *"How does your system prevent stack traces and internal database errors from leaking to users during an exception?"*
 - **Defense:**
   > *"In `app.py`, we registered global Flask error handlers `@app.errorhandler(404)` and `@app.errorhandler(500)`. When an unhandled exception occurs, the 500 handler catches it, logs the technical traceback to our server console for developer debugging, but returns a clean, branded dark-glass error page (`templates/500.html`) or JSON `{ "status": 500, "error": "An internal server error occurred. Please try again later." }`. At no point is an internal file path, SQL query, or Python stack trace exposed to the client."*
 
 ---
 
-### 2. Mark Ephraim Nicor (UI Interaction & Confirmation Engine)
+### 2. Mark Ephraim Nicor (Laundry Operator & UI Engine)
 - **Question:** *"Why did you replace the native browser `confirm()` with a custom modal, and how does your destructive action safety work?"*
 - **Defense:**
   > *"The native browser `window.confirm()` dialog is synchronous, visually inconsistent with our dark-glass design system, and cannot display loading indicators. In `form_bindings.js`, we implemented `confirmDestructiveAction()`. When an operator clicks 'Delete', an accessible modal card appears with a red warning badge, item-specific micro-copy, and 'Cancel' / 'Yes, Delete' buttons. When confirmed, the delete button immediately shows an animated spinner and disables itself to prevent duplicate delete requests, sends an asynchronous POST to the controller, and upon 200 OK, animates the table row out using `.row-fade-out`."*
 
 ---
 
-### 3. Tristan Dave M. Plaza (Logistics & 404 Error Experience)
+### 3. Tristan Dave M. Plaza (Delivery Driver & Logistics Dispatch)
 - **Question:** *"What happens when a user attempts to access a delivery record or URL that no longer exists?"*
 - **Defense:**
   > *"We implemented dual-mode 404 handling. If an operator accesses a non-existent URL or deleted delivery ID via standard browser navigation (like `/delivery-records-page/details/99999`), the controller catches the missing record and renders `templates/404.html`. This page features recovery navigation buttons ('Return to Dashboard', 'View Orders', 'Live Deliveries') rather than an empty page. If the request was sent asynchronously via JavaScript fetch, the controller returns HTTP 404 with JSON `{ 'status': 404, 'error': 'Delivery record not found or has already been deleted.' }`, which our toast notification system renders as a floating alert without crashing the UI."*
 
 ---
 
-### 4. Hazil Enoc (CRM & Inline Field Validation)
+### 4. Hazil Enoc (Store Cashier & CRM Front Counter)
 - **Question:** *"How does the system ensure users clearly understand what went wrong during invalid form submissions?"*
 - **Defense:**
   > *"We follow humanized micro-copy and visible field-level error binding. When a customer registration fails due to missing data, the backend rejects it with HTTP 422 and a structured dictionary like `{ 'name': 'Customer Name is required.', 'contact_number': 'Contact Number is required.' }`. The client engine iterates over these errors, highlights each input with a red focus ring (`.input-invalid`), appends a red badge with an exclamation icon directly beneath the input, and automatically focuses the first invalid field. We never rely on vague alert popups or raw status codes."*
 
 ---
 
-### 5. Marvin Oclarino (Financial Ledger & Error Resilience Testing)
+### 5. Marvin Oclarino (Delivery Driver & Financial Audit)
 - **Question:** *"How did you verify that destructive actions and error handlers work across the entire application?"*
 - **Defense:**
-  > *"We built an automated test suite in `tests/test_error_handling.py` and documented an end-to-end failure-path verification log in `docs/feedback-tests.md`. Our automated pytest suite tests: 1) standard 404 routes, 2) missing entity detail pages for all 5 controllers, 3) custom 500 error pages, and 4) async deletion endpoints ensuring the record is removed from SQLite and returns HTTP 200 JSON. We currently have over 45 passing automated tests across the project with 100% green status."*
+  > *"We built an automated test suite in `tests/test_error_handling.py` and documented an end-to-end failure-path verification log in `docs/feedback-tests.md`. Our automated pytest suite tests: 1) standard 404 routes, 2) missing entity detail pages for all 5 controllers, 3) custom 500 error pages, and 4) async deletion endpoints ensuring the record is removed from SQLite and returns HTTP 200 JSON. We currently have over 50 passing automated tests across the project with 100% green status."*

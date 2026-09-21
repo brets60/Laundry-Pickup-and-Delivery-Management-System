@@ -28,13 +28,13 @@ In accordance with **Week 08 Lab Objectives (Interface & View Binding)**, every 
 
 To ensure clear accountability across the 5-member engineering team for Deliverable 3, module ownership is partitioned as follows:
 
-| Team Member | Role | Operational Module Owned | Primary Views & Handlers |
+| Team Member | Operational & System Role | Module Owned | Primary Views & Handlers |
 |---|---|---|---|
-| **John Michael D. Bretaña** | Lead Architect / Backend | **Laundry Orders** | `orders.html`, `edit_order.html`, `order_details.html`, Global `app.py` Error Handlers |
-| **Tristan Dave M. Plaza** | Frontend / Logistics Eng. | **Delivery Records** | `deliveries.html`, `edit_delivery.html`, `delivery_details.html`, `404.html`, `500.html` |
-| **Mark Ephraim Nicor** | Frontend / UI Interaction | **Pickup Schedules** | `pickups.html`, `edit_pickup.html`, `pickup_details.html`, `form_bindings.js` Engine |
-| **Hazil Enoc** | Full-Stack / CRM Eng. | **Customer Directory** | `customers.html`, `customer_details.html`, `animations.css` Feedback Styles |
-| **Marvin Oclarino** | QA / Financial Eng. | **Payments & Billing** | `payments.html`, `payment_details.html`, `test_error_handling.py` Test Suite |
+| **John Michael D. Bretaña** | Manager (Admin / Lead Architect) | **Laundry Orders & System Admin** | `orders.html`, `edit_order.html`, `order_details.html`, Global `app.py` Error Handlers |
+| **Hazil Enoc** | Store Cashier (Full-Stack / CRM) | **Customer Directory & POS Counter** | `customers.html`, `customer_details.html`, `animations.css` Feedback Styles |
+| **Marvin Oclarino** | Delivery Driver (Logistics / Financial QA) | **Payments, Ledger & Route Van 1** | `payments.html`, `payment_details.html`, `test_error_handling.py` Test Suite |
+| **Tristan Dave M. Plaza** | Delivery Driver (Logistics / Dispatch) | **Delivery Records & Courier Dispatch** | `deliveries.html`, `edit_delivery.html`, `delivery_details.html`, `404.html`, `500.html` |
+| **Mark Ephraim Nicor** | Laundry Operator (Washing / UI Engine) | **Pickup Schedules & Wash Hub** | `pickups.html`, `edit_pickup.html`, `pickup_details.html`, `form_bindings.js` Engine |
 
 ---
 

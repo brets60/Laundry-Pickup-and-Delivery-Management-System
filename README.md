@@ -8,13 +8,13 @@ Many laundry shops still use manual methods to record customer information, laun
 
 **Project Title:** Laundry Pickup and Delivery Management System
 
-| Name                     | Role       | Responsibilities                                                     |
-| ------------------------ | ---------- | -------------------------------------------------------------------- |
-| John Michael D. Bretaña  | Repo Lead  | Manages the GitHub repository, branch protection, and pull requests. |
-| Tristan Dave M. Plaza    | Board Lead | Organizes the task board and monitors the team's progress.           |
-| Mark Ephraim Nicor       | Scribe     | Documents decisions, meeting notes, and project updates.             |
-| Marvin Oclarino          | Builder    | Develops and tests system features.                                  |
-| Hazil Enoc               | Builder    | Develops and tests system features.                                  |
+| Name | Coursework Role | System Operational Role | System Responsibilities |
+| :--- | :--- | :--- | :--- |
+| **John Michael D. Bretaña** | Repo Lead | Manager (Admin) | Manages system operations, GitHub repository, system administration, and orders oversight. |
+| **Hazil Enoc** | Builder | Store Cashier | Front-counter intake, client registration, POS billing, and customer transaction logs. |
+| **Marvin Oclarino** | Builder | Delivery Driver | Fleet logistics, order dispatches, route execution (Delivery Van 1), and payment receipts. |
+| **Tristan Dave M. Plaza** | Board Lead | Delivery Driver | Pickup collection, schedule dispatch (Motorcycle Courier 1), and sprint task tracking. |
+| **Mark Ephraim Nicor** | Scribe | Laundry Operator | Wash hub operations, machine cycle tracking, pickup tag generation, and documentation. |
 
 ## Team Members
 
