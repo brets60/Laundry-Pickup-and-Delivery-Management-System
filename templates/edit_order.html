@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/customers.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 
     <style>
         /* =========================================================
@@ -410,7 +411,7 @@
             </div>
 
             <!-- Changed action URL to order edit route -->
-            <form action="/laundry-orders-page/edit/{{ order['id'] }}" method="POST">
+            <form action="/laundry-orders-page/edit/{{ order['id'] }}" method="POST" data-async-form="order-edit" novalidate>
                 <div class="customer-form">
 
                     <!-- Customer Name (Dropdown) -->
@@ -477,5 +478,6 @@
 
     <!-- LaundryCare UI Interactions & Animations Engine -->
     <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
+    <script src="{{ url_for('static', filename='js/form_bindings.js') }}?v=1.0"></script>
 </body>
 </html>

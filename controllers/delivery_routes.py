@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, session, flash, url_for
+from flask import Blueprint, render_template, request, redirect, session, flash, url_for, jsonify
 import sqlite3
 
 delivery_bp = Blueprint('delivery', __name__)
@@ -14,6 +14,14 @@ def get_db_connection():
 
 def is_authenticated():
     return "user_id" in session
+
+
+def is_async_request():
+    return (
+        request.is_json
+        or request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        or 'application/json' in request.headers.get('Accept', '')
+    )
 
 
 @delivery_bp.route('/deliveries/new')
@@ -34,35 +42,44 @@ def new_delivery_redirect():
 @delivery_bp.route('/delivery-records-page', methods=['GET', 'POST'])
 def manage_deliveries():
     if not is_authenticated():
+        if is_async_request():
+            return jsonify({"status": 401, "error": "Unauthorized"}), 401
         return redirect('/login')
 
     conn = get_db_connection()
 
     if request.method == 'POST':
-        customer = (request.form.get('customer') or '').strip()
-        delivery_date = (request.form.get('delivery_date') or '').strip()
-        delivery_address = (request.form.get('delivery_address') or '').strip()
-        status = (request.form.get('status') or 'Scheduled').strip()
-        assigned_rider = (request.form.get('assigned_rider') or '').strip()
-        delivery_notes = (request.form.get('delivery_notes') or '').strip()
-        order_id_val = request.form.get('order_id')
+        is_async = is_async_request()
+        data = request.get_json(silent=True) if request.is_json else request.form
+        customer = (data.get('customer') or '').strip()
+        delivery_date = (data.get('delivery_date') or '').strip()
+        delivery_address = (data.get('delivery_address') or '').strip()
+        status = (data.get('status') or 'Scheduled').strip()
+        assigned_rider = (data.get('assigned_rider') or '').strip()
+        delivery_notes = (data.get('delivery_notes') or '').strip()
+        order_id_val = data.get('order_id')
 
         # Clean order_id
-        order_id = int(order_id_val) if order_id_val and order_id_val.isdigit() else None
+        order_id = int(order_id_val) if order_id_val and str(order_id_val).isdigit() else None
 
-        # VALIDATION with Flash Messages
+        # Field Validation
+        errors = {}
         if not customer:
-            flash("Validation Error: Customer Name is required.", "danger")
-            conn.close()
-            return redirect('/delivery-records-page')
-
+            errors['customer'] = "Customer Name is required."
         if not delivery_date:
-            flash("Validation Error: Delivery Date is required.", "danger")
+            errors['delivery_date'] = "Delivery Date is required."
+
+        if errors:
             conn.close()
+            if is_async:
+                return jsonify({"status": 422, "error": errors}), 422
+            first_err = next(iter(errors.values()))
+            flash(f"Validation Error: {first_err}", "danger")
             return redirect('/delivery-records-page')
 
         try:
-            conn.execute(
+            cursor = conn.cursor()
+            cursor.execute(
                 """
                 INSERT INTO delivery_records 
                 (customer, order_id, delivery_date, delivery_address, status, assigned_rider, delivery_notes)
@@ -70,10 +87,32 @@ def manage_deliveries():
                 """,
                 (customer, order_id, delivery_date, delivery_address, status, assigned_rider, delivery_notes)
             )
+            new_id = cursor.lastrowid
             conn.commit()
             flash(f"Delivery record for '{customer}' created successfully!", "success")
+
+            if is_async:
+                conn.close()
+                return jsonify({
+                    "status": 201,
+                    "message": f"Delivery #{new_id:04d} dispatched successfully!",
+                    "data": {
+                        "id": new_id,
+                        "customer": customer,
+                        "order_id": order_id,
+                        "delivery_date": delivery_date,
+                        "delivery_address": delivery_address,
+                        "status": status,
+                        "assigned_rider": assigned_rider,
+                        "delivery_notes": delivery_notes
+                    }
+                }), 201
+
         except Exception as e:
             flash(f"Database Error: {str(e)}", "danger")
+            if is_async:
+                conn.close()
+                return jsonify({"status": 500, "error": str(e)}), 500
         finally:
             conn.close()
 
@@ -143,9 +182,11 @@ def delivery_details(delivery_id):
 # ============================================================
 # 3. UPDATE DELIVERY RECORD
 # ============================================================
-@delivery_bp.route('/delivery-records-page/edit/<int:delivery_id>', methods=['GET', 'POST'])
+@delivery_bp.route('/delivery-records-page/edit/<int:delivery_id>', methods=['GET', 'POST', 'PUT'])
 def edit_delivery(delivery_id):
     if not is_authenticated():
+        if is_async_request():
+            return jsonify({"status": 401, "error": "Unauthorized"}), 401
         return redirect('/login')
 
     conn = get_db_connection()
@@ -153,29 +194,36 @@ def edit_delivery(delivery_id):
 
     if delivery is None:
         conn.close()
+        if is_async_request():
+            return jsonify({"status": 404, "error": "Delivery record not found."}), 404
         flash("Delivery record not found.", "warning")
         return redirect('/delivery-records-page')
 
-    if request.method == 'POST':
-        customer = (request.form.get('customer') or '').strip()
-        delivery_date = (request.form.get('delivery_date') or '').strip()
-        delivery_address = (request.form.get('delivery_address') or '').strip()
-        status = (request.form.get('status') or 'Scheduled').strip()
-        assigned_rider = (request.form.get('assigned_rider') or '').strip()
-        delivery_notes = (request.form.get('delivery_notes') or '').strip()
-        order_id_val = request.form.get('order_id')
+    if request.method in ['POST', 'PUT']:
+        is_async = is_async_request()
+        data = request.get_json(silent=True) if request.is_json else request.form
+        customer = (data.get('customer') or '').strip()
+        delivery_date = (data.get('delivery_date') or '').strip()
+        delivery_address = (data.get('delivery_address') or '').strip()
+        status = (data.get('status') or 'Scheduled').strip()
+        assigned_rider = (data.get('assigned_rider') or '').strip()
+        delivery_notes = (data.get('delivery_notes') or '').strip()
+        order_id_val = data.get('order_id')
 
-        order_id = int(order_id_val) if order_id_val and order_id_val.isdigit() else None
+        order_id = int(order_id_val) if order_id_val and str(order_id_val).isdigit() else None
 
+        errors = {}
         if not customer:
-            flash("Validation Error: Customer Name is required.", "danger")
-            customers = conn.execute("SELECT id, name FROM customers ORDER BY name ASC").fetchall()
-            orders = conn.execute("SELECT id, customer, laundry_weight FROM laundry_orders ORDER BY id DESC").fetchall()
-            conn.close()
-            return render_template('edit_delivery.html', delivery=delivery, customers=customers, orders=orders)
-
+            errors['customer'] = "Customer Name is required."
         if not delivery_date:
-            flash("Validation Error: Delivery Date is required.", "danger")
+            errors['delivery_date'] = "Delivery Date is required."
+
+        if errors:
+            if is_async:
+                conn.close()
+                return jsonify({"status": 422, "error": errors}), 422
+            first_err = next(iter(errors.values()))
+            flash(f"Validation Error: {first_err}", "danger")
             customers = conn.execute("SELECT id, name FROM customers ORDER BY name ASC").fetchall()
             orders = conn.execute("SELECT id, customer, laundry_weight FROM laundry_orders ORDER BY id DESC").fetchall()
             conn.close()
@@ -193,8 +241,29 @@ def edit_delivery(delivery_id):
             )
             conn.commit()
             flash(f"Delivery record #{delivery_id} updated successfully!", "success")
+
+            if is_async:
+                conn.close()
+                return jsonify({
+                    "status": 200,
+                    "message": f"Delivery #{delivery_id:04d} updated successfully!",
+                    "data": {
+                        "id": delivery_id,
+                        "customer": customer,
+                        "order_id": order_id,
+                        "delivery_date": delivery_date,
+                        "delivery_address": delivery_address,
+                        "status": status,
+                        "assigned_rider": assigned_rider,
+                        "delivery_notes": delivery_notes
+                    }
+                }), 200
+
         except Exception as e:
             flash(f"Database Error: {str(e)}", "danger")
+            if is_async:
+                conn.close()
+                return jsonify({"status": 500, "error": str(e)}), 500
         finally:
             conn.close()
 

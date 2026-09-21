@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, flash
+from flask import Blueprint, render_template, request, redirect, flash, jsonify
 import sqlite3
 
 order_bp = Blueprint('order', __name__)
@@ -11,6 +11,14 @@ def get_db_connection():
     return conn
 
 
+def is_async_request():
+    return (
+        request.is_json
+        or request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        or 'application/json' in request.headers.get('Accept', '')
+    )
+
+
 # ==========================================
 # 1. READ LIST & CREATE ORDER
 # ==========================================
@@ -19,34 +27,75 @@ def manage_orders():
     conn = get_db_connection()
 
     if request.method == 'POST':
-        customer = request.form.get('customer', '').strip()
-        laundry_weight = request.form.get('laundry_weight', '').strip()
-        service_type = request.form.get('service_type', 'Wash & Fold').strip()
-        status = request.form.get('status', 'Received').strip()
-        price_input = request.form.get('total_price', '').strip()
+        is_async = is_async_request()
+        data = request.get_json(silent=True) if request.is_json else request.form
+        customer = (data.get('customer') or '').strip()
+        laundry_weight = (data.get('laundry_weight') or '').strip()
+        service_type = (data.get('service_type') or 'Wash & Fold').strip()
+        status = (data.get('status') or 'Received').strip()
+        price_input = (data.get('total_price') or '').strip()
 
-        # Validation
-        if not customer or not laundry_weight:
-            conn.close()
-            return "Validation Error: Customer Name and Laundry Weight are required.", 422
+        # Structured Validation
+        errors = {}
+        if not customer:
+            errors['customer'] = "Customer Name is required."
+        if not laundry_weight:
+            errors['laundry_weight'] = "Laundry Weight is required."
+        else:
+            try:
+                weight_val = float(laundry_weight)
+                if weight_val <= 0:
+                    errors['laundry_weight'] = "Weight must be greater than 0 kg."
+            except ValueError:
+                errors['laundry_weight'] = "Weight must be a valid number."
 
-        try:
-            weight_val = float(laundry_weight)
-            price_val = float(price_input) if price_input else (weight_val * 50.0)
-        except ValueError:
+        price_val = 0.0
+        if price_input:
+            try:
+                price_val = float(price_input)
+                if price_val < 0:
+                    errors['total_price'] = "Total price cannot be negative."
+            except ValueError:
+                errors['total_price'] = "Total price must be a valid number."
+        elif 'laundry_weight' not in errors:
+            price_val = weight_val * 50.0
+
+        if errors:
             conn.close()
-            return "Validation Error: Invalid number for weight or price.", 422
+            if is_async:
+                return jsonify({"status": 422, "error": errors}), 422
+            first_err = next(iter(errors.values()))
+            return f"Validation Error: {first_err}", 422
 
         # Insert new order
-        conn.execute(
+        cursor = conn.cursor()
+        cursor.execute(
             """
             INSERT INTO laundry_orders (customer, laundry_weight, service_type, total_price, status, created_at)
             VALUES (?, ?, ?, ?, ?, datetime('now'))
             """,
             (customer, weight_val, service_type, price_val, status)
         )
+        new_id = cursor.lastrowid
         conn.commit()
         conn.close()
+
+        if is_async:
+            return jsonify({
+                "status": 201,
+                "message": f"Order #ORD-{new_id:04d} created successfully!",
+                "data": {
+                    "id": new_id,
+                    "order_code": f"ORD-{new_id:04d}",
+                    "customer": customer,
+                    "laundry_weight": weight_val,
+                    "service_type": service_type,
+                    "total_price": price_val,
+                    "status": status,
+                    "created_at": "Today"
+                }
+            }), 201
+
         return redirect('/laundry-orders-page')
 
     # KPI Statistics
@@ -125,7 +174,7 @@ def print_order_tag(order_id):
 # ==========================================
 # 3. UPDATE ORDER
 # ==========================================
-@order_bp.route('/laundry-orders-page/edit/<int:order_id>', methods=['GET', 'POST'])
+@order_bp.route('/laundry-orders-page/edit/<int:order_id>', methods=['GET', 'POST', 'PUT'])
 def edit_order(order_id):
     conn = get_db_connection()
     order = conn.execute("SELECT * FROM laundry_orders WHERE id = ?", (order_id,)).fetchone()
@@ -134,23 +183,45 @@ def edit_order(order_id):
         conn.close()
         return "Order Not Found", 404
 
-    if request.method == 'POST':
-        customer = request.form.get('customer', '').strip()
-        laundry_weight = request.form.get('laundry_weight', '').strip()
-        service_type = request.form.get('service_type', 'Wash & Fold').strip()
-        status = request.form.get('status', 'Received').strip()
-        price_input = request.form.get('total_price', '').strip()
+    if request.method in ['POST', 'PUT']:
+        is_async = is_async_request()
+        data = request.get_json(silent=True) if request.is_json else request.form
+        customer = (data.get('customer') or '').strip()
+        laundry_weight = (data.get('laundry_weight') or '').strip()
+        service_type = (data.get('service_type') or 'Wash & Fold').strip()
+        status = (data.get('status') or 'Received').strip()
+        price_input = (data.get('total_price') or '').strip()
 
-        if not customer or not laundry_weight:
-            conn.close()
-            return "Validation Error: Customer Name and Laundry Weight are required.", 422
+        errors = {}
+        if not customer:
+            errors['customer'] = "Customer Name is required."
+        if not laundry_weight:
+            errors['laundry_weight'] = "Laundry Weight is required."
+        else:
+            try:
+                weight_val = float(laundry_weight)
+                if weight_val <= 0:
+                    errors['laundry_weight'] = "Weight must be greater than 0 kg."
+            except ValueError:
+                errors['laundry_weight'] = "Weight must be a valid number."
 
-        try:
-            weight_val = float(laundry_weight)
-            price_val = float(price_input) if price_input else (weight_val * 50.0)
-        except ValueError:
+        price_val = 0.0
+        if price_input:
+            try:
+                price_val = float(price_input)
+                if price_val < 0:
+                    errors['total_price'] = "Total price cannot be negative."
+            except ValueError:
+                errors['total_price'] = "Total price must be a valid number."
+        elif 'laundry_weight' not in errors:
+            price_val = weight_val * 50.0
+
+        if errors:
             conn.close()
-            return "Validation Error: Invalid number for weight or price.", 422
+            if is_async:
+                return jsonify({"status": 422, "error": errors}), 422
+            first_err = next(iter(errors.values()))
+            return f"Validation Error: {first_err}", 422
 
         conn.execute(
             """
@@ -162,6 +233,22 @@ def edit_order(order_id):
         )
         conn.commit()
         conn.close()
+
+        if is_async:
+            return jsonify({
+                "status": 200,
+                "message": f"Order #ORD-{order_id:04d} updated successfully!",
+                "data": {
+                    "id": order_id,
+                    "order_code": f"ORD-{order_id:04d}",
+                    "customer": customer,
+                    "laundry_weight": weight_val,
+                    "service_type": service_type,
+                    "total_price": price_val,
+                    "status": status
+                }
+            }), 200
+
         return redirect('/laundry-orders-page')
 
     customers = conn.execute("SELECT name FROM customers ORDER BY name ASC").fetchall()

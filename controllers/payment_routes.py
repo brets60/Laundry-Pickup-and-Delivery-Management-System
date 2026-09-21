@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, flash, session
+from flask import Blueprint, render_template, request, redirect, flash, session, jsonify
 import sqlite3
 from datetime import datetime
 import random
@@ -18,15 +18,27 @@ def is_authenticated():
     return "user_id" in session
 
 
+def is_async_request():
+    return (
+        request.is_json
+        or request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        or 'application/json' in request.headers.get('Accept', '')
+    )
+
+
 # ==========================================
 # 1. READ LIST & CREATE PAYMENT
 # ==========================================
 @payment_bp.route('/payments-page', methods=['GET', 'POST'])
 def manage_payments():
     if not is_authenticated():
+        if is_async_request():
+            return jsonify({"status": 401, "error": "Unauthorized"}), 401
         return redirect('/login')
 
     if session.get('role', 'admin') != 'admin':
+        if is_async_request():
+            return jsonify({"status": 403, "error": "Access restricted: Admin role required"}), 403
         flash("Access restricted: Administrator role required to view financial reports.", "error")
         if session.get('role') == 'rider':
             return redirect('/delivery-records-page')
@@ -35,32 +47,46 @@ def manage_payments():
     conn = get_db_connection()
 
     if request.method == 'POST':
-        customer = (request.form.get('customer') or '').strip()
-        payment_amount_raw = (request.form.get('payment_amount') or '').strip()
-        payment_method = (request.form.get('payment_method') or '').strip()
-        order_id_val = request.form.get('order_id')
-        status = (request.form.get('status') or 'Paid').strip()
-        reference_no = (request.form.get('reference_no') or '').strip()
-        notes = (request.form.get('notes') or '').strip()
+        is_async = is_async_request()
+        data = request.get_json(silent=True) if request.is_json else request.form
+        customer = (data.get('customer') or '').strip()
+        payment_amount_raw = (data.get('payment_amount') or '').strip()
+        payment_method = (data.get('payment_method') or '').strip()
+        order_id_val = data.get('order_id')
+        status = (data.get('status') or 'Paid').strip()
+        reference_no = (data.get('reference_no') or '').strip()
+        notes = (data.get('notes') or '').strip()
 
-        # VALIDATION
-        if not customer or not payment_amount_raw or not payment_method:
+        # Structured Validation
+        errors = {}
+        if not customer:
+            errors['customer'] = "Customer Name is required."
+        if not payment_amount_raw:
+            errors['payment_amount'] = "Payment Amount is required."
+        else:
+            try:
+                payment_amount = float(payment_amount_raw)
+                if payment_amount <= 0:
+                    errors['payment_amount'] = "Payment Amount must be greater than 0."
+            except ValueError:
+                errors['payment_amount'] = "Payment Amount must be a valid number."
+        if not payment_method:
+            errors['payment_method'] = "Payment Method is required."
+
+        if errors:
             conn.close()
+            if is_async:
+                return jsonify({"status": 422, "error": errors}), 422
             return "Validation Error: Customer Name, Amount, and Method are required.", 422
 
-        try:
-            payment_amount = float(payment_amount_raw)
-        except ValueError:
-            conn.close()
-            return "Validation Error: Invalid payment amount.", 422
-
-        order_id = int(order_id_val) if order_id_val and order_id_val.isdigit() else None
+        order_id = int(order_id_val) if order_id_val and str(order_id_val).isdigit() else None
         if not reference_no:
             reference_no = f"TXN-{random.randint(1000, 9999)}"
 
         transaction_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        conn.execute(
+        cursor = conn.cursor()
+        cursor.execute(
             """
             INSERT INTO payments 
             (customer, payment_amount, payment_method, transaction_time, order_id, status, reference_no, notes)
@@ -68,8 +94,27 @@ def manage_payments():
             """,
             (customer, payment_amount, payment_method, transaction_time, order_id, status, reference_no, notes)
         )
+        new_id = cursor.lastrowid
         conn.commit()
         conn.close()
+
+        if is_async:
+            return jsonify({
+                "status": 201,
+                "message": f"Payment #{reference_no} recorded successfully!",
+                "data": {
+                    "id": new_id,
+                    "customer": customer,
+                    "payment_amount": payment_amount,
+                    "payment_method": payment_method,
+                    "transaction_time": transaction_time,
+                    "order_id": order_id,
+                    "status": status,
+                    "reference_no": reference_no,
+                    "notes": notes
+                }
+            }), 201
+
         return redirect('/payments-page')
 
     # READ: Get all payments and calculate financial KPIs
@@ -136,7 +181,7 @@ def payment_details(payment_id):
 # ==========================================
 # 3. UPDATE PAYMENT
 # ==========================================
-@payment_bp.route('/payments-page/edit/<int:payment_id>', methods=['GET', 'POST'])
+@payment_bp.route('/payments-page/edit/<int:payment_id>', methods=['GET', 'POST', 'PUT'])
 def edit_payment(payment_id):
     conn = get_db_connection()
     payment = conn.execute("SELECT * FROM payments WHERE id = ?", (payment_id,)).fetchone()
@@ -145,15 +190,34 @@ def edit_payment(payment_id):
         conn.close()
         return "Payment Not Found", 404
 
-    if request.method == 'POST':
-        customer = (request.form.get('customer') or '').strip()
-        payment_amount = (request.form.get('payment_amount') or '').strip()
-        payment_method = (request.form.get('payment_method') or '').strip()
-        status = (request.form.get('status') or 'Paid').strip()
-        notes = (request.form.get('notes') or '').strip()
+    if request.method in ['POST', 'PUT']:
+        is_async = is_async_request()
+        data = request.get_json(silent=True) if request.is_json else request.form
+        customer = (data.get('customer') or '').strip()
+        payment_amount_raw = (data.get('payment_amount') or '').strip()
+        payment_method = (data.get('payment_method') or '').strip()
+        status = (data.get('status') or 'Paid').strip()
+        notes = (data.get('notes') or '').strip()
 
-        if not customer or not payment_amount or not payment_method:
+        errors = {}
+        if not customer:
+            errors['customer'] = "Customer Name is required."
+        if not payment_amount_raw:
+            errors['payment_amount'] = "Payment Amount is required."
+        else:
+            try:
+                payment_amount = float(payment_amount_raw)
+                if payment_amount <= 0:
+                    errors['payment_amount'] = "Payment Amount must be greater than 0."
+            except ValueError:
+                errors['payment_amount'] = "Payment Amount must be a valid number."
+        if not payment_method:
+            errors['payment_method'] = "Payment Method is required."
+
+        if errors:
             conn.close()
+            if is_async:
+                return jsonify({"status": 422, "error": errors}), 422
             return "Validation Error: Customer, Amount, and Method are required.", 422
 
         conn.execute(
@@ -162,10 +226,25 @@ def edit_payment(payment_id):
             SET customer = ?, payment_amount = ?, payment_method = ?, status = ?, notes = ? 
             WHERE id = ?
             """,
-            (customer, float(payment_amount), payment_method, status, notes, payment_id)
+            (customer, payment_amount, payment_method, status, notes, payment_id)
         )
         conn.commit()
         conn.close()
+
+        if is_async:
+            return jsonify({
+                "status": 200,
+                "message": f"Payment updated successfully!",
+                "data": {
+                    "id": payment_id,
+                    "customer": customer,
+                    "payment_amount": payment_amount,
+                    "payment_method": payment_method,
+                    "status": status,
+                    "notes": notes
+                }
+            }), 200
+
         return redirect('/payments-page')
 
     customers = conn.execute("SELECT name FROM customers ORDER BY name ASC").fetchall()

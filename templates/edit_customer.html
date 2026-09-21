@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/customers.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 
     <style>
         /* =========================================================
@@ -404,7 +405,7 @@
                 </div>
             </div>
 
-            <form method="POST">
+            <form method="POST" data-async-form="customer-edit" novalidate>
                 <div class="customer-form">
 
                     <!-- Customer Name -->
@@ -465,5 +466,6 @@
 
     <!-- LaundryCare UI Interactions & Animations Engine -->
     <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
+    <script src="{{ url_for('static', filename='js/form_bindings.js') }}?v=1.0"></script>
 </body>
 </html>

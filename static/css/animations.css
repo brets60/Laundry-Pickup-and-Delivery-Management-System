@@ -387,3 +387,184 @@
         scroll-behavior: auto !important;
     }
 }
+
+/* --------------------------------------------------------------------------
+   10. WEEK 7: ASYNC FORM BINDING & VALIDATION FEEDBACK
+   -------------------------------------------------------------------------- */
+
+@keyframes shakeX {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+}
+
+@keyframes errorSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-16px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-16px) scale(0.96);
+    }
+}
+
+/* Input validation states */
+.input-invalid {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+    animation: shakeX 0.35s ease-in-out;
+}
+
+.input-invalid:focus {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25) !important;
+}
+
+/* Field-level error messages */
+.field-error-text {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #dc2626;
+    margin-top: 5px;
+    animation: errorSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.field-error-text svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+/* Form-level error banner */
+.form-error-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #ef4444;
+    border-radius: 8px;
+    color: #991b1b;
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 16px;
+    animation: errorSlideDown 0.25s ease-out;
+}
+
+.form-error-banner svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    stroke: #ef4444;
+}
+
+/* Loading & Double-submit Prevention Button States */
+.btn-loading {
+    position: relative;
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+    opacity: 0.82;
+}
+
+.btn-spinner {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #ffffff;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+/* Floating Toast Notifications */
+.lc-toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.lc-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 280px;
+    max-width: 420px;
+    padding: 12px 18px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15), 0 1px 3px rgba(15, 23, 42, 0.08);
+    border-left: 4px solid #2563eb;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1e293b;
+    animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: all 0.25s ease;
+}
+
+.lc-toast.success {
+    border-left-color: #10b981;
+}
+
+.lc-toast.error {
+    border-left-color: #ef4444;
+}
+
+.lc-toast.closing {
+    animation: toastSlideOut 0.25s ease forwards;
+}
+
+.lc-toast-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.lc-toast.success .lc-toast-icon {
+    color: #10b981;
+}
+
+.lc-toast.error .lc-toast-icon {
+    color: #ef4444;
+}
+

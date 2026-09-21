@@ -426,7 +426,7 @@
             <h3 class="modal-title">+ Create New Laundry Order</h3>
             <button type="button" class="modal-close-btn" onclick="closeOrderModal()">&times;</button>
         </div>
-        <form action="/laundry-orders-page" method="POST">
+        <form action="/laundry-orders-page" method="POST" data-async-form="order-create" novalidate>
             <div class="modal-body">
                 <!-- Customer Selection -->
                 <div class="modal-form-group">
@@ -871,5 +871,6 @@ function openPrintModal(orderId, customer, weight, service, price) {
 
     <!-- LaundryCare UI Interactions & Animations Engine -->
     <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
+    <script src="{{ url_for('static', filename='js/form_bindings.js') }}?v=1.0"></script>
 </body>
 </html>

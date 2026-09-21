@@ -596,7 +596,7 @@
             <h3 class="modal-title">Dispatch New Delivery</h3>
             <button type="button" class="modal-close-btn" onclick="closeModal('dispatchModal')">&times;</button>
         </div>
-        <form action="/delivery-records-page" method="POST">
+        <form action="/delivery-records-page" method="POST" data-async-form="delivery-create" novalidate>
             <div class="modal-body">
                 <!-- Customer Name -->
                 <div class="form-group">
@@ -684,7 +684,7 @@
             <h3 class="modal-title" id="editModalTitle">Edit Delivery Record</h3>
             <button type="button" class="modal-close-btn" onclick="closeModal('editModal')">&times;</button>
         </div>
-        <form id="editDeliveryForm" action="" method="POST">
+        <form id="editDeliveryForm" action="" method="POST" data-async-form="delivery-edit" novalidate>
             <div class="modal-body">
                 <div class="form-group">
                     <label class="form-label" for="edit_customer">Customer Name *</label>
@@ -1404,5 +1404,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     <!-- LaundryCare UI Interactions & Animations Engine -->
     <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
+    <script src="{{ url_for('static', filename='js/form_bindings.js') }}?v=1.0"></script>
 </body>
 </html>

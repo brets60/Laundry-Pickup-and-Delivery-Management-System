@@ -203,7 +203,7 @@
         </div>
 
         <section class="form-card">
-            <form action="/payments-page/edit/{{ payment['id'] }}" method="POST">
+            <form action="/payments-page/edit/{{ payment['id'] }}" method="POST" data-async-form="payment-edit" novalidate>
                 <div class="customer-form">
 
                     <div class="field-group">
@@ -229,5 +229,6 @@
 </main>
     <!-- LaundryCare UI Interactions & Animations Engine -->
     <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
+    <script src="{{ url_for('static', filename='js/form_bindings.js') }}?v=1.0"></script>
 </body>
 </html>

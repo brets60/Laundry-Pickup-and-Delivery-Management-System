@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
 import sqlite3
 
 customer_bp = Blueprint('customer', __name__)
@@ -16,6 +16,14 @@ def is_authenticated():
     return "user_id" in session
 
 
+def is_async_request():
+    return (
+        request.is_json
+        or request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        or 'application/json' in request.headers.get('Accept', '')
+    )
+
+
 # ==========================================
 # 1. READ LIST & CREATE CUSTOMER
 # ==========================================
@@ -24,26 +32,53 @@ def manage_customers():
     conn = get_db_connection()
 
     if request.method == 'POST':
-        name = (request.form.get('name') or '').strip()
-        contact_number = (request.form.get('contact_number') or '').strip()
-        email = (request.form.get('email') or '').strip()
-        address = (request.form.get('address') or 'Kalagutay, Base Camp, Maramag, Bukidnon').strip()
-        membership = (request.form.get('membership') or 'Regular').strip()
+        is_async = is_async_request()
+        data = request.get_json(silent=True) if request.is_json else request.form
+        name = (data.get('name') or '').strip()
+        contact_number = (data.get('contact_number') or '').strip()
+        email = (data.get('email') or '').strip()
+        address = (data.get('address') or 'Kalagutay, Base Camp, Maramag, Bukidnon').strip()
+        membership = (data.get('membership') or 'Regular').strip()
 
-        # VALIDATION
-        if not name or not contact_number:
+        # Structured Validation
+        errors = {}
+        if not name:
+            errors['name'] = "Customer Name is required."
+        if not contact_number:
+            errors['contact_number'] = "Contact Number is required."
+
+        if errors:
             conn.close()
+            if is_async:
+                return jsonify({"status": 422, "error": errors}), 422
             return "Validation Error: Customer Name and Contact Number are required.", 422
 
-        conn.execute(
+        cursor = conn.cursor()
+        cursor.execute(
             """
             INSERT INTO customers (name, contact_number, email, address, membership)
             VALUES (?, ?, ?, ?, ?)
             """,
             (name, contact_number, email, address, membership)
         )
+        new_id = cursor.lastrowid
         conn.commit()
         conn.close()
+
+        if is_async:
+            return jsonify({
+                "status": 201,
+                "message": f"Customer '{name}' registered successfully!",
+                "data": {
+                    "id": new_id,
+                    "name": name,
+                    "contact_number": contact_number,
+                    "email": email,
+                    "address": address,
+                    "membership": membership
+                }
+            }), 201
+
         return redirect('/customers-page')
 
     # READ: Get all customers and aggregate stats
@@ -85,7 +120,7 @@ def customer_details(customer_id):
 # ==========================================
 # 3. UPDATE CUSTOMER
 # ==========================================
-@customer_bp.route('/customers-page/edit/<int:customer_id>', methods=['GET', 'POST'])
+@customer_bp.route('/customers-page/edit/<int:customer_id>', methods=['GET', 'POST', 'PUT'])
 def edit_customer(customer_id):
     conn = get_db_connection()
     customer = conn.execute("SELECT * FROM customers WHERE id = ?", (customer_id,)).fetchone()
@@ -94,15 +129,25 @@ def edit_customer(customer_id):
         conn.close()
         return "Customer Not Found", 404
 
-    if request.method == 'POST':
-        name = (request.form.get('name') or '').strip()
-        contact_number = (request.form.get('contact_number') or '').strip()
-        email = (request.form.get('email') or '').strip()
-        address = (request.form.get('address') or 'Kalagutay, Base Camp, Maramag, Bukidnon').strip()
-        membership = (request.form.get('membership') or 'Regular').strip()
+    if request.method in ['POST', 'PUT']:
+        is_async = is_async_request()
+        data = request.get_json(silent=True) if request.is_json else request.form
+        name = (data.get('name') or '').strip()
+        contact_number = (data.get('contact_number') or '').strip()
+        email = (data.get('email') or '').strip()
+        address = (data.get('address') or 'Kalagutay, Base Camp, Maramag, Bukidnon').strip()
+        membership = (data.get('membership') or 'Regular').strip()
 
-        if not name or not contact_number:
+        errors = {}
+        if not name:
+            errors['name'] = "Customer Name is required."
+        if not contact_number:
+            errors['contact_number'] = "Contact Number is required."
+
+        if errors:
             conn.close()
+            if is_async:
+                return jsonify({"status": 422, "error": errors}), 422
             return "Validation Error: Customer Name and Contact Number are required.", 422
 
         conn.execute(
@@ -115,6 +160,21 @@ def edit_customer(customer_id):
         )
         conn.commit()
         conn.close()
+
+        if is_async:
+            return jsonify({
+                "status": 200,
+                "message": f"Customer '{name}' updated successfully!",
+                "data": {
+                    "id": customer_id,
+                    "name": name,
+                    "contact_number": contact_number,
+                    "email": email,
+                    "address": address,
+                    "membership": membership
+                }
+            }), 200
+
         return redirect('/customers-page')
 
     conn.close()

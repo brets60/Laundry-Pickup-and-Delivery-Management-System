@@ -423,7 +423,7 @@
             <h3 class="modal-title">Add New Customer</h3>
             <button type="button" class="modal-close-btn" onclick="closeModal('addModal')">&times;</button>
         </div>
-        <form action="/customers-page" method="POST">
+        <form action="/customers-page" method="POST" data-async-form="customer-create" novalidate>
             <div class="modal-body">
                 <div class="form-group">
                     <label class="form-label" for="new_name">Full Name *</label>
@@ -547,7 +547,7 @@
             <h3 class="modal-title" id="editModalTitle">Edit Customer Profile</h3>
             <button type="button" class="modal-close-btn" onclick="closeModal('editModal')">&times;</button>
         </div>
-        <form id="editCustomerForm" action="" method="POST">
+        <form id="editCustomerForm" action="" method="POST" data-async-form="customer-edit" novalidate>
             <div class="modal-body">
                 <div class="form-group">
                     <label class="form-label" for="edit_name">Full Name *</label>
@@ -714,5 +714,6 @@ function openEditModal(button) {
 
     <!-- LaundryCare UI Interactions & Animations Engine -->
     <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
+    <script src="{{ url_for('static', filename='js/form_bindings.js') }}?v=1.0"></script>
 </body>
 </html>

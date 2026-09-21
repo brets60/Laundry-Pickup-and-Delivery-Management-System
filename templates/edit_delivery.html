@@ -207,7 +207,7 @@
         </div>
 
         <section class="form-card">
-            <form action="/delivery-records-page/edit/{{ delivery['id'] }}" method="POST">
+            <form action="/delivery-records-page/edit/{{ delivery['id'] }}" method="POST" data-async-form="delivery-edit" novalidate>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-bottom: 24px;">
 
                     <div class="field-group">
@@ -270,5 +270,6 @@
 </main>
     <!-- LaundryCare UI Interactions & Animations Engine -->
     <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
+    <script src="{{ url_for('static', filename='js/form_bindings.js') }}?v=1.0"></script>
 </body>
 </html>

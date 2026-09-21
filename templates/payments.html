@@ -446,7 +446,7 @@
             <h3 class="modal-title">Record New Payment</h3>
             <button type="button" class="modal-close-btn" onclick="closeModal('recordModal')">&times;</button>
         </div>
-        <form action="/payments-page" method="POST">
+        <form action="/payments-page" method="POST" data-async-form="payment-create" novalidate>
             <div class="modal-body">
                 <div class="form-group">
                     <label class="form-label" for="new_customer">Customer Name *</label>
@@ -516,7 +516,7 @@
             <h3 class="modal-title" id="editModalTitle">Edit Payment Record</h3>
             <button type="button" class="modal-close-btn" onclick="closeModal('editModal')">&times;</button>
         </div>
-        <form id="editPaymentForm" action="" method="POST">
+        <form id="editPaymentForm" action="" method="POST" data-async-form="payment-edit" novalidate>
             <div class="modal-body">
                 <div class="form-group">
                     <label class="form-label" for="edit_customer">Customer Name *</label>
@@ -724,5 +724,6 @@ function openReceiptModal(button) {
 
     <!-- LaundryCare UI Interactions & Animations Engine -->
     <script src="{{ url_for('static', filename='js/ui_interactions.js') }}?v=1.0"></script>
+    <script src="{{ url_for('static', filename='js/form_bindings.js') }}?v=1.0"></script>
 </body>
 </html>
