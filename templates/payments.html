@@ -181,7 +181,7 @@
                     <circle cx="11" cy="11" r="8"/>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                <input type="text" id="paymentSearchInput" placeholder="Search by ref, customer, method..." onkeyup="filterPaymentsTable()">
+                <input type="text" id="paymentSearchInput" placeholder="Search by ref, customer, method..." oninput="handlePaymentSearchDebounced()">
             </div>
 
             <!-- Method Filter Pills -->
@@ -682,6 +682,7 @@
 
 <script>
 let currentMethodFilter = 'all';
+let paymentSearchDebounce = null;
 
 function setMethodFilter(method, buttonElement) {
     currentMethodFilter = method.toLowerCase();
@@ -690,9 +691,15 @@ function setMethodFilter(method, buttonElement) {
     filterPaymentsTable();
 }
 
+function handlePaymentSearchDebounced() {
+    clearTimeout(paymentSearchDebounce);
+    paymentSearchDebounce = setTimeout(filterPaymentsTable, 200);
+}
+
 function filterPaymentsTable() {
     const searchVal = (document.getElementById('paymentSearchInput').value || '').toLowerCase().trim();
     const rows = document.querySelectorAll('#paymentsTable tbody tr.payment-row');
+    let visibleCount = 0;
 
     rows.forEach(row => {
         const rowMethod = (row.getAttribute('data-method') || '').toLowerCase();
@@ -703,10 +710,20 @@ function filterPaymentsTable() {
 
         if (matchesMethod && matchesSearch) {
             row.style.display = '';
+            visibleCount++;
         } else {
             row.style.display = 'none';
         }
     });
+
+    const countLabel = document.querySelector('.table-record-count');
+    if (countLabel) {
+        if (searchVal || currentMethodFilter !== 'all') {
+            countLabel.textContent = `Showing ${visibleCount} of ${rows.length} transactions (filtered)`;
+        } else {
+            countLabel.textContent = `Showing ${rows.length} transactions`;
+        }
+    }
 }
 
 function openModal(id) {
