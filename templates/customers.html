@@ -179,7 +179,7 @@
                     <circle cx="11" cy="11" r="8"/>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                <input type="text" id="customerSearchInput" placeholder="Search by name, phone, address..." onkeyup="filterCustomersTable()">
+                <input type="text" id="customerSearchInput" placeholder="Search by name, phone, address..." oninput="handleSearchDebounced()">
             </div>
 
             <!-- Status Filter Pills -->
@@ -600,6 +600,7 @@
 
 <script>
 let currentStatusFilter = 'all';
+let searchDebounceTimer = null;
 
 function setStatusFilter(status, buttonElement) {
     currentStatusFilter = status.toLowerCase();
@@ -608,9 +609,15 @@ function setStatusFilter(status, buttonElement) {
     filterCustomersTable();
 }
 
+function handleSearchDebounced() {
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(filterCustomersTable, 200);
+}
+
 function filterCustomersTable() {
     const searchVal = (document.getElementById('customerSearchInput').value || '').toLowerCase().trim();
     const rows = document.querySelectorAll('#customersTable tbody tr.customer-row');
+    let visibleCount = 0;
 
     rows.forEach(row => {
         const rowMembership = (row.getAttribute('data-membership') || '').toLowerCase();
@@ -621,10 +628,20 @@ function filterCustomersTable() {
 
         if (matchesStatus && matchesSearch) {
             row.style.display = '';
+            visibleCount++;
         } else {
             row.style.display = 'none';
         }
     });
+
+    const countLabel = document.querySelector('.table-record-count');
+    if (countLabel) {
+        if (searchVal || currentStatusFilter !== 'all') {
+            countLabel.textContent = `Showing ${visibleCount} of ${rows.length} registered clients (filtered)`;
+        } else {
+            countLabel.textContent = `Showing ${rows.length} registered clients`;
+        }
+    }
 }
 
 function openModal(id) {
