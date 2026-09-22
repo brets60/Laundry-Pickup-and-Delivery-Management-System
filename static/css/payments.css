@@ -669,21 +669,43 @@ body {
 }
 
 @media print {
+    body {
+        background: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
     body * {
         visibility: hidden;
     }
+    .modal-overlay#receiptModal {
+        display: block !important;
+        position: static !important;
+        background: transparent !important;
+        padding: 0 !important;
+        visibility: visible !important;
+    }
+    .modal-overlay#receiptModal .modal-card {
+        box-shadow: none !important;
+        border: none !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        visibility: visible !important;
+    }
+    .modal-overlay#receiptModal .modal-header,
+    .modal-overlay#receiptModal .modal-footer {
+        display: none !important;
+    }
     #receiptPrintArea, #receiptPrintArea * {
-        visibility: visible;
+        visibility: visible !important;
     }
     #receiptPrintArea {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        padding: 20px;
-    }
-    .modal-header, .modal-footer, .modal-overlay {
-        display: none !important;
+        position: static !important;
+        max-width: 80mm !important;
+        margin: 0 auto !important;
+        padding: 14px !important;
+        border: 1px dashed #64748b !important;
+        box-shadow: none !important;
     }
 }
 
