@@ -26,6 +26,21 @@ def is_async_request():
     )
 
 
+def clean_phone_number(phone):
+    """Normalize phone input by trimming whitespace and formatting digits."""
+    if not phone:
+        return ''
+    cleaned = ''.join(c for c in phone.strip() if c.isdigit() or c == '+')
+    return cleaned if cleaned else phone.strip()
+
+
+def format_customer_name(name):
+    """Normalize casing and spacing for client profile display."""
+    if not name:
+        return ''
+    return ' '.join(word.capitalize() for word in name.strip().split())
+
+
 # ==========================================
 # 1. READ LIST & CREATE CUSTOMER
 # ==========================================
@@ -36,8 +51,8 @@ def manage_customers():
     if request.method == 'POST':
         is_async = is_async_request()
         data = request.get_json(silent=True) if request.is_json else request.form
-        name = (data.get('name') or '').strip()
-        contact_number = (data.get('contact_number') or '').strip()
+        name = format_customer_name(data.get('name') or '')
+        contact_number = clean_phone_number(data.get('contact_number') or '')
         email = (data.get('email') or '').strip()
         address = (data.get('address') or 'Kalagutay, Base Camp, Maramag, Bukidnon').strip()
         membership = (data.get('membership') or 'Regular').strip()
@@ -154,8 +169,8 @@ def edit_customer(customer_id):
     if request.method in ['POST', 'PUT']:
         is_async = is_async_request()
         data = request.get_json(silent=True) if request.is_json else request.form
-        name = (data.get('name') or '').strip()
-        contact_number = (data.get('contact_number') or '').strip()
+        name = format_customer_name(data.get('name') or '')
+        contact_number = clean_phone_number(data.get('contact_number') or '')
         email = (data.get('email') or '').strip()
         address = (data.get('address') or 'Kalagutay, Base Camp, Maramag, Bukidnon').strip()
         membership = (data.get('membership') or 'Regular').strip()
