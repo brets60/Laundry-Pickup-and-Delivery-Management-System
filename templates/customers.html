@@ -162,13 +162,23 @@
                 <h1>Customer Management</h1>
                 <p>View customer profiles, contact info, and transaction histories</p>
             </div>
-            <button type="button" class="btn-add-customer btn-interactive" id="openAddCustomerBtn">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"/>
-                    <line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-                <span>Add Customer</span>
-            </button>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <a href="/customers-page/export" class="btn-interactive" style="display: inline-flex; align-items: center; gap: 7px; padding: 10px 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #e2e8f0; text-decoration: none; font-size: 13px; font-weight: 600; cursor: pointer;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    <span>Export CSV</span>
+                </a>
+                <button type="button" class="btn-add-customer btn-interactive" id="openAddCustomerBtn">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <span>Add Customer</span>
+                </button>
+            </div>
         </div>
 
         <!-- SEARCH & STATUS FILTERS TOOLBAR -->

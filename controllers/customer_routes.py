@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify, Response
+import csv
+import io
 import sqlite3
 
 customer_bp = Blueprint('customer', __name__)
@@ -227,6 +229,47 @@ def delete_customer(customer_id):
         }), 200
 
     return redirect('/customers-page')
+
+
+# ==========================================
+# 4.5 EXPORT CUSTOMER DIRECTORY TO CSV
+# ==========================================
+@customer_bp.route('/customers-page/export', methods=['GET'])
+def export_customers():
+    if not is_authenticated():
+        return redirect('/login')
+
+    if session.get('role', 'admin') not in ['admin', 'staff']:
+        flash("Access restricted: Staff or Administrator role required to export customer records.", "error")
+        return redirect('/dashboard-page')
+
+    conn = get_db_connection()
+    customers = conn.execute("SELECT * FROM customers ORDER BY id ASC").fetchall()
+    conn.close()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['Customer ID', 'Full Name', 'Contact Number', 'Email', 'Address', 'Membership Tier', 'Total Orders', 'Pending Balance (PHP)', 'Registration Date'])
+
+    for c in customers:
+        writer.writerow([
+            f"CUST-{c['id']:04d}",
+            c['name'],
+            c['contact_number'],
+            c['email'] or 'N/A',
+            c['address'] or 'N/A',
+            c['membership'] or 'Regular',
+            c['total_orders'] or 0,
+            f"{c['pending_balance'] or 0.0:.2f}",
+            c['created_at'] or 'N/A'
+        ])
+
+    output.seek(0)
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment;filename=laundrycare_customers_directory.csv"}
+    )
 
 
 # ==========================================
