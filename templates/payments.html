@@ -610,11 +610,59 @@
 
                 <div class="receipt-total-box">
                     <div style="font-size:12px; color:#64748b; font-weight:600; text-transform:uppercase;">Amount Received</div>
-                    <div class="receipt-total-amount" id="recAmount">₱450.00</div>
+                    <div class="receipt-total-amount" id="recAmount">&#8369;450.00</div>
                 </div>
 
-                <div style="font-size:12px; color:#64748b; text-align:center; margin-top:16px;">
-                    Thank you for choosing LaundryCare! This serves as your official electronic receipt.
+                <!-- THERMAL RECEIPT BARCODE & AUDIT METADATA -->
+                <div style="margin-top: 18px; padding-top: 14px; border-top: 1px dashed #cbd5e1; text-align: center;">
+                    <div style="font-size: 11px; color: #64748b; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+                        Electronic Audit &amp; Settlement
+                    </div>
+                    <div style="display: flex; justify-content: center; margin-bottom: 4px;">
+                        <!-- SVG Simulated Code128 Barcode -->
+                        <svg width="220" height="40" viewBox="0 0 220 40" style="background: #fff; padding: 2px;">
+                            <rect x="10" y="5" width="3" height="30" fill="#0f172a"/>
+                            <rect x="16" y="5" width="2" height="30" fill="#0f172a"/>
+                            <rect x="22" y="5" width="4" height="30" fill="#0f172a"/>
+                            <rect x="29" y="5" width="2" height="30" fill="#0f172a"/>
+                            <rect x="34" y="5" width="5" height="30" fill="#0f172a"/>
+                            <rect x="42" y="5" width="2" height="30" fill="#0f172a"/>
+                            <rect x="47" y="5" width="4" height="30" fill="#0f172a"/>
+                            <rect x="54" y="5" width="2" height="30" fill="#0f172a"/>
+                            <rect x="59" y="5" width="3" height="30" fill="#0f172a"/>
+                            <rect x="65" y="5" width="5" height="30" fill="#0f172a"/>
+                            <rect x="73" y="5" width="2" height="30" fill="#0f172a"/>
+                            <rect x="78" y="5" width="4" height="30" fill="#0f172a"/>
+                            <rect x="85" y="5" width="2" height="30" fill="#0f172a"/>
+                            <rect x="90" y="5" width="5" height="30" fill="#0f172a"/>
+                            <rect x="98" y="5" width="3" height="30" fill="#0f172a"/>
+                            <rect x="104" y="5" width="2" height="30" fill="#0f172a"/>
+                            <rect x="109" y="5" width="4" height="30" fill="#0f172a"/>
+                            <rect x="116" y="5" width="3" height="30" fill="#0f172a"/>
+                            <rect x="122" y="5" width="5" height="30" fill="#0f172a"/>
+                            <rect x="130" y="5" width="2" height="30" fill="#0f172a"/>
+                            <rect x="135" y="5" width="4" height="30" fill="#0f172a"/>
+                            <rect x="142" y="5" width="3" height="30" fill="#0f172a"/>
+                            <rect x="148" y="5" width="2" height="30" fill="#0f172a"/>
+                            <rect x="153" y="5" width="5" height="30" fill="#0f172a"/>
+                            <rect x="161" y="5" width="2" height="30" fill="#0f172a"/>
+                            <rect x="166" y="5" width="4" height="30" fill="#0f172a"/>
+                            <rect x="173" y="5" width="3" height="30" fill="#0f172a"/>
+                            <rect x="179" y="5" width="2" height="30" fill="#0f172a"/>
+                            <rect x="184" y="5" width="4" height="30" fill="#0f172a"/>
+                            <rect x="191" y="5" width="2" height="30" fill="#0f172a"/>
+                            <rect x="196" y="5" width="4" height="30" fill="#0f172a"/>
+                            <rect x="203" y="5" width="3" height="30" fill="#0f172a"/>
+                        </svg>
+                    </div>
+                    <div style="font-family: monospace; font-size: 11px; color: #475569;" id="recBarcodeRef">TXN-1001</div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 8px;">
+                        Settled by Courier Driver &amp; Cashier Desk &bull; Marvin Oclarino
+                    </div>
+                </div>
+
+                <div style="font-size:11px; color:#94a3b8; text-align:center; margin-top:12px;">
+                    Thank you for choosing LaundryCare! Keep this receipt for verification upon delivery.
                 </div>
             </div>
         </div>
@@ -716,7 +764,10 @@ function openReceiptModal(button) {
     const row = button.closest('tr.payment-row');
     if (!row) return;
 
-    document.getElementById('recRef').textContent = `#${row.getAttribute('data-ref')}`;
+    const ref = row.getAttribute('data-ref') || 'TXN-0000';
+    document.getElementById('recRef').textContent = `#${ref}`;
+    const barcodeEl = document.getElementById('recBarcodeRef');
+    if (barcodeEl) barcodeEl.textContent = ref;
     document.getElementById('recCustomer').textContent = row.getAttribute('data-customer');
     document.getElementById('recMethod').textContent = row.getAttribute('data-method-val');
     document.getElementById('recDate').textContent = row.getAttribute('data-time') || 'Today';
