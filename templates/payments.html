@@ -471,13 +471,31 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="new_payment_method">Payment Channel *</label>
-                        <select id="new_payment_method" name="payment_method" class="form-control" required>
+                        <select id="new_payment_method" name="payment_method" class="form-control" required onchange="toggleCashHelper()">
                             <option value="Cash" selected>Cash</option>
                             <option value="GCash">GCash</option>
                             <option value="Credit Card">Credit Card</option>
                             <option value="Debit Card">Debit Card</option>
                             <option value="Bank Transfer">Bank Transfer</option>
                         </select>
+                    </div>
+                </div>
+
+                <!-- CASH CHANGE CALCULATOR HELPER (Marvin Oclarino / Courier Collections) -->
+                <div id="cashChangeHelper" style="background: rgba(16, 185, 129, 0.08); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 12px; font-weight: 700; color: #059669; text-transform: uppercase; letter-spacing: 0.05em;">Courier &amp; Cashier Change Calculator</span>
+                        <span style="font-size: 11px; color: #64748b;">Marvin Oclarino &bull; Van 1 Tool</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px;">
+                        <div>
+                            <label style="font-size: 11px; color: #64748b; display: block; margin-bottom: 4px;">Tendered Cash (&#8369;)</label>
+                            <input type="number" step="0.01" id="cashTendered" class="form-control" style="padding: 6px 10px; font-size: 13px;" placeholder="Amount given" oninput="calculateChange()">
+                        </div>
+                        <div>
+                            <label style="font-size: 11px; color: #64748b; display: block; margin-bottom: 4px;">Change Due</label>
+                            <div id="changeDueDisplay" style="font-size: 16px; font-weight: 800; color: #059669; padding: 6px 0;">&#8369;0.00</div>
+                        </div>
                     </div>
                 </div>
 
@@ -791,6 +809,32 @@ function openReceiptModal(button) {
     document.getElementById('recAmount').textContent = `₱${row.getAttribute('data-amount')}`;
 
     openModal('receiptModal');
+}
+
+function calculateChange() {
+    const amountDue = parseFloat(document.getElementById('new_payment_amount').value) || 0;
+    const tendered = parseFloat(document.getElementById('cashTendered').value) || 0;
+    const display = document.getElementById('changeDueDisplay');
+    if (!display) return;
+
+    if (tendered >= amountDue && amountDue > 0) {
+        display.textContent = '₱' + (tendered - amountDue).toFixed(2);
+        display.style.color = '#059669';
+    } else if (tendered > 0 && tendered < amountDue) {
+        display.textContent = 'Short: ₱' + (amountDue - tendered).toFixed(2);
+        display.style.color = '#dc2626';
+    } else {
+        display.textContent = '₱0.00';
+        display.style.color = '#64748b';
+    }
+}
+
+function toggleCashHelper() {
+    const method = document.getElementById('new_payment_method').value;
+    const helper = document.getElementById('cashChangeHelper');
+    if (helper) {
+        helper.style.display = (method === 'Cash') ? 'block' : 'none';
+    }
 }
 </script>
 
