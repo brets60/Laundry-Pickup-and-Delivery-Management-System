@@ -706,3 +706,70 @@ textarea.form-control {
     color: #ffffff;
     transform: scale(1.08);
 }
+
+/* ==========================================================================
+   STORE CASHIER CRM & LOYALTY STYLES (Hazil Enoc)
+   ========================================================================== */
+.crm-loyalty-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 58, 138, 0.4));
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.crm-loyalty-card::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.15), transparent 70%);
+    pointer-events: none;
+}
+
+.loyalty-points-display {
+    font-family: 'SF Pro Display', -apple-system, monospace;
+    font-size: 32px;
+    font-weight: 800;
+    color: #38bdf8;
+    letter-spacing: -0.5px;
+}
+
+.tier-badge-vip {
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.4);
+}
+
+.tier-badge-gold {
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}
+
+.tier-badge-regular {
+    background: rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 9999px;
+}
