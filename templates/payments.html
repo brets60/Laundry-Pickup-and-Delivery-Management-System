@@ -263,21 +263,21 @@
                 <span class="channel-dot" style="background: #10b981;"></span>
                 <div class="channel-info">
                     <span class="channel-name">Cash on Delivery</span>
-                    <span class="channel-amount">₱18,450 (48%)</span>
+                    <span class="channel-amount">&#8369;{{ "{:,.0f}".format(stats.cash_total) if stats else 0 }} ({{ stats.cash_pct if stats else 0 }}%)</span>
                 </div>
             </div>
             <div class="channel-item">
                 <span class="channel-dot" style="background: #2563eb;"></span>
                 <div class="channel-info">
                     <span class="channel-name">GCash / Maya QR</span>
-                    <span class="channel-amount">₱15,200 (39%)</span>
+                    <span class="channel-amount">&#8369;{{ "{:,.0f}".format(stats.gcash_total) if stats else 0 }} ({{ stats.gcash_pct if stats else 0 }}%)</span>
                 </div>
             </div>
             <div class="channel-item">
                 <span class="channel-dot" style="background: #8b5cf6;"></span>
                 <div class="channel-info">
-                    <span class="channel-name">Bank Transfer</span>
-                    <span class="channel-amount">₱5,100 (13%)</span>
+                    <span class="channel-name">Bank Transfer &amp; Cards</span>
+                    <span class="channel-amount">&#8369;{{ "{:,.0f}".format(stats.bank_total) if stats else 0 }} ({{ stats.bank_pct if stats else 0 }}%)</span>
                 </div>
             </div>
         </div>

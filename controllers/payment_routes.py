@@ -137,11 +137,26 @@ def manage_payments():
     pending_cnt = sum(1 for p in payments if (p['status'] or '').lower() == 'pending')
     avg_ticket = round(total_rev / max(1, paid_cnt), 2) if paid_cnt > 0 else 0.0
 
+    cash_total = sum(float(p['payment_amount'] or 0.0) for p in paid_payments if 'cash' in (p['payment_method'] or '').lower())
+    gcash_total = sum(float(p['payment_amount'] or 0.0) for p in paid_payments if any(k in (p['payment_method'] or '').lower() for k in ['gcash', 'maya', 'qr']))
+    bank_total = sum(float(p['payment_amount'] or 0.0) for p in paid_payments if any(k in (p['payment_method'] or '').lower() for k in ['bank', 'card', 'transfer']))
+
+    rev_base = total_rev if total_rev > 0 else 1.0
+    cash_pct = int(round((cash_total / rev_base) * 100))
+    gcash_pct = int(round((gcash_total / rev_base) * 100))
+    bank_pct = max(0, 100 - (cash_pct + gcash_pct)) if (cash_total or gcash_total or bank_total) else 0
+
     stats = {
         "total_revenue": total_rev,
         "paid_invoices": paid_cnt,
         "pending_collections": pending_cnt,
-        "avg_ticket": avg_ticket
+        "avg_ticket": avg_ticket,
+        "cash_total": cash_total,
+        "gcash_total": gcash_total,
+        "bank_total": bank_total,
+        "cash_pct": cash_pct,
+        "gcash_pct": gcash_pct,
+        "bank_pct": bank_pct
     }
 
     conn.close()
