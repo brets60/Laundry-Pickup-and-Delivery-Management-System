@@ -115,8 +115,24 @@ def customer_details(customer_id):
         return render_template('404.html', message=f"Customer #{customer_id} was not found or has been removed."), 404
 
     orders = conn.execute("SELECT * FROM laundry_orders WHERE customer = ? ORDER BY id DESC", (customer['name'],)).fetchall()
+    
+    # Calculate CRM stats & loyalty points (10 pts per order, tier bonus)
+    total_spent = sum((o['total_price'] or 0.0) for o in orders)
+    completed_orders = sum(1 for o in orders if (o['status'] or '').lower() in ['completed', 'delivered'])
+    tier = (customer['membership'] or 'Regular').lower()
+    tier_multiplier = 1.5 if tier == 'vip' else (1.2 if tier == 'gold' else 1.0)
+    loyalty_points = int(((total_spent / 50) + (completed_orders * 10)) * tier_multiplier)
+    tier_discount = '15% Off Services' if tier == 'vip' else ('10% Off Services' if tier == 'gold' else 'Standard Rates')
+    
+    crm_stats = {
+        'total_spent': total_spent,
+        'completed_orders': completed_orders,
+        'loyalty_points': loyalty_points,
+        'tier_discount': tier_discount
+    }
+    
     conn.close()
-    return render_template('customer_details.html', customer=customer, orders=orders)
+    return render_template('customer_details.html', customer=customer, orders=orders, crm_stats=crm_stats)
 
 
 # ==========================================

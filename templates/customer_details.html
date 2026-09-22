@@ -322,66 +322,145 @@
         </div>
 
 
-        <section class="details-card">
+        <div style="display: grid; grid-template-columns: 1fr 340px; gap: 24px; max-width: 1100px;">
+            <div>
+                <section class="details-card" style="max-width: 100%; margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                        <div>
+                            <h2 class="details-heading" style="display: flex; align-items: center; gap: 10px;">
+                                {{ customer["name"] }}
+                                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 4px 10px; border-radius: 9999px; letter-spacing: 0.05em;
+                                    {% if (customer['membership'] or '')|lower == 'vip' %}
+                                        background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4);
+                                    {% elif (customer['membership'] or '')|lower == 'gold' %}
+                                        background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4);
+                                    {% else %}
+                                        background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4);
+                                    {% endif %}">
+                                    {{ customer["membership"] or 'Regular' }} Member
+                                </span>
+                            </h2>
+                            <p class="details-description" style="margin-bottom: 0;">
+                                Customer Account #{{ customer["id"] }} &bull; Registered {{ customer["created_at"] or 'Recently' }}
+                            </p>
+                        </div>
+                    </div>
 
-            <h2 class="details-heading">
-                Customer Information
-            </h2>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Contact Number</span>
+                            <span class="detail-value">{{ customer["contact_number"] or 'None recorded' }}</span>
+                        </div>
 
-            <p class="details-description">
-                Complete information for the selected customer.
-            </p>
+                        <div class="detail-item">
+                            <span class="detail-label">Email Address</span>
+                            <span class="detail-value" style="font-size: 15px; word-break: break-all;">{{ customer["email"] or 'None recorded' }}</span>
+                        </div>
 
+                        <div class="detail-item" style="grid-column: span 2;">
+                            <span class="detail-label">Service & Delivery Address</span>
+                            <span class="detail-value" style="font-size: 15px; font-weight: 500;">{{ customer["address"] or 'Walk-in / No address recorded' }}</span>
+                        </div>
+                    </div>
+                </section>
 
-            <div class="details-grid">
+                <!-- ORDER HISTORY SECTION -->
+                <section class="details-card" style="max-width: 100%;">
+                    <h3 style="margin: 0 0 16px; font-size: 18px; color: #fff; display: flex; align-items: center; justify-content: space-between;">
+                        <span>Order History ({{ orders|length }})</span>
+                        <a href="{{ url_for('laundry_orders_page') }}" style="font-size: 13px; color: #38bdf8; text-decoration: none; font-weight: 500;">+ New Order</a>
+                    </h3>
 
-                <div class="detail-item">
+                    {% if orders %}
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: #94a3b8; text-align: left;">
+                                    <th style="padding: 10px 8px;">Order #</th>
+                                    <th style="padding: 10px 8px;">Service</th>
+                                    <th style="padding: 10px 8px;">Weight</th>
+                                    <th style="padding: 10px 8px;">Total</th>
+                                    <th style="padding: 10px 8px;">Status</th>
+                                    <th style="padding: 10px 8px;">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ord in orders %}
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); color: #f1f5f9;">
+                                    <td style="padding: 10px 8px; font-weight: 600; color: #38bdf8;">#{{ ord['id'] }}</td>
+                                    <td style="padding: 10px 8px;">{{ ord['service_type'] }}</td>
+                                    <td style="padding: 10px 8px;">{{ ord['laundry_weight'] }} kg</td>
+                                    <td style="padding: 10px 8px; font-weight: 600;">&#8369;{{ "%.2f"|format(ord['total_price'] or 0.0) }}</td>
+                                    <td style="padding: 10px 8px;">
+                                        <span style="font-size: 11px; padding: 2px 8px; border-radius: 9999px; font-weight: 600;
+                                            {% if ord['status'] in ['Completed', 'Delivered'] %}background: rgba(34, 197, 94, 0.2); color: #4ade80;
+                                            {% elif ord['status'] in ['In Progress', 'Washing'] %}background: rgba(59, 130, 246, 0.2); color: #60a5fa;
+                                            {% else %}background: rgba(245, 158, 11, 0.2); color: #fbbf24;{% endif %}">
+                                            {{ ord['status'] }}
+                                        </span>
+                                    </td>
+                                    <td style="padding: 10px 8px; color: #94a3b8; font-size: 12px;">{{ ord['created_at'] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div style="padding: 24px; text-align: center; color: #94a3b8; background: rgba(255,255,255,0.02); border-radius: 8px;">
+                        No orders recorded yet for this customer.
+                    </div>
+                    {% endif %}
 
-                    <span class="detail-label">
-                        Customer ID
-                    </span>
-
-                    <span class="detail-value">
-                        #{{ customer["id"] }}
-                    </span>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <span class="detail-label">
-                        Customer Name
-                    </span>
-
-                    <span class="detail-value">
-                        {{ customer["name"] }}
-                    </span>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <span class="detail-label">
-                        Contact Number
-                    </span>
-
-                    <span class="detail-value">
-                        {{ customer["contact_number"] }}
-                    </span>
-
-                </div>
-
+                    <div style="margin-top: 24px;">
+                        <a href="{{ url_for('customers_page') }}" class="back-button" style="margin-top: 0;">
+                            &larr; Back to Customer Directory
+                        </a>
+                    </div>
+                </section>
             </div>
 
+            <!-- CRM LOYALTY & REWARDS SIDEBAR -->
+            <div>
+                <section class="details-card" style="max-width: 100%; background: linear-gradient(145deg, rgba(15, 30, 50, 0.95), rgba(30, 58, 138, 0.25)); border: 1px solid rgba(59, 130, 246, 0.25);">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            &#9733;
+                        </div>
+                        <div>
+                            <h3 style="margin: 0; font-size: 16px; color: #fff;">Cashier Loyalty Hub</h3>
+                            <span style="font-size: 12px; color: #93c5fd;">Store Cashier CRM</span>
+                        </div>
+                    </div>
 
-            <a href="{{ url_for('customers_page') }}"
-               class="back-button">
-                ← Back to Customers
-            </a>
+                    <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 16px; margin-bottom: 16px; text-align: center;">
+                        <div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Reward Points Balance</div>
+                        <div style="font-size: 32px; font-weight: 800; color: #38bdf8; font-family: monospace;">{{ crm_stats.loyalty_points if crm_stats else 0 }} <span style="font-size: 14px; font-weight: 500; color: #94a3b8;">pts</span></div>
+                        <div style="font-size: 12px; color: #a5f3fc; margin-top: 4px;">{{ crm_stats.tier_discount if crm_stats else 'Standard Rates' }}</div>
+                    </div>
 
-        </section>
+                    <div style="display: flex; flex-direction: column; gap: 12px; font-size: 13px;">
+                        <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <span style="color: #94a3b8;">Total Revenue:</span>
+                            <span style="font-weight: 700; color: #4ade80;">&#8369;{{ "%.2f"|format(crm_stats.total_spent if crm_stats else 0.0) }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <span style="color: #94a3b8;">Completed Orders:</span>
+                            <span style="font-weight: 700; color: #fff;">{{ crm_stats.completed_orders if crm_stats else 0 }}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <span style="color: #94a3b8;">Pending Balance:</span>
+                            <span style="font-weight: 700; color: {% if (customer['pending_balance'] or 0) > 0 %}#f87171{% else %}#4ade80{% endif %};">
+                                &#8369;{{ "%.2f"|format(customer['pending_balance'] or 0.0) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px; padding: 12px; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border: 1px dashed rgba(59, 130, 246, 0.3); font-size: 12px; color: #bfdbfe;">
+                        <strong>Cashier Tip:</strong> Every &#8369;50 spent awards 1 loyalty point. Points can be redeemed at front counter for service discounts.
+                    </div>
+                </section>
+            </div>
+        </div>
 
     </main>
 
