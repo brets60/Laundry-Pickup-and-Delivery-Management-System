@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, flash, session, jsonify
+from flask import Blueprint, render_template, request, redirect, flash, session, jsonify, Response
+import csv
+import io
 import sqlite3
 from datetime import datetime
 import random
@@ -303,3 +305,55 @@ def delete_payment(payment_id):
         }), 200
 
     return redirect('/payments-page')
+
+
+# ==========================================
+# 5. EXPORT PAYMENTS TO CSV (Marvin Oclarino)
+# ==========================================
+@payment_bp.route('/payments-page/export', methods=['GET'])
+def export_payments():
+    if not is_authenticated():
+        return redirect('/login')
+
+    if session.get('role', 'admin') != 'admin':
+        flash("Access restricted: Administrator role required to export financial reports.", "error")
+        return redirect('/dashboard-page')
+
+    conn = get_db_connection()
+    payments = conn.execute(
+        """
+        SELECT p.*, o.service_type, o.laundry_weight, c.contact_number
+        FROM payments p
+        LEFT JOIN laundry_orders o ON p.order_id = o.id
+        LEFT JOIN customers c ON p.customer = c.name
+        ORDER BY p.id ASC
+        """
+    ).fetchall()
+    conn.close()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        'Reference No', 'Customer Name', 'Contact Number', 'Amount (PHP)', 
+        'Payment Channel', 'Status', 'Transaction Date', 'Order ID', 'Remarks'
+    ])
+
+    for p in payments:
+        writer.writerow([
+            p['reference_no'] or f"TXN-{p['id']}",
+            p['customer'],
+            p['contact_number'] or 'N/A',
+            f"{float(p['payment_amount'] or 0.0):.2f}",
+            p['payment_method'],
+            p['status'],
+            p['transaction_time'],
+            f"ORD-{p['order_id']}" if p['order_id'] else 'N/A',
+            p['notes'] or ''
+        ])
+
+    output.seek(0)
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment;filename=laundrycare_payments_ledger.csv"}
+    )
