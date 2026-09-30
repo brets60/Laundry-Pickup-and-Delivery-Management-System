@@ -308,10 +308,9 @@
                     </div>
                 </div>
                 <div class="driver-route-tabs">
-                    <button type="button" class="driver-tab-btn active" onclick="switchDriverRoute('mike', this)">Van 1 (Mike)</button>
-                    <button type="button" class="driver-tab-btn" onclick="switchDriverRoute('alex', this)">Moto 2 (Alex)</button>
-                    <button type="button" class="driver-tab-btn" onclick="switchDriverRoute('dave', this)">Moto 3 (Dave)</button>
-                    <button type="button" class="driver-tab-btn" onclick="switchDriverRoute('all', this)">All Stops</button>
+                    <button type="button" class="driver-tab-btn active" onclick="switchDriverRoute('van1', this)">Van 1 (Marvin Oclarino)</button>
+                    <button type="button" class="driver-tab-btn" onclick="switchDriverRoute('moto1', this)">Motorcycle 1 (Tristan Dave Plaza)</button>
+                    <button type="button" class="driver-tab-btn" onclick="switchDriverRoute('all', this)">All Fleet Stops</button>
                 </div>
             </div>
 
@@ -927,6 +926,29 @@
      PAGE CLIENT JAVASCRIPT
      ========================================================= -->
 <script>
+function switchDriverRoute(driverKey, btnElement) {
+    document.querySelectorAll('.driver-tab-btn').forEach(btn => btn.classList.remove('active'));
+    if (btnElement) btnElement.classList.add('active');
+
+    const stopsCount = document.getElementById('routeStopsCount');
+    const vehicle = document.getElementById('routeVehicle');
+    const distance = document.getElementById('routeDistance');
+
+    if (driverKey === 'van1') {
+        if (stopsCount) stopsCount.textContent = '4 Scheduled Stops';
+        if (vehicle) vehicle.textContent = 'Delivery Van 1 (Marvin Oclarino)';
+        if (distance) distance.textContent = '14.8 km • 42 mins remaining';
+    } else if (driverKey === 'moto1') {
+        if (stopsCount) stopsCount.textContent = '3 Express Stops';
+        if (vehicle) vehicle.textContent = 'Motorcycle 1 (Tristan Dave Plaza)';
+        if (distance) distance.textContent = '8.2 km • 24 mins remaining';
+    } else {
+        if (stopsCount) stopsCount.textContent = '7 Fleet Stops Total';
+        if (vehicle) vehicle.textContent = 'Combined Fleet (Van 1 & Moto 1)';
+        if (distance) distance.textContent = '23.0 km • All Zones Active';
+    }
+}
+
 let currentStatusFilter = 'all';
 
 function setStatusFilter(status, buttonElement) {
