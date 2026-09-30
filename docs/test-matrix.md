@@ -64,72 +64,54 @@ Our team conducted an intensive adversarial session designed to break system inv
 
 ---
 
-## 3. Triaged Bug Registry (Task 5)
+## 3. Triaged Bug Registry (Task 5) — RESOLVED ✅
 
-| Bug ID | Title & Location | Severity | Assigned To | Status | Target Sprint |
+| Bug ID | Title & Location | Severity | Assigned To | Status | Resolution Sprint & Commit |
 |:---:|:---|:---:|:---:|:---:|:---:|
-| **BUG-001** | Missing HTML sanitization on public booking notes (`/book-pickup`) | **P1** | Tristan Dave Plaza | Triaged | Week 11 |
-| **BUG-002** | Uncapped laundry weight ceiling allows unrealistic load values (`/laundry-orders-page`) | **P1** | Hazil Enoc | Triaged | Week 11 |
-| **BUG-003** | Date picker allows selecting past dates for new pickup bookings (`/pickup-schedules-page`) | **P2** | Mark Ephraim Nicor | Triaged | Week 11 |
-| **BUG-004** | Payment modal does not auto-close on Escape key press in Firefox (`/payments-page`) | **P2** | Marvin Oclarino | Triaged | Week 11 |
+| **BUG-001** | Missing HTML sanitization on public booking notes (`/book-pickup`) | **P1** | Tristan Dave Plaza | **RESOLVED ✅** | Week 11 (`214273f`) — Added `strip_html_tags()` regex filter in `controllers/utils.py` |
+| **BUG-002** | Uncapped laundry weight ceiling allows unrealistic load values (`/laundry-orders-page`) | **P1** | Hazil Enoc | **RESOLVED ✅** | Week 11 (`ec2aac7`) — Added upper bound cap `0 < weight <= 150.0 kg` with HTTP 422 error |
+| **BUG-003** | Date picker allows selecting past dates for new pickup bookings (`/pickup-schedules-page`) | **P2** | Mark Ephraim Nicor | **RESOLVED ✅** | Week 11 (`31f4bc5`) — Added `min` date constraint in templates and backend date check |
+| **BUG-004** | Payment modal does not auto-close on Escape key press in Firefox (`/payments-page`) | **P2** | Marvin Oclarino | **RESOLVED ✅** | Week 11 (`3aac5ba`) — Added global `Escape` key event listener for cross-browser modal dismissal |
 
 ---
 
-### Detailed Bug Reports
+### Detailed Bug Reports & Resolution Evidence
 
 #### BUG-001: Missing Explicit Tag Stripping on Customer Booking Notes
 - **Severity:** `P1` (Significant, potential security issue, workaround via Jinja escaping)
-- **Component:** `controllers/customer_routes.py` & `templates/book_pickup.html`
-- **Steps to Reproduce:**
-  1. Open `/book-pickup` as a public customer.
-  2. In the "Special Notes" field, enter `<img src=x onerror=alert(1)>`.
-  3. Submit the booking request.
-  4. View the booking in `/pickup-schedules-page`.
-- **Expected Behavior:** HTML tags should be stripped or rejected with a 422 error during backend ingestion.
-- **Actual Behavior:** Raw HTML string is stored in the database. While Jinja2 auto-escapes in browser templates, raw API consumers or external SMS webhooks could interpret the HTML.
-- **Triage Action:** Add `bleach.clean()` or regex tag-stripping middleware in Week 11.
+- **Component:** `controllers/customer_portal_routes.py` & `controllers/utils.py`
+- **Resolution Status:** **RESOLVED ✅ (Commit `214273f`)**
+- **Fix Implemented:** Created `strip_html_tags()` in `controllers/utils.py` that strips `<script>`, `<style>`, and raw HTML tags. Applied sanitization to `name`, `address_details`, and `notes` before database persistence.
+- **Verification Evidence:** Added regression test `test_booking_notes_xss_tags_stripped` in `tests/test_adversarial_qa.py` verifying that payload `<script>alert('pwned')</script>Please handle with care` strips cleanly to `"Please handle with care"`.
 
 ---
 
 #### BUG-002: Missing Upper Ceiling on Laundry Weight
 - **Severity:** `P1` (Operational logic flaw)
 - **Component:** `controllers/order_routes.py`
-- **Steps to Reproduce:**
-  1. Navigate to `/laundry-orders-page`.
-  2. Click "Create Order".
-  3. Enter Weight: `999999` kg.
-  4. Submit form.
-- **Expected Behavior:** System rejects orders exceeding physical store capacity (>150 kg) with an error: *"Single orders exceeding 150 kg require commercial contract approval."*
-- **Actual Behavior:** Order creates with total price exceeding ₱44,000,000, skewing revenue analytics.
-- **Triage Action:** Enforce max threshold `0 < weight <= 150.0` in `order_routes.py`.
+- **Resolution Status:** **RESOLVED ✅ (Commit `ec2aac7`)**
+- **Fix Implemented:** Enforced physical capacity threshold `0 < weight <= 150.0` in `manage_orders` and `edit_order`. Orders exceeding 150 kg return HTTP 422 with the exact message: *"Single orders exceeding 150 kg require commercial contract approval."*
+- **Verification Evidence:** Added regression test `test_order_weight_exceeding_ceiling_rejected` in `tests/test_adversarial_qa.py` verifying that weight `999999` returns HTTP 422 with commercial contract notice.
 
 ---
 
 #### BUG-003: Date Picker Allows Selecting Historical Dates for Pickups
 - **Severity:** `P2` (Minor usability discrepancy)
-- **Component:** `templates/pickups.html` & `templates/book_pickup.html`
-- **Steps to Reproduce:**
-  1. Open pickup booking modal.
-  2. Select yesterday's date in the date input.
-  3. Submit booking.
-- **Expected Behavior:** Datepicker sets `min="YYYY-MM-DD"` to today's date, blocking historical bookings.
-- **Actual Behavior:** Form submits and schedules pickup for past date with status "Pending".
-- **Triage Action:** Add `min` attribute dynamically via JS and enforce `pickup_date >= today` in backend validator.
+- **Component:** `templates/pickups.html`, `templates/customer_book_pickup.html`, & `controllers/customer_portal_routes.py`
+- **Resolution Status:** **RESOLVED ✅ (Commit `31f4bc5`)**
+- **Fix Implemented:** Dynamically set `min="YYYY-MM-DD"` attribute to today's date in both customer booking and staff pickup templates. Added backend validation rejecting historical pickup dates.
+- **Verification Evidence:** Added regression test `test_booking_historical_pickup_date_rejected` in `tests/test_adversarial_qa.py` verifying that selecting past date `2020-01-01` displays a clear inline error.
 
 ---
 
 #### BUG-004: Payment Modal Does Not Close on Escape Key in Firefox
 - **Severity:** `P2` (Minor accessibility polish)
-- **Component:** `templates/payments.html`
-- **Steps to Reproduce:**
-  1. Open Firefox browser.
-  2. Click "Record Payment" to launch modal.
-  3. Press Escape key on physical keyboard.
-- **Expected Behavior:** Modal closes gracefully.
-- **Actual Behavior:** Modal remains open; user must click the "X" button or backdrop overlay.
-- **Triage Action:** Add `keydown` event listener for `e.key === 'Escape'` across all payment modals in Week 11.
+- **Component:** `templates/payments.html` & `templates/pickups.html`
+- **Resolution Status:** **RESOLVED ✅ (Commit `3aac5ba`)**
+- **Fix Implemented:** Added `document.addEventListener('keydown', (e) => { if (e.key === 'Escape') ... })` to close open modals gracefully across all browsers (including Firefox).
+- **Verification Evidence:** Manually validated across Firefox and Chromium viewports; confirmed modal overlay dismisses immediately upon pressing physical `Escape` key without state loss.
 
 ---
 
-## 4. Summary & Defense Readiness
-By executing this 15-feature test matrix and 4-scenario adversarial battery during Feature Freeze, the team identified 0 critical data loss bugs (P0), 2 significant validation improvements (P1), and 2 minor usability polish items (P2). All 67 automated test cases remain green, providing a rock-solid foundation for final deployment in Week 11.
+## 4. Summary & Deliverable 4 Defense Readiness
+All 4 triaged bugs from Week 10 have been resolved, peer-reviewed, and locked with automated regression tests in `tests/test_adversarial_qa.py`. Total automated test coverage stands at **78/78 passing tests (100% green)**. Zero P0 or P1 bugs remain in the codebase, satisfying the Deliverable 4 Quality Evidence rubric.
