@@ -1,5 +1,29 @@
+# Python virtual environments & bytecode
 .venv/
-.idea/
+venv/
+env/
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# IDE & Editor caches
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment Variables & Secrets (Week 11 Security Checklist)
+.env
+.env.local
+.env.*.local
+*.env
+
+# SQLite local databases
 *.db
+*.sqlite
+*.sqlite3
+
+# Test & coverage caches
+.pytest_cache/
+.coverage
+htmlcov/
