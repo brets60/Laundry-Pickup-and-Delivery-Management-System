@@ -770,6 +770,15 @@ document.querySelectorAll('.modal-overlay').forEach(modal => {
     });
 });
 
+// BUG-004 Fix: Close modal gracefully on Escape key press (Cross-browser / Firefox support)
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.open').forEach(modal => {
+            modal.classList.remove('open');
+        });
+    }
+});
+
 document.getElementById('openRecordPaymentBtn').addEventListener('click', () => {
     openModal('recordModal');
 });
