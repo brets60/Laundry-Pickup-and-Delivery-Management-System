@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, redirect, session, jsonify, flash
+import os
+from flask import Flask, render_template, request, redirect, session, jsonify, flash, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from datetime import datetime
 import sqlite3
+from controllers.utils import is_async_request, strip_html_tags
 
 #controllers
 from controllers.customer_routes import customer_bp
@@ -13,7 +15,15 @@ from controllers.payment_routes import payment_bp
 from controllers.customer_portal_routes import portal_bp
 
 app = Flask(__name__)
-app.secret_key = "laundry-system-secret-key"
+
+# Environment & Security Configuration (Week 11 Lab Task 3)
+FLASK_ENV = os.environ.get("FLASK_ENV", "development")
+if FLASK_ENV == "production":
+    app.debug = False
+else:
+    app.debug = os.environ.get("FLASK_DEBUG", os.environ.get("APP_DEBUG", "True")).lower() in ("true", "1")
+
+app.secret_key = os.environ.get("SECRET_KEY", "laundry-system-secret-key-dev-only")
 
 app.register_blueprint(customer_bp)
 app.register_blueprint(order_bp)
@@ -23,7 +33,7 @@ app.register_blueprint(payment_bp)
 app.register_blueprint(portal_bp)
 
 
-DATABASE = "laundry.db"
+DATABASE = os.environ.get("DATABASE", "laundry.db")
 
 
 # ============================================================
@@ -3061,14 +3071,6 @@ def serve_manifest():
     return send_from_directory(os.path.join(app.root_path, "static"), "manifest.json", mimetype="application/json")
 
 
-def is_async_request():
-    return (
-        request.is_json
-        or request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-        or 'application/json' in request.headers.get('Accept', '')
-    )
-
-
 # ============================================================
 # GLOBAL ERROR HANDLERS (Week 8 / Deliverable 3)
 # ============================================================
@@ -3095,8 +3097,10 @@ def handle_500_error(e):
 
 
 if __name__ == "__main__":
+    host = os.environ.get("HOST", "0.0.0.0")
+    port = int(os.environ.get("PORT", 5000))
     app.run(
-        debug=True,
-        host="127.0.0.1",
-        port=5000
+        debug=app.debug,
+        host=host,
+        port=port
     )
