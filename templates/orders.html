@@ -203,7 +203,7 @@
                 </div>
                 <div class="kpi-text-box">
                     <span class="kpi-label">Total Orders</span>
-                    <span class="kpi-number">{{ total_orders if total_orders and total_orders > 0 else 148 }}</span>
+                    <span class="kpi-number">{{ total_orders or 0 }}</span>
                 </div>
             </div>
 
@@ -217,7 +217,7 @@
                 </div>
                 <div class="kpi-text-box">
                     <span class="kpi-label">Total Weight Processed</span>
-                    <span class="kpi-number">{{ total_weight if total_weight and total_weight > 0 else 842 }} kg</span>
+                    <span class="kpi-number">{{ "%.1f"|format(total_weight or 0.0) }} kg</span>
                 </div>
             </div>
 
@@ -232,7 +232,7 @@
                 </div>
                 <div class="kpi-text-box">
                     <span class="kpi-label">In Wash</span>
-                    <span class="kpi-number">{{ in_wash_count if in_wash_count and in_wash_count > 0 else 24 }}</span>
+                    <span class="kpi-number">{{ in_wash_count or 0 }}</span>
                 </div>
             </div>
 
@@ -247,7 +247,7 @@
                 </div>
                 <div class="kpi-text-box">
                     <span class="kpi-label">Ready for Dispatch</span>
-                    <span class="kpi-number">{{ ready_count if ready_count and ready_count > 0 else 18 }}</span>
+                    <span class="kpi-number">{{ ready_count or 0 }}</span>
                 </div>
             </div>
         </section>

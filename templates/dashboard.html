@@ -213,10 +213,10 @@
                     <span class="stat-header-label">Total Revenue</span>
                     <div class="peso-badge">₱</div>
                 </div>
-                <div class="stat-main-value" data-counter="{{ total_revenue if total_revenue and total_revenue > 0 else 124500 }}" data-counter-prefix="₱">
-                    ₱{{ "{:,.2f}".format(total_revenue) if total_revenue and total_revenue > 0 else '124,500.00' }}
+                <div class="stat-main-value" data-counter="{{ total_revenue or 0 }}" data-counter-prefix="₱">
+                    ₱{{ "{:,.2f}".format(total_revenue or 0.0) }}
                 </div>
-                <div class="stat-trend-positive">+8.1%</div>
+                <div class="stat-trend-muted">Settled</div>
             </div>
 
             <!-- Card 2: Active Orders -->
@@ -231,10 +231,10 @@
                         </svg>
                     </div>
                 </div>
-                <div class="stat-main-value" data-counter="{{ orders_count if orders_count and orders_count > 0 else 148 }}">
-                    {{ orders_count if orders_count and orders_count > 0 else 148 }}
+                <div class="stat-main-value" data-counter="{{ orders_count or 0 }}">
+                    {{ orders_count or 0 }}
                 </div>
-                <div class="stat-trend-positive">+12%</div>
+                <div class="stat-trend-muted">Total</div>
             </div>
 
             <!-- Card 3: Pickups Scheduled -->
@@ -250,8 +250,8 @@
                         </svg>
                     </div>
                 </div>
-                <div class="stat-main-value" data-counter="{{ pickups_count if pickups_count and pickups_count > 0 else 32 }}">
-                    {{ pickups_count if pickups_count and pickups_count > 0 else 32 }}
+                <div class="stat-main-value" data-counter="{{ pickups_count or 0 }}">
+                    {{ pickups_count or 0 }}
                 </div>
                 <div class="stat-trend-muted">Today</div>
             </div>
@@ -269,8 +269,8 @@
                         </svg>
                     </div>
                 </div>
-                <div class="stat-main-value" data-counter="{{ out_for_delivery_count if out_for_delivery_count and out_for_delivery_count > 0 else 19 }}">
-                    {{ out_for_delivery_count if out_for_delivery_count and out_for_delivery_count > 0 else 19 }}
+                <div class="stat-main-value" data-counter="{{ out_for_delivery_count or 0 }}">
+                    {{ out_for_delivery_count or 0 }}
                 </div>
                 <div class="stat-trend-muted">Live</div>
             </div>
@@ -361,27 +361,27 @@
 
                     <div class="pipeline-steps">
                         <div class="pipeline-step step-received">
-                            <div class="pipeline-count">{{ pipeline.received }}</div>
+                            <div class="pipeline-count">{{ pipeline.received or 0 }}</div>
                             <div class="pipeline-label">Received</div>
                             <div class="pipeline-subtag">Intake</div>
                         </div>
                         <div class="pipeline-step step-washing">
-                            <div class="pipeline-count">{{ pipeline.washing }}</div>
+                            <div class="pipeline-count">{{ pipeline.washing or 0 }}</div>
                             <div class="pipeline-label">Washing</div>
-                            <div class="pipeline-subtag">3 Batches</div>
+                            <div class="pipeline-subtag">In Wash</div>
                         </div>
                         <div class="pipeline-step step-drying">
-                            <div class="pipeline-count">{{ pipeline.drying }}</div>
+                            <div class="pipeline-count">{{ pipeline.drying or 0 }}</div>
                             <div class="pipeline-label">Drying</div>
-                            <div class="pipeline-subtag">2 Batches</div>
+                            <div class="pipeline-subtag">In Dry</div>
                         </div>
                         <div class="pipeline-step step-pressing">
-                            <div class="pipeline-count">{{ pipeline.pressing }}</div>
+                            <div class="pipeline-count">{{ pipeline.pressing or 0 }}</div>
                             <div class="pipeline-label">Pressing</div>
-                            <div class="pipeline-subtag">Station A</div>
+                            <div class="pipeline-subtag">Ironing</div>
                         </div>
                         <div class="pipeline-step step-ready">
-                            <div class="pipeline-count">{{ pipeline.ready }}</div>
+                            <div class="pipeline-count">{{ pipeline.ready or 0 }}</div>
                             <div class="pipeline-label">Dispatch</div>
                             <div class="pipeline-subtag">Ready</div>
                         </div>
@@ -458,148 +458,43 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- ROW 1: Delivered -->
-                            <tr>
-                                <td>
-                                    <span class="cell-order-id">#LC1024</span>
-                                </td>
-                                <td>
-                                    <div class="customer-cell-name">Maria Santos</div>
-                                    <div class="customer-cell-phone">0917-555-1234</div>
-                                </td>
-                                <td class="cell-weight">8.5 kg</td>
-                                <td class="cell-date">Oct 26,<br>10:00 AM</td>
-                                <td class="cell-date">Oct 28,<br>4:00 PM</td>
-                                <td>
-                                    <span class="badge-pill badge-delivered">Delivered</span>
-                                    <span class="badge-sub-text">Oct 28</span>
-                                </td>
-                                <td>
-                                    <div class="table-actions">
-                                        <a href="/delivery-records-page" title="Edit">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                            </svg>
-                                        </a>
-                                        <span>&bull;&bull;&bull;</span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- ROW 2: Out for Delivery -->
-                            <tr>
-                                <td>
-                                    <span class="cell-order-id">#LC1023</span>
-                                </td>
-                                <td>
-                                    <div class="customer-cell-name">Maria Santos</div>
-                                    <div class="customer-cell-phone">0917-555-1234</div>
-                                </td>
-                                <td class="cell-weight">8.5 kg</td>
-                                <td class="cell-date">Oct 26,<br>10:00 AM</td>
-                                <td class="cell-date">Oct 28,<br>4:00 PM</td>
-                                <td>
-                                    <span class="badge-pill badge-out">Out for Delivery</span>
-                                    <span class="badge-sub-text">Live</span>
-                                </td>
-                                <td>
-                                    <div class="table-actions">
-                                        <a href="/delivery-records-page" title="Edit">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                            </svg>
-                                        </a>
-                                        <span>&bull;&bull;&bull;</span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- ROW 3: Scheduled -->
-                            <tr>
-                                <td>
-                                    <span class="cell-order-id">#LC1022</span>
-                                </td>
-                                <td>
-                                    <div class="customer-cell-name">Maria Santos</div>
-                                    <div class="customer-cell-phone">0917-555-1234</div>
-                                </td>
-                                <td class="cell-weight">8.5 kg</td>
-                                <td class="cell-date">Oct 26,<br>10:00 AM</td>
-                                <td class="cell-date">Oct 28,<br>4:00 PM</td>
-                                <td>
-                                    <span class="badge-pill badge-scheduled">Scheduled</span>
-                                    <span class="badge-sub-text">Oct 29</span>
-                                </td>
-                                <td>
-                                    <div class="table-actions">
-                                        <a href="/delivery-records-page" title="Edit">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                            </svg>
-                                        </a>
-                                        <span>&bull;&bull;&bull;</span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- ROW 4: Pending -->
-                            <tr>
-                                <td>
-                                    <span class="cell-order-id">#LC1021</span>
-                                </td>
-                                <td>
-                                    <div class="customer-cell-name">Maria Santos</div>
-                                    <div class="customer-cell-phone">0917-555-1234</div>
-                                </td>
-                                <td class="cell-weight">8.5 kg</td>
-                                <td class="cell-date">Oct 26,<br>10:00 AM</td>
-                                <td class="cell-date">Oct 28,<br>4:00 PM</td>
-                                <td>
-                                    <span class="badge-pill badge-pending">Pending</span>
-                                </td>
-                                <td>
-                                    <div class="table-actions">
-                                        <a href="/delivery-records-page" title="Edit">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                            </svg>
-                                        </a>
-                                        <span>&bull;&bull;&bull;</span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- ROW 5: Picked Up -->
-                            <tr>
-                                <td>
-                                    <span class="cell-order-id">#LC1020</span>
-                                </td>
-                                <td>
-                                    <div class="customer-cell-name">Maria Santos</div>
-                                    <div class="customer-cell-phone">0917-555-1234</div>
-                                </td>
-                                <td class="cell-weight">8.5 kg</td>
-                                <td class="cell-date">Oct 26,<br>10:00 AM</td>
-                                <td class="cell-date">Oct 28,<br>4:00 PM</td>
-                                <td>
-                                    <span class="badge-pill badge-picked">Picked Up</span>
-                                </td>
-                                <td>
-                                    <div class="table-actions">
-                                        <a href="/delivery-records-page" title="Edit">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                            </svg>
-                                        </a>
-                                        <span>&bull;&bull;&bull;</span>
-                                    </div>
-                                </td>
-                            </tr>
+                            {% if recent_deliveries %}
+                                {% for d in recent_deliveries %}
+                                <tr>
+                                    <td>
+                                        <span class="cell-order-id">#DLV-{{ "%04d"|format(d['id']) }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="customer-cell-name">{{ d['customer'] }}</div>
+                                        <div class="customer-cell-phone">{{ d['contact_number'] or 'N/A' }}</div>
+                                    </td>
+                                    <td class="cell-weight">{{ d['laundry_weight'] or '—' }} kg</td>
+                                    <td class="cell-date">{{ d['created_at'][:10] if d['created_at'] else 'Today' }}</td>
+                                    <td class="cell-date">{{ d['delivery_date'] }}</td>
+                                    <td>
+                                        <span class="badge-pill badge-{{ d['status']|lower|replace(' ', '-') }}">{{ d['status'] }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <a href="/delivery-records-page" title="View Deliveries">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" style="text-align:center; padding: 42px 20px; color: #94a3b8;">
+                                        <div style="font-size: 28px; margin-bottom: 8px;">🧺</div>
+                                        <div style="font-size: 14px; font-weight: 700; color: #475569;">No deliveries or orders recorded yet</div>
+                                        <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Clean slate! New orders created in the system or booked online will appear here.</div>
+                                    </td>
+                                </tr>
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>
@@ -622,24 +517,23 @@
                                       stroke-width="15"
                                       stroke-linecap="round"/>
                                 <!-- Active Fill Arc (circumference = PI * 75 = ~236) -->
-                                <!-- 78% of 236 = 184; dashoffset = 236 - 184 = 52 -->
                                 <path d="M 25 105 A 75 75 0 0 1 175 105"
                                       fill="none"
                                       stroke="#1877f2"
                                       stroke-width="15"
                                       stroke-linecap="round"
                                       stroke-dasharray="236"
-                                      stroke-dashoffset="{{ 236 - (236 * (completion_rate if completion_rate and completion_rate > 0 else 78) / 100) }}"
+                                      stroke-dashoffset="{{ 236 - (236 * (completion_rate or 0) / 100) }}"
                                       style="transition: stroke-dashoffset 1s ease;"/>
                             </svg>
 
                             <div class="gauge-percentage-text">
-                                {{ completion_rate if completion_rate and completion_rate > 0 else 78 }}%
+                                {{ completion_rate or 0 }}%
                             </div>
                         </div>
 
                         <div class="gauge-caption-main">Delivery Completion Rate</div>
-                        <div class="gauge-caption-sub">112 / 144 Completed Today</div>
+                        <div class="gauge-caption-sub">{{ delivered_count or 0 }} / {{ deliveries_count or 0 }} Completed</div>
                     </div>
                 </div>
 

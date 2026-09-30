@@ -360,9 +360,11 @@ def rider_app_view():
         # Stats
         total = len(deliveries)
         delivered = sum(1 for d in deliveries if (d['status'] or '').lower() == 'delivered')
+        cod_total = sum((d['total_price'] or 0.0) for d in deliveries if (d['status'] or '').lower() != 'delivered')
         stats = {
             'total': total,
-            'delivered': delivered
+            'delivered': delivered,
+            'cod_total': cod_total
         }
 
         return render_template(

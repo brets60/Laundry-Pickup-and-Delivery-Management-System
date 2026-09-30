@@ -469,11 +469,11 @@ def dashboard_page():
         ready_count = conn.execute("SELECT COUNT(*) FROM laundry_orders WHERE LOWER(COALESCE(status, '')) in ('ready', 'ready for dispatch', 'ready for delivery')").fetchone()[0]
 
         pipeline = {
-            "received": received_count if received_count > 0 else 68,
-            "washing": washing_count if washing_count > 0 else 34,
-            "drying": drying_count if drying_count > 0 else 19,
-            "pressing": pressing_count if pressing_count > 0 else 12,
-            "ready": ready_count if ready_count > 0 else 7
+            "received": received_count,
+            "washing": washing_count,
+            "drying": drying_count,
+            "pressing": pressing_count,
+            "ready": ready_count
         }
 
         # Active drivers roster
