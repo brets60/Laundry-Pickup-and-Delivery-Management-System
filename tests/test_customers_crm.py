@@ -39,6 +39,10 @@ def test_customer_details_crm_stats(auth_client):
     """Verify customer details route calculates CRM loyalty stats."""
     conn = get_db_connection()
     cust = conn.execute("SELECT id FROM customers LIMIT 1").fetchone()
+    if cust is None:
+        conn.execute("INSERT INTO customers (name, contact_number, email, address) VALUES ('Maria Test', '0917-000-0000', 'maria@test.com', 'Poblacion, Maramag')")
+        conn.commit()
+        cust = conn.execute("SELECT id FROM customers LIMIT 1").fetchone()
     conn.close()
     assert cust is not None, "At least one customer must exist in test database"
 
