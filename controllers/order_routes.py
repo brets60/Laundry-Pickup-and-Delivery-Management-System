@@ -1,22 +1,16 @@
+import os
 from flask import Blueprint, render_template, request, redirect, flash, jsonify
 import sqlite3
+from controllers.utils import is_async_request
 
 order_bp = Blueprint('order', __name__)
-DATABASE = "laundry.db"
+DATABASE = os.environ.get("DATABASE", "laundry.db")
 
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
-
-
-def is_async_request():
-    return (
-        request.is_json
-        or request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-        or 'application/json' in request.headers.get('Accept', '')
-    )
 
 
 # ==========================================
@@ -46,6 +40,8 @@ def manage_orders():
                 weight_val = float(laundry_weight)
                 if weight_val <= 0:
                     errors['laundry_weight'] = "Weight must be greater than 0 kg."
+                elif weight_val > 150.0:
+                    errors['laundry_weight'] = "Single orders exceeding 150 kg require commercial contract approval."
             except ValueError:
                 errors['laundry_weight'] = "Weight must be a valid number."
 
@@ -208,6 +204,8 @@ def edit_order(order_id):
                 weight_val = float(laundry_weight)
                 if weight_val <= 0:
                     errors['laundry_weight'] = "Weight must be greater than 0 kg."
+                elif weight_val > 150.0:
+                    errors['laundry_weight'] = "Single orders exceeding 150 kg require commercial contract approval."
             except ValueError:
                 errors['laundry_weight'] = "Weight must be a valid number."
 
