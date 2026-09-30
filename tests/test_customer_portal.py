@@ -1,3 +1,4 @@
+from datetime import date
 import pytest
 from app import app, get_db_connection
 
@@ -28,7 +29,7 @@ def test_book_pickup_post_success(client):
         'address_details': 'Dorm 3, Room 101',
         'service_type': 'Wash & Fold',
         'estimated_load': 'Medium Bag (~6-8 kg)',
-        'pickup_date': '2026-09-16',
+        'pickup_date': date.today().strftime('%Y-%m-%d'),
         'pickup_time': '09:00 AM - 12:00 PM',
         'payment_method': 'Cash on Delivery (COD)',
         'notes': 'Please ring the dorm bell upon arrival.'

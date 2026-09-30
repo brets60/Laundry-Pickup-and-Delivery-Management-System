@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, request, redirect, jsonify, url_fo
 import sqlite3
 from datetime import datetime, date
 
+from controllers.utils import strip_html_tags
+
 portal_bp = Blueprint('customer_portal', __name__)
 DATABASE = "laundry.db"
 
@@ -32,17 +34,17 @@ def book_pickup():
     today_str = date.today().strftime('%Y-%m-%d')
 
     if request.method == 'POST':
-        name = (request.form.get('name') or '').strip()
+        name = strip_html_tags(request.form.get('name') or '')
         contact_number = (request.form.get('contact_number') or '').strip()
         email = (request.form.get('email') or '').strip()
-        barangay = (request.form.get('barangay') or 'Poblacion').strip()
-        address_details = (request.form.get('address_details') or '').strip()
+        barangay = strip_html_tags(request.form.get('barangay') or 'Poblacion')
+        address_details = strip_html_tags(request.form.get('address_details') or '')
         service_type = (request.form.get('service_type') or 'Wash & Fold').strip()
         estimated_load = (request.form.get('estimated_load') or 'Medium Bag (~6-8 kg)').strip()
         pickup_date = (request.form.get('pickup_date') or today_str).strip()
         pickup_time = (request.form.get('pickup_time') or '09:00 AM - 12:00 PM').strip()
         payment_method = (request.form.get('payment_method') or 'Cash on Delivery (COD)').strip()
-        notes = (request.form.get('notes') or '').strip()
+        notes = strip_html_tags(request.form.get('notes') or '')
 
         # Validation
         if not name or not contact_number:
@@ -50,6 +52,15 @@ def book_pickup():
             return render_template(
                 'customer_book_pickup.html',
                 error="Please provide both your Full Name and Mobile Contact Number.",
+                today_str=today_str,
+                form_data=request.form
+            )
+
+        if pickup_date < today_str:
+            conn.close()
+            return render_template(
+                'customer_book_pickup.html',
+                error="Pickup date cannot be in the past. Please select today or a future date.",
                 today_str=today_str,
                 form_data=request.form
             )
