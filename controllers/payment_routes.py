@@ -1,12 +1,14 @@
+import os
 from flask import Blueprint, render_template, request, redirect, flash, session, jsonify, Response
 import csv
 import io
 import sqlite3
 from datetime import datetime
 import random
+from controllers.utils import is_async_request, strip_html_tags
 
 payment_bp = Blueprint('payment', __name__)
-DATABASE = "laundry.db"
+DATABASE = os.environ.get("DATABASE", "laundry.db")
 
 
 def get_db_connection():
@@ -18,14 +20,6 @@ def get_db_connection():
 
 def is_authenticated():
     return "user_id" in session
-
-
-def is_async_request():
-    return (
-        request.is_json
-        or request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-        or 'application/json' in request.headers.get('Accept', '')
-    )
 
 
 # ==========================================
