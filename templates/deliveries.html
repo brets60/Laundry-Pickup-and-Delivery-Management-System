@@ -926,29 +926,6 @@
      PAGE CLIENT JAVASCRIPT
      ========================================================= -->
 <script>
-function switchDriverRoute(driverKey, btnElement) {
-    document.querySelectorAll('.driver-tab-btn').forEach(btn => btn.classList.remove('active'));
-    if (btnElement) btnElement.classList.add('active');
-
-    const stopsCount = document.getElementById('routeStopsCount');
-    const vehicle = document.getElementById('routeVehicle');
-    const distance = document.getElementById('routeDistance');
-
-    if (driverKey === 'van1') {
-        if (stopsCount) stopsCount.textContent = '4 Scheduled Stops';
-        if (vehicle) vehicle.textContent = 'Delivery Van 1 (Marvin Oclarino)';
-        if (distance) distance.textContent = '14.8 km • 42 mins remaining';
-    } else if (driverKey === 'moto1') {
-        if (stopsCount) stopsCount.textContent = '3 Express Stops';
-        if (vehicle) vehicle.textContent = 'Motorcycle 1 (Tristan Dave Plaza)';
-        if (distance) distance.textContent = '8.2 km • 24 mins remaining';
-    } else {
-        if (stopsCount) stopsCount.textContent = '7 Fleet Stops Total';
-        if (vehicle) vehicle.textContent = 'Combined Fleet (Van 1 & Moto 1)';
-        if (distance) distance.textContent = '23.0 km • All Zones Active';
-    }
-}
-
 let currentStatusFilter = 'all';
 
 function setStatusFilter(status, buttonElement) {
@@ -1168,8 +1145,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Switch Driver Routes Interactive Logic
     const routeDatasets = {
-        'mike': {
-            vehicle: 'Ford Transit (Van #1)',
+        'van1': {
+            vehicle: 'Delivery Van 1 (Marvin Oclarino)',
             stops: '4 Scheduled Stops',
             dist: '14.8 km • 42 mins remaining',
             html: `
@@ -1214,8 +1191,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 </div>
             `
         },
-        'alex': {
-            vehicle: 'Yamaha NMAX (Motorcycle #2)',
+        'moto1': {
+            vehicle: 'Motorcycle 1 (Tristan Dave Plaza)',
             stops: '3 Express Stops',
             dist: '8.4 km • 25 mins remaining',
             html: `
@@ -1250,43 +1227,17 @@ window.addEventListener('DOMContentLoaded', () => {
                 </div>
             `
         },
-        'dave': {
-            vehicle: 'Honda Click (Motorcycle #3)',
-            stops: '2 Scheduled Stops',
-            dist: '6.1 km • 18 mins remaining',
-            html: `
-                <div class="stop-node completed">
-                    <div class="stop-marker"><span class="stop-number">&#10003;</span></div>
-                    <div class="stop-content">
-                        <div class="stop-time">09:15 AM &bull; Done</div>
-                        <div class="stop-customer">Patricia Cruz</div>
-                        <div class="stop-address">North Poblacion, Maramag</div>
-                        <span class="stop-status-pill pill-done">Delivered</span>
-                    </div>
-                </div>
-                <div class="stop-connector completed"></div>
-                <div class="stop-node en-route">
-                    <div class="stop-marker"><span class="stop-number">2</span></div>
-                    <div class="stop-content">
-                        <div class="stop-time">10:50 AM &bull; In Transit</div>
-                        <div class="stop-customer">Miguel Diaz</div>
-                        <div class="stop-address">Anoling, Maramag</div>
-                        <span class="stop-status-pill pill-transit">En Route (8 mins)</span>
-                    </div>
-                </div>
-            `
-        },
         'all': {
-            vehicle: 'All Active Couriers (3 Vehicles)',
-            stops: '9 Fleet Deliveries Today',
-            dist: '29.3 km total route coverage',
+            vehicle: 'All Active Couriers (Van 1 & Motorcycle 1)',
+            stops: '7 Fleet Deliveries Today',
+            dist: '23.2 km total route coverage',
             html: `
                 <div class="stop-node completed">
                     <div class="stop-marker"><span class="stop-number">&#10003;</span></div>
                     <div class="stop-content">
                         <div class="stop-time">Batch A &bull; Done</div>
-                        <div class="stop-customer">3 Morning Stops</div>
-                        <div class="stop-address">Van 1, Moto 2, Moto 3</div>
+                        <div class="stop-customer">2 Morning Stops</div>
+                        <div class="stop-address">Van 1 (Marvin) &bull; Moto 1 (Tristan)</div>
                         <span class="stop-status-pill pill-done">Completed</span>
                     </div>
                 </div>
@@ -1294,7 +1245,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 <div class="stop-node en-route">
                     <div class="stop-marker"><span class="stop-number">LIVE</span></div>
                     <div class="stop-content">
-                        <div class="stop-time">Current &bull; 3 Active</div>
+                        <div class="stop-time">Current &bull; 2 Active</div>
                         <div class="stop-customer">Midday Dispatch</div>
                         <div class="stop-address">Poblacion, Musuan, Dologon</div>
                         <span class="stop-status-pill pill-transit">En Route</span>
@@ -1318,7 +1269,7 @@ window.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.driver-tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        const data = routeDatasets[driverKey] || routeDatasets['mike'];
+        const data = routeDatasets[driverKey] || routeDatasets['van1'];
         document.getElementById('routeVehicle').textContent = data.vehicle;
         document.getElementById('routeStopsCount').textContent = data.stops;
         document.getElementById('routeDistance').textContent = data.dist;
