@@ -1,8 +1,11 @@
+import os
+from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, flash, session, url_for, jsonify
 import sqlite3
+from controllers.utils import is_async_request, strip_html_tags
 
 pickup_bp = Blueprint('pickup', __name__)
-DATABASE = "laundry.db"
+DATABASE = os.environ.get("DATABASE", "laundry.db")
 
 
 def get_db_connection():
@@ -14,14 +17,6 @@ def get_db_connection():
 
 def is_authenticated():
     return "user_id" in session
-
-
-def is_async_request():
-    return (
-        request.is_json
-        or request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-        or 'application/json' in request.headers.get('Accept', '')
-    )
 
 
 def check_pickup_slot_conflict(conn, pickup_date, pickup_time, assigned_driver=None, exclude_id=None):

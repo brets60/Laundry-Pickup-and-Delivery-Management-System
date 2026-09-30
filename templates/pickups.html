@@ -918,10 +918,22 @@ document.querySelectorAll('.modal-overlay').forEach(modal => {
 document.getElementById('openScheduleModalBtn').addEventListener('click', () => {
     const today = new Date().toISOString().split('T')[0];
     const dateInput = document.getElementById('new_pickup_date');
-    if (dateInput && !dateInput.value) {
-        dateInput.value = today;
+    if (dateInput) {
+        dateInput.min = today;
+        if (!dateInput.value) {
+            dateInput.value = today;
+        }
     }
     openModal('scheduleModal');
+});
+
+// Close open modals on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.open').forEach(modal => {
+            modal.classList.remove('open');
+        });
+    }
 });
 
 // Open Edit Modal
