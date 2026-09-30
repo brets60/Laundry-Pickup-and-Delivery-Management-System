@@ -24,6 +24,33 @@ def is_async_request():
     )
 
 
+def check_pickup_slot_conflict(conn, pickup_date, pickup_time, assigned_driver=None, exclude_id=None):
+    """
+    Checks courier pickup scheduling density to prevent route bottlenecks and hub intake overload.
+    Authored by Mark Ephraim Nicor (Laundry Operator).
+    """
+    query = """
+        SELECT COUNT(*) as slot_count 
+        FROM pickup_schedules 
+        WHERE pickup_date = ? AND pickup_time = ? AND status != 'Cancelled'
+    """
+    params = [pickup_date, pickup_time]
+    if assigned_driver:
+        query += " AND assigned_driver = ?"
+        params.append(assigned_driver)
+    if exclude_id:
+        query += " AND id != ?"
+        params.append(exclude_id)
+
+    row = conn.execute(query, tuple(params)).fetchone()
+    count = row['slot_count'] if row else 0
+    return {
+        'count': count,
+        'is_high_volume': count >= 4,
+        'warning': f"High intake density: {count} pickups already booked for {pickup_time} on {pickup_date}" if count >= 4 else None
+    }
+
+
 # ============================================================
 # 1. READ LIST & CREATE PICKUP SCHEDULE
 # ============================================================
