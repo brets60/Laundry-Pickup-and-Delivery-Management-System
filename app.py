@@ -247,12 +247,13 @@ def init_database():
     default_users = [
         ("admin", "admin123", "admin", "John Michael Bretaña (Manager)"),
         ("johnmichael", "admin123", "admin", "John Michael Bretaña"),
-        ("hazil", "cashier123", "staff", "Hazil Enoc"),
-        ("marvin", "driver123", "rider", "Marvin Oclarino"),
-        ("tristan", "driver123", "rider", "Tristan Dave Plaza"),
-        ("mark", "operator123", "staff", "Mark Ephraim Nicor"),
-        ("staff", "staff123", "staff", "Hazil Enoc & Mark Ephraim Nicor"),
-        ("rider", "rider123", "rider", "Marvin Oclarino & Tristan Dave Plaza"),
+        ("hazil", "cashier123", "staff", "Hazil Enoc (Store Cashier)"),
+        ("marvin", "driver123", "rider", "Marvin Oclarino (Motorcycle Courier 2)"),
+        ("tristan", "driver123", "rider", "Tristan Dave Plaza (Motorcycle Courier 1)"),
+        ("ephraim", "driver123", "rider", "Mark Ephraim Nicor (Motorcycle Courier 3)"),
+        ("mark", "operator123", "staff", "Mark Ephraim Nicor (Laundry Operator)"),
+        ("staff", "staff123", "staff", "Staff Desk (Hazil Enoc & Mark Ephraim Nicor)"),
+        ("rider", "rider123", "rider", "Motorcycle Fleet (Tristan, Marvin & Ephraim)"),
     ]
 
     for uname, upass, urole, ufullname in default_users:

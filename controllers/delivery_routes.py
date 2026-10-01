@@ -324,7 +324,7 @@ def rider_app_view():
         role = session.get('role', 'admin')
         username = session.get('username', '')
 
-        if role == 'rider':
+        if role == 'rider' and username != 'rider':
             deliveries = conn.execute("""
                 SELECT d.*, o.laundry_weight, o.service_type, o.total_price, c.contact_number, c.name as customer_name
                 FROM delivery_records d
@@ -335,6 +335,15 @@ def rider_app_view():
                     WHEN d.status = 'Out for Delivery' THEN 1
                     WHEN d.status = 'Scheduled' THEN 2
                     ELSE 3 END, d.id ASC
+            """, (f"%{username}%",)).fetchall()
+
+            pickups = conn.execute("""
+                SELECT p.*, c.contact_number
+                FROM pickup_schedules p
+                LEFT JOIN customers c ON p.customer = c.name
+                WHERE (p.assigned_driver LIKE ? OR p.assigned_driver IS NULL OR p.assigned_driver = '')
+                  AND p.status != 'Picked Up' AND p.status != 'Cancelled'
+                ORDER BY p.id ASC
             """, (f"%{username}%",)).fetchall()
         else:
             deliveries = conn.execute("""
@@ -348,14 +357,13 @@ def rider_app_view():
                     ELSE 3 END, d.id ASC
             """).fetchall()
 
-        # Fetch scheduled pickups
-        pickups = conn.execute("""
-            SELECT p.*, c.contact_number
-            FROM pickup_schedules p
-            LEFT JOIN customers c ON p.customer = c.name
-            WHERE p.status != 'Picked Up' AND p.status != 'Cancelled'
-            ORDER BY p.id ASC
-        """).fetchall()
+            pickups = conn.execute("""
+                SELECT p.*, c.contact_number
+                FROM pickup_schedules p
+                LEFT JOIN customers c ON p.customer = c.name
+                WHERE p.status != 'Picked Up' AND p.status != 'Cancelled'
+                ORDER BY p.id ASC
+            """).fetchall()
 
         # Stats
         total = len(deliveries)
