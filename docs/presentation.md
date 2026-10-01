@@ -94,8 +94,8 @@ flowchart TD
 ### Slide 5: Live Demo Part 1 — The Happy Path (End-to-End Loop)
 - **Host:** Live Public URL — [`https://laundrycare-management.onrender.com`](https://laundrycare-management.onrender.com) *(No Localhost!)*
 - **Step 1: Public Booking (`/book-pickup`)**
-  - Customer *Maria Santos* books a doorstep pickup in *Poblacion, Maramag*.
-  - System automatically maps address to **Zone 2** and assigns **Rider Alex (Moto 2)**.
+  - Customer *Maria Santos* books a doorstep pickup in *Sayre Highway, Base Camp*.
+  - System automatically maps address to **Zone 2** and assigns **Marvin Oclarino (Moto 2)**.
 - **Step 2: Staff Intake & Order Creation (`/laundry-orders-page`)**
   - Cashier records intake: `8.5 kg` Wash & Fold $\rightarrow$ System computes ₱425.00 (`8.5 * ₱50.00`).
 - **Step 3: Wash Hub Processing (`/pickup-schedules-page`)**
@@ -209,7 +209,7 @@ flowchart TD
 
 | Step | Action | Input Data | What to Highlight to the Panel |
 |:---:|:---|:---|:---|
-| **1** | Open `/book-pickup` | Name: `Maria Santos`<br>Phone: `0917-123-4567`<br>Barangay: `Poblacion`<br>Date: Today | Highlight: Zero login required; auto-allocates to **Zone 2 / Rider Alex**. |
+| **1** | Open `/book-pickup` | Name: `Maria Santos`<br>Phone: `0917-123-4567`<br>Barangay: `Sayre Highway, Base Camp`<br>Date: Today | Highlight: Zero login required; auto-allocates to **Zone 2 / Marvin Oclarino (Moto 2)**. |
 | **2** | Open `/laundry-orders-page` | Customer: `Maria Santos`<br>Weight: `8.5 kg`<br>Service: `Wash & Fold` | Highlight: Auto-computes ₱425.00. Dynamic AJAX creation without page reload. |
 | **3** | Transition status | Select `In Wash` | Highlight: Badge changes color; wash hub load telemetry updates. |
 | **4** | Open `/delivery-records-page` | Click "Dispatch Slip" on order | Highlight: Mobile HTML5 signature canvas. Draw signature; notice zero mobile scroll bounce. |

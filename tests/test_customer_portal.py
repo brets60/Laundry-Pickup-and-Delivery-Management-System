@@ -11,12 +11,12 @@ def client():
 
 
 def test_book_pickup_get(client):
-    """Test that the customer booking form loads properly with Maramag options."""
+    """Test that the customer booking form loads properly with Base Camp options."""
     res = client.get('/book-pickup')
     assert res.status_code == 200
     assert b"Request Doorstep Laundry Pickup" in res.data
-    assert b"CMU Campus / Musuan" in res.data
-    assert b"Poblacion" in res.data
+    assert b"Base Camp Proper & Junction" in res.data
+    assert b"Sayre Highway, Base Camp" in res.data
 
 
 def test_book_pickup_post_success(client):
@@ -25,14 +25,14 @@ def test_book_pickup_post_success(client):
         'name': 'Juan de la Cruz',
         'contact_number': '0918-987-6543',
         'email': 'juan@example.com',
-        'barangay': 'CMU Campus / Musuan (Dormitory/Apartment)',
-        'address_details': 'Dorm 3, Room 101',
+        'barangay': 'Base Camp Proper & Junction',
+        'address_details': 'Near Central Crossing, Store #4',
         'service_type': 'Wash & Fold',
         'estimated_load': 'Medium Bag (~6-8 kg)',
         'pickup_date': date.today().strftime('%Y-%m-%d'),
         'pickup_time': '09:00 AM - 12:00 PM',
         'payment_method': 'Cash on Delivery (COD)',
-        'notes': 'Please ring the dorm bell upon arrival.'
+        'notes': 'Please ring the doorbell upon arrival.'
     }
 
     res = client.post('/book-pickup', data=form_data, follow_redirects=True)
@@ -49,7 +49,7 @@ def test_book_pickup_post_success(client):
 
     pickup = conn.execute("SELECT * FROM pickup_schedules WHERE customer = 'Juan de la Cruz' ORDER BY id DESC LIMIT 1").fetchone()
     assert pickup is not None
-    assert 'Dorm 3, Room 101' in pickup['pickup_address']
+    assert 'Near Central Crossing' in pickup['pickup_address']
     conn.close()
 
 
@@ -83,27 +83,27 @@ def test_api_track_lookup(client):
 
 
 def test_barangay_zone_auto_assignment(client):
-    """Test that booking in different Maramag barangays routes to dedicated zone couriers."""
+    """Test that booking in different Base Camp sectors routes to dedicated motorcycle couriers."""
     from controllers.customer_portal_routes import resolve_maramag_zone_and_rider
 
-    # Zone 1: CMU & Musuan
-    z1, r1 = resolve_maramag_zone_and_rider("Sampaguita Dorm, CMU Campus / Musuan, Maramag")
+    # Zone 1: Base Camp Proper & Junction -> Tristan Dave Plaza (Moto 1)
+    z1, r1 = resolve_maramag_zone_and_rider("Base Camp Proper & Junction, Maramag")
     assert "Zone 1" in z1
-    assert "Mike" in r1
+    assert "Tristan Dave" in r1
 
-    # Zone 2: Poblacion
-    z2, r2 = resolve_maramag_zone_and_rider("Sayre Highway, Poblacion, Maramag")
+    # Zone 2: Sayre Highway & Commercial -> Marvin Oclarino (Moto 2)
+    z2, r2 = resolve_maramag_zone_and_rider("Sayre Highway, Base Camp, Maramag")
     assert "Zone 2" in z2
-    assert "Alex" in r2
+    assert "Marvin" in r2
 
-    # Zone 3: Dologon & Base Camp (including shop hub at Kalagutay)
-    z3, r3 = resolve_maramag_zone_and_rider("Purok 3, Dologon, Maramag")
+    # Zone 3: Puroks 1-5 Residential -> Mark Ephraim Nicor (Moto 3)
+    z3, r3 = resolve_maramag_zone_and_rider("Purok 3 (Riverside), Base Camp")
     assert "Zone 3" in z3
-    assert "Dave" in r3
+    assert "Nicor" in r3 or "Ephraim" in r3
 
-    z3_k, r3_k = resolve_maramag_zone_and_rider("Kalagutay Base camp maramag bukidnon")
-    assert "Zone 3" in z3_k
-    assert "Dave" in r3_k
+    z3_b, r3_b = resolve_maramag_zone_and_rider("Purok 1 Central, Base Camp, Maramag")
+    assert "Zone 3" in z3_b
+    assert "Nicor" in r3_b or "Ephraim" in r3_b
 
 
 def test_welcome_home_routes_and_navigation(client):
@@ -111,7 +111,7 @@ def test_welcome_home_routes_and_navigation(client):
     res_root = client.get('/')
     assert res_root.status_code == 200
     assert b"LaundryCare" in res_root.data
-    assert b"Kalagutay, Base Camp" in res_root.data
+    assert b"Base Camp" in res_root.data
 
     res_welcome = client.get('/welcome')
     assert res_welcome.status_code == 200

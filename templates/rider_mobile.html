@@ -104,9 +104,9 @@
         <!-- RIDER BARANGAY ZONE FILTER TOOLBAR -->
         <div style="display:flex; gap:6px; overflow-x:auto; padding:0 0 12px; margin-bottom:4px;" id="riderZoneFilters">
             <button type="button" class="tab-btn-pill active" style="font-size:12px; padding:6px 12px;" onclick="filterRiderZone('all', this)">All Stops</button>
-            <button type="button" class="tab-btn-pill" style="font-size:12px; padding:6px 12px; border-left:3px solid #2563eb;" onclick="filterRiderZone('zone 1', this)">🎓 Zone 1 (CMU)</button>
-            <button type="button" class="tab-btn-pill" style="font-size:12px; padding:6px 12px; border-left:3px solid #10b981;" onclick="filterRiderZone('zone 2', this)">🛍️ Zone 2 (Poblacion)</button>
-            <button type="button" class="tab-btn-pill" style="font-size:12px; padding:6px 12px; border-left:3px solid #f59e0b;" onclick="filterRiderZone('zone 3', this)">🛣️ Zone 3 (Dologon)</button>
+            <button type="button" class="tab-btn-pill" style="font-size:12px; padding:6px 12px; border-left:3px solid #2563eb;" onclick="filterRiderZone('zone 1', this)">📍 Zone 1 (Proper &amp; Junction)</button>
+            <button type="button" class="tab-btn-pill" style="font-size:12px; padding:6px 12px; border-left:3px solid #10b981;" onclick="filterRiderZone('zone 2', this)">🛣️ Zone 2 (Commercial &amp; Hwy)</button>
+            <button type="button" class="tab-btn-pill" style="font-size:12px; padding:6px 12px; border-left:3px solid #f59e0b;" onclick="filterRiderZone('zone 3', this)">🏡 Zone 3 (Puroks 1–5)</button>
         </div>
 
         <!-- =====================================================
@@ -118,18 +118,18 @@
                 {% set st = (d.status or 'Scheduled')|lower %}
                 {% set d_addr = (d.delivery_address or '')|lower %}
                 {% set d_rdr = (d.assigned_rider or '')|lower %}
-                {% if 'cmu' in d_addr or 'musuan' in d_addr or 'camp 1' in d_addr or 'mike' in d_rdr %}
+                {% if 'proper' in d_addr or 'junction' in d_addr or 'market' in d_addr or 'tristan' in d_rdr or 'mike' in d_rdr or 'cmu' in d_addr %}
                     {% set r_zone = 'zone 1' %}
-                    {% set r_zone_label = 'Zone 1: CMU Musuan' %}
+                    {% set r_zone_label = 'Zone 1: Proper & Junction' %}
                     {% set r_zone_cls = 'zone-cmu' %}
-                {% elif 'dologon' in d_addr or 'base camp' in d_addr or 'kuya' in d_addr or 'anoling' in d_addr or 'dave' in d_rdr %}
-                    {% set r_zone = 'zone 3' %}
-                    {% set r_zone_label = 'Zone 3: Dologon / Base Camp' %}
-                    {% set r_zone_cls = 'zone-dologon' %}
-                {% else %}
+                {% elif 'sayre' in d_addr or 'highway' in d_addr or 'commercial' in d_addr or 'marvin' in d_rdr or 'alex' in d_rdr or 'poblacion' in d_addr %}
                     {% set r_zone = 'zone 2' %}
-                    {% set r_zone_label = 'Zone 2: Poblacion' %}
+                    {% set r_zone_label = 'Zone 2: Sayre Hwy & Commercial' %}
                     {% set r_zone_cls = 'zone-poblacion' %}
+                {% else %}
+                    {% set r_zone = 'zone 3' %}
+                    {% set r_zone_label = 'Zone 3: Puroks 1-5 Residential' %}
+                    {% set r_zone_cls = 'zone-dologon' %}
                 {% endif %}
                 <article class="stop-card-pro" id="deliveryCard-{{ d.id }}" data-zone="{{ r_zone }}">
                     <div class="stop-header-bar">
@@ -160,7 +160,7 @@
                         <div class="dest-address-card">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                             <div>
-                                <strong>Destination:</strong> {{ d.delivery_address or 'Poblacion, Maramag, Bukidnon' }}
+                                <strong>Destination:</strong> {{ d.delivery_address or 'Base Camp, Maramag, Bukidnon' }}
                                 {% if d.delivery_notes %}
                                 <div style="font-size:11.5px; color:#64748b; margin-top:2px;"><em>Note:</em> {{ d.delivery_notes }}</div>
                                 {% endif %}
@@ -172,14 +172,14 @@
                     <div class="stop-actions-bar">
                         <!-- GPS Buttons -->
                         <div class="gps-button-group">
-                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ d.delivery_address|urlencode if d.delivery_address else 'Poblacion+Maramag+Bukidnon' }}" 
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ d.delivery_address|urlencode if d.delivery_address else 'Base+Camp+Maramag+Bukidnon' }}" 
                                target="_blank" 
                                class="btn-gps-action btn-gmaps"
                                title="Open in Google Maps">
                                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
                                 <span>Google Maps</span>
                             </a>
-                            <a href="https://waze.com/ul?q={{ d.delivery_address|urlencode if d.delivery_address else 'Poblacion+Maramag+Bukidnon' }}" 
+                            <a href="https://waze.com/ul?q={{ d.delivery_address|urlencode if d.delivery_address else 'Base+Camp+Maramag+Bukidnon' }}" 
                                target="_blank" 
                                class="btn-gps-action btn-waze"
                                title="Open in Waze">
@@ -255,17 +255,17 @@
                         <div class="dest-address-card">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                             <div>
-                                <strong>Pickup Location:</strong> {{ p.pickup_address or 'Poblacion, Maramag, Bukidnon' }}
+                                <strong>Pickup Location:</strong> {{ p.pickup_address or 'Base Camp, Maramag, Bukidnon' }}
                             </div>
                         </div>
                     </div>
 
                     <div class="stop-actions-bar">
                         <div class="gps-button-group">
-                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ p.pickup_address|urlencode if p.pickup_address else 'Poblacion+Maramag+Bukidnon' }}" target="_blank" class="btn-gps-action btn-gmaps">
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ p.pickup_address|urlencode if p.pickup_address else 'Base+Camp+Maramag+Bukidnon' }}" target="_blank" class="btn-gps-action btn-gmaps">
                                 <span>Google Maps</span>
                             </a>
-                            <a href="https://waze.com/ul?q={{ p.pickup_address|urlencode if p.pickup_address else 'Poblacion+Maramag+Bukidnon' }}" target="_blank" class="btn-gps-action btn-waze">
+                            <a href="https://waze.com/ul?q={{ p.pickup_address|urlencode if p.pickup_address else 'Base+Camp+Maramag+Bukidnon' }}" target="_blank" class="btn-gps-action btn-waze">
                                 <span>Waze</span>
                             </a>
                         </div>

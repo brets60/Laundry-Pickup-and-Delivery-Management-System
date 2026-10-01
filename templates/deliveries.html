@@ -214,15 +214,14 @@
 
         <!-- BARANGAY ZONE SECTOR FILTER TOOLBAR -->
         <div class="zone-filter-toolbar" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:10px 16px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
-            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                <span class="zone-label-tag">📍 Barangay Zone:</span>
-                <button type="button" class="filter-pill active" id="zoneFilterAll" onclick="setZoneFilter('all', this)">All Zones</button>
-                <button type="button" class="filter-pill" style="border-left:3px solid #2563eb;" onclick="setZoneFilter('zone 1', this)">🎓 Zone 1: CMU Musuan (Mike)</button>
-                <button type="button" class="filter-pill" style="border-left:3px solid #10b981;" onclick="setZoneFilter('zone 2', this)">🛍️ Zone 2: Poblacion (Alex)</button>
-                <button type="button" class="filter-pill" style="border-left:3px solid #f59e0b;" onclick="setZoneFilter('zone 3', this)">🛣️ Zone 3: Dologon &amp; Base Camp (Dave)</button>
+                <span class="zone-label-tag">📍 Base Camp Sector:</span>
+                <button type="button" class="filter-pill active" id="zoneFilterAll" onclick="setZoneFilter('all', this)">All Sectors</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #2563eb;" onclick="setZoneFilter('zone 1', this)">📍 Zone 1: Proper &amp; Junction (Tristan)</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #10b981;" onclick="setZoneFilter('zone 2', this)">🛣️ Zone 2: Highway &amp; Commercial (Marvin)</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #f59e0b;" onclick="setZoneFilter('zone 3', this)">🏡 Zone 3: Puroks 1–5 (Ephraim)</button>
             </div>
             <div style="font-size:12px; color:#64748b;">
-                3 Dedicated Couriers Assigned
+                3 Dedicated Motorcycle Couriers Assigned
             </div>
         </div>
 
@@ -472,18 +471,18 @@
                             {% set st = (d.status or 'Scheduled')|lower %}
                             {% set addr_l = (d.delivery_address or '')|lower %}
                             {% set rdr_l = (d.assigned_rider or '')|lower %}
-                            {% if 'cmu' in addr_l or 'musuan' in addr_l or 'camp 1' in addr_l or 'mike' in rdr_l %}
+                            {% if 'proper' in addr_l or 'junction' in addr_l or 'market' in addr_l or 'tristan' in rdr_l or 'mike' in rdr_l or 'cmu' in addr_l %}
                                 {% set z_code = 'zone 1' %}
-                                {% set z_name = 'Zone 1: CMU Musuan' %}
+                                {% set z_name = 'Zone 1: Proper & Junction' %}
                                 {% set z_cls = 'zone-cmu' %}
-                            {% elif 'dologon' in addr_l or 'base camp' in addr_l or 'kuya' in addr_l or 'anoling' in addr_l or 'dave' in rdr_l %}
-                                {% set z_code = 'zone 3' %}
-                                {% set z_name = 'Zone 3: Dologon / Base Camp' %}
-                                {% set z_cls = 'zone-dologon' %}
-                            {% else %}
+                            {% elif 'sayre' in addr_l or 'highway' in addr_l or 'commercial' in addr_l or 'marvin' in rdr_l or 'alex' in rdr_l or 'poblacion' in addr_l %}
                                 {% set z_code = 'zone 2' %}
-                                {% set z_name = 'Zone 2: Poblacion' %}
+                                {% set z_name = 'Zone 2: Sayre Hwy & Commercial' %}
                                 {% set z_cls = 'zone-poblacion' %}
+                            {% else %}
+                                {% set z_code = 'zone 3' %}
+                                {% set z_name = 'Zone 3: Puroks 1-5 Residential' %}
+                                {% set z_cls = 'zone-dologon' %}
                             {% endif %}
                             <tr class="delivery-row" 
                                 data-status="{{ st }}" 
@@ -647,10 +646,10 @@
                         <label class="form-label" for="new_assigned_rider">Assigned Rider</label>
                         <select id="new_assigned_rider" name="assigned_rider" class="form-control">
                             <option value="">-- Select Courier --</option>
-                            <option value="Marvin Oclarino">Marvin Oclarino (Delivery Van 1)</option>
                             <option value="Tristan Dave Plaza">Tristan Dave Plaza (Motorcycle 1)</option>
-                            <option value="Rider Mike">Rider Mike (Van 2)</option>
-                            <option value="Rider Alex">Rider Alex (Motorcycle 2)</option>
+                            <option value="Marvin Oclarino">Marvin Oclarino (Motorcycle 2)</option>
+                            <option value="Mark Ephraim Nicor">Mark Ephraim Nicor (Motorcycle 3)</option>
+                            <option value="Rider Mike">Rider Mike (Motorcycle Backup)</option>
                         </select>
                     </div>
 
@@ -722,10 +721,10 @@
                         <label class="form-label" for="edit_assigned_rider">Assigned Rider</label>
                         <select id="edit_assigned_rider" name="assigned_rider" class="form-control">
                             <option value="">-- Unassigned --</option>
-                            <option value="Marvin Oclarino">Marvin Oclarino (Delivery Van 1)</option>
                             <option value="Tristan Dave Plaza">Tristan Dave Plaza (Motorcycle 1)</option>
-                            <option value="Rider Mike">Rider Mike (Van 2)</option>
-                            <option value="Rider Alex">Rider Alex (Motorcycle 2)</option>
+                            <option value="Marvin Oclarino">Marvin Oclarino (Motorcycle 2)</option>
+                            <option value="Mark Ephraim Nicor">Mark Ephraim Nicor (Motorcycle 3)</option>
+                            <option value="Rider Mike">Rider Mike (Motorcycle Backup)</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1047,7 +1046,7 @@ function openViewDeliveryModal(button) {
     const id = row.getAttribute('data-id');
     const customer = row.getAttribute('data-customer') || 'N/A';
     const orderId = row.getAttribute('data-order-id') || '';
-    const address = row.getAttribute('data-address') || 'Poblacion, Maramag, Bukidnon';
+    const address = row.getAttribute('data-address') || 'Base Camp, Maramag, Bukidnon';
     const rider = row.getAttribute('data-rider') || 'Unassigned';
     const date = row.getAttribute('data-date') || 'TBD';
     const notes = row.getAttribute('data-notes') || 'None';

@@ -95,10 +95,10 @@ The defense assesses three core criteria:
 ### 2. Deep-Dive Architectural Concepts
 - **HTML5 Touch Signature Canvas (`#sigCanvas`):** Implemented mobile touch signature capture. Handled `touchstart`, `touchmove`, and `touchend` events while calling `e.preventDefault()`, which prevents the mobile browser from triggering native pinch-to-zoom or vertical page bouncing while the customer signs.
 - **Stored XSS Sanitization Engine (BUG-001 Resolution):** In Week 10, adversarial testing found that `<script>` and `<img onerror=...>` tags in customer booking notes were saved raw in SQLite. In Week 11, I created `strip_html_tags()` in `controllers/utils.py` using regex to purge `<script>...</script>` and `<style>...</style>` blocks along with their executable contents, escaping any remaining angle brackets.
-- **Barangay Logistics Zone Allocation:** Created `resolve_maramag_zone_and_rider()` in `customer_portal_routes.py`. It inspects customer addresses using substring heuristics:
-  - CMU Campus / Musuan / Doms $\rightarrow$ Zone 1 (Rider Mike — Van 1)
-  - Kalagutay / Base Camp / Dologon $\rightarrow$ Zone 3 (Rider Dave — Moto 3)
-  - Poblacion Center $\rightarrow$ Zone 2 (Rider Alex — Moto 2)
+- **Base Camp Logistics Zone Allocation:** Created `resolve_maramag_zone_and_rider()` in `customer_portal_routes.py`. It inspects customer addresses within Barangay Base Camp using sector heuristics:
+  - Base Camp Proper & Junction $\rightarrow$ Zone 1 (Tristan Dave Plaza — Motorcycle 1)
+  - Sayre Highway & Commercial Strip $\rightarrow$ Zone 2 (Marvin Oclarino — Motorcycle 2)
+  - Puroks 1–5 Residential (Base Camp) $\rightarrow$ Zone 3 (Mark Ephraim Nicor — Motorcycle 3)
 
 ### 3. Anticipated Defense Questions & Model Answers
 - **Q1: Why did you use regex to strip HTML tags in `controllers/utils.py` rather than installing an external library like `bleach`?**

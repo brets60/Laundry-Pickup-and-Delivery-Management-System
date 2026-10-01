@@ -64,7 +64,7 @@ def init_database():
             name TEXT NOT NULL,
             contact_number TEXT NOT NULL,
             email TEXT,
-            address TEXT DEFAULT 'Kalagutay, Base Camp, Maramag, Bukidnon',
+            address TEXT DEFAULT 'Base Camp, Maramag, Bukidnon',
             membership TEXT DEFAULT 'Regular',
             total_orders INTEGER DEFAULT 0,
             pending_balance REAL DEFAULT 0.0,
@@ -76,7 +76,7 @@ def init_database():
     existing_cust_cols = [row["name"] for row in cursor.fetchall()]
     cust_migrations = [
         ("email", "TEXT"),
-        ("address", "TEXT DEFAULT 'Kalagutay, Base Camp, Maramag, Bukidnon'"),
+        ("address", "TEXT DEFAULT 'Base Camp, Maramag, Bukidnon'"),
         ("membership", "TEXT DEFAULT 'Regular'"),
         ("total_orders", "INTEGER DEFAULT 0"),
         ("pending_balance", "REAL DEFAULT 0.0"),
@@ -289,9 +289,9 @@ def init_database():
     official_staff = [
         ("John Michael Bretaña", "Manager", "0917-123-4567", "Active", "Main Office / Branch Manager"),
         ("Hazil Enoc", "Store Cashier", "0918-234-5678", "Active", "Front Counter / Cashier Desk"),
-        ("Marvin Oclarino", "Delivery Driver", "0919-345-6789", "Active", "Delivery Van 1 (Toyota HiAce)"),
+        ("Marvin Oclarino", "Delivery Driver", "0919-345-6789", "Active", "Motorcycle Courier 2 (Yamaha Mio)"),
         ("Tristan Dave Plaza", "Delivery Driver", "0920-456-7890", "On Route", "Motorcycle Courier 1 (Honda Click)"),
-        ("Mark Ephraim Nicor", "Laundry Operator", "0921-567-8901", "Active", "Washing & Ironing Station A"),
+        ("Mark Ephraim Nicor", "Laundry Operator & Delivery Driver", "0921-567-8901", "Active", "Motorcycle Courier 3 (Honda Wave) & Wash Station"),
     ]
 
     for s_name, s_role, s_contact, s_status, s_station in official_staff:

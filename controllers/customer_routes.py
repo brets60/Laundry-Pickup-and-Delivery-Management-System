@@ -48,7 +48,7 @@ def manage_customers():
         name = format_customer_name(data.get('name') or '')
         contact_number = clean_phone_number(data.get('contact_number') or '')
         email = (data.get('email') or '').strip()
-        address = (data.get('address') or 'Kalagutay, Base Camp, Maramag, Bukidnon').strip()
+        address = (data.get('address') or 'Base Camp, Maramag, Bukidnon').strip()
         membership = (data.get('membership') or 'Regular').strip()
 
         # Structured Validation
@@ -166,7 +166,7 @@ def edit_customer(customer_id):
         name = format_customer_name(data.get('name') or '')
         contact_number = clean_phone_number(data.get('contact_number') or '')
         email = (data.get('email') or '').strip()
-        address = (data.get('address') or 'Kalagutay, Base Camp, Maramag, Bukidnon').strip()
+        address = (data.get('address') or 'Base Camp, Maramag, Bukidnon').strip()
         membership = (data.get('membership') or 'Regular').strip()
 
         errors = {}

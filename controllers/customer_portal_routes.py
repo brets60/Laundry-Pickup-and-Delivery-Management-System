@@ -17,12 +17,18 @@ def get_db_connection():
 
 def resolve_maramag_zone_and_rider(barangay_or_address):
     addr = (barangay_or_address or '').lower()
-    if any(k in addr for k in ['cmu', 'musuan', 'camp 1', 'sampaguita', 'dorm', 'university', 'colambugan']):
-        return 'Zone 1: CMU & Musuan', 'Rider Mike (Van 1)'
-    elif any(k in addr for k in ['kalagutay', 'base camp', 'basecamp', 'dologon', 'kuya', 'anoling', 'dagumba', 'purok 3']):
-        return 'Zone 3: Dologon & Base Camp', 'Rider Dave (Moto 3)'
+    # Zone 1: Base Camp Proper & Junction -> Tristan Dave Plaza (Motorcycle 1)
+    if any(k in addr for k in ['proper', 'junction', 'cmu', 'musuan', 'camp 1', 'sampaguita', 'dorm', 'university', 'colambugan', 'market']):
+        return 'Zone 1: Base Camp Proper & Junction', 'Tristan Dave Plaza (Moto 1)'
+    # Zone 2: Sayre Highway & Commercial (Base Camp) -> Marvin Oclarino (Motorcycle 2)
+    elif any(k in addr for k in ['sayre', 'highway', 'commercial', 'poblacion']):
+        return 'Zone 2: Base Camp Highway & Commercial', 'Marvin Oclarino (Moto 2)'
+    # Zone 3: Puroks 1-5 Residential (Base Camp) -> Mark Ephraim Nicor (Motorcycle 3)
     else:
-        return 'Zone 2: Poblacion Center', 'Rider Alex (Moto 2)'
+        return 'Zone 3: Puroks 1-5 Residential (Base Camp)', 'Mark Ephraim Nicor (Moto 3)'
+
+
+resolve_basecamp_zone_and_rider = resolve_maramag_zone_and_rider
 
 
 # ============================================================
@@ -37,7 +43,7 @@ def book_pickup():
         name = strip_html_tags(request.form.get('name') or '')
         contact_number = (request.form.get('contact_number') or '').strip()
         email = (request.form.get('email') or '').strip()
-        barangay = strip_html_tags(request.form.get('barangay') or 'Poblacion')
+        barangay = strip_html_tags(request.form.get('barangay') or 'Base Camp Proper')
         address_details = strip_html_tags(request.form.get('address_details') or '')
         service_type = (request.form.get('service_type') or 'Wash & Fold').strip()
         estimated_load = (request.form.get('estimated_load') or 'Medium Bag (~6-8 kg)').strip()
@@ -65,11 +71,11 @@ def book_pickup():
                 form_data=request.form
             )
 
-        # Assemble full formatted address in Maramag
+        # Assemble full formatted address in Base Camp, Maramag
         if address_details:
-            full_address = f"{address_details}, {barangay}, Maramag, Bukidnon"
+            full_address = f"{address_details}, {barangay}, Base Camp, Maramag, Bukidnon"
         else:
-            full_address = f"{barangay}, Maramag, Bukidnon"
+            full_address = f"{barangay}, Base Camp, Maramag, Bukidnon"
 
         # Check or register customer
         existing_cust = conn.execute(
@@ -216,7 +222,7 @@ def track_order(query_code=None):
 
     current_step = 1
     step_name = "Intake Received"
-    step_desc = "Your laundry has been logged at our Maramag branch."
+    step_desc = "Your laundry has been logged at our Base Camp branch."
 
     if order:
         st = (order['status'] or 'Received').lower()
@@ -251,7 +257,7 @@ def track_order(query_code=None):
         if p_st in ['picked up', 'completed']:
             current_step = 1
             step_name = "Bag Collected by Courier"
-            step_desc = "Your laundry bag has been picked up and is arriving at our Maramag branch for weighing."
+            step_desc = "Your laundry bag has been picked up and is arriving at our Base Camp branch for weighing."
         elif p_st in ['assigned', 'in transit']:
             current_step = 1
             step_name = "Rider Dispatched for Pickup"
