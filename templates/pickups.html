@@ -307,7 +307,7 @@
             <div class="pickup-batch-card">
                 <div class="batch-card-header">
                     <span class="batch-window-tag">09:00 AM - 12:00 PM</span>
-                    <span class="batch-load-badge">3 Requests</span>
+                    <span class="batch-load-badge">{% if batches %}{{ batches.morning.total }}{% else %}0{% endif %} Requests</span>
                 </div>
                 <h4 class="batch-title">Morning Base Camp Proper &amp; Junction</h4>
                 <div class="batch-driver-info">
@@ -315,16 +315,22 @@
                     <span>Courier: <strong>Tristan Dave Plaza (Motorcycle 1)</strong></span>
                 </div>
                 <div class="batch-progress-bar">
-                    <div class="batch-progress-fill" style="width: 100%; background: #10b981;"></div>
+                    <div class="batch-progress-fill" style="width: {% if batches %}{{ batches.morning.pct }}{% else %}0{% endif %}%; background: #10b981;"></div>
                 </div>
-                <div style="font-size: 11.5px; color: #059669; font-weight: 700;">100% Collected (3/3 completed)</div>
+                {% if not batches or batches.morning.total == 0 %}
+                <div style="font-size: 11.5px; color: #64748b; font-weight: 600;">Standby &bull; 0 pickups scheduled</div>
+                {% elif batches.morning.pct == 100 %}
+                <div style="font-size: 11.5px; color: #059669; font-weight: 700;">100% Collected ({{ batches.morning.collected }}/{{ batches.morning.total }} completed)</div>
+                {% else %}
+                <div style="font-size: 11.5px; color: #2563eb; font-weight: 700;">In Progress ({{ batches.morning.collected }}/{{ batches.morning.total }} bags picked up)</div>
+                {% endif %}
             </div>
 
             <!-- Afternoon Batch -->
             <div class="pickup-batch-card">
                 <div class="batch-card-header">
                     <span class="batch-window-tag" style="background:#fef3c7; color:#b45309;">01:00 PM - 05:00 PM</span>
-                    <span class="batch-load-badge">4 Requests</span>
+                    <span class="batch-load-badge">{% if batches %}{{ batches.afternoon.total }}{% else %}0{% endif %} Requests</span>
                 </div>
                 <h4 class="batch-title">Afternoon Sayre Highway &amp; Commercial Strip</h4>
                 <div class="batch-driver-info">
@@ -332,16 +338,22 @@
                     <span>Courier: <strong>Marvin Oclarino (Motorcycle 2)</strong></span>
                 </div>
                 <div class="batch-progress-bar">
-                    <div class="batch-progress-fill" style="width: 50%; background: #2563eb;"></div>
+                    <div class="batch-progress-fill" style="width: {% if batches %}{{ batches.afternoon.pct }}{% else %}0{% endif %}%; background: #2563eb;"></div>
                 </div>
-                <div style="font-size: 11.5px; color: #2563eb; font-weight: 700;">In Progress (2/4 bags picked up)</div>
+                {% if not batches or batches.afternoon.total == 0 %}
+                <div style="font-size: 11.5px; color: #64748b; font-weight: 600;">Standby &bull; 0 pickups scheduled</div>
+                {% elif batches.afternoon.pct == 100 %}
+                <div style="font-size: 11.5px; color: #059669; font-weight: 700;">100% Collected ({{ batches.afternoon.collected }}/{{ batches.afternoon.total }} completed)</div>
+                {% else %}
+                <div style="font-size: 11.5px; color: #2563eb; font-weight: 700;">In Progress ({{ batches.afternoon.collected }}/{{ batches.afternoon.total }} bags picked up)</div>
+                {% endif %}
             </div>
 
             <!-- Evening Batch -->
             <div class="pickup-batch-card">
                 <div class="batch-card-header">
                     <span class="batch-window-tag" style="background:#f1f5f9; color:#475569;">05:00 PM - 08:00 PM</span>
-                    <span class="batch-load-badge">2 Requests</span>
+                    <span class="batch-load-badge">{% if batches %}{{ batches.evening.total }}{% else %}0{% endif %} Requests</span>
                 </div>
                 <h4 class="batch-title">Evening Puroks 1–5 Residential Circuit</h4>
                 <div class="batch-driver-info">
@@ -349,9 +361,15 @@
                     <span>Courier: <strong>Mark Ephraim Nicor (Motorcycle 3)</strong></span>
                 </div>
                 <div class="batch-progress-bar">
-                    <div class="batch-progress-fill" style="width: 0%; background: #94a3b8;"></div>
+                    <div class="batch-progress-fill" style="width: {% if batches %}{{ batches.evening.pct }}{% else %}0{% endif %}%; background: #94a3b8;"></div>
                 </div>
-                <div style="font-size: 11.5px; color: #64748b; font-weight: 600;">Scheduled for evening dispatch</div>
+                {% if not batches or batches.evening.total == 0 %}
+                <div style="font-size: 11.5px; color: #64748b; font-weight: 600;">Standby &bull; 0 pickups scheduled</div>
+                {% elif batches.evening.pct == 100 %}
+                <div style="font-size: 11.5px; color: #059669; font-weight: 700;">100% Collected ({{ batches.evening.collected }}/{{ batches.evening.total }} completed)</div>
+                {% else %}
+                <div style="font-size: 11.5px; color: #2563eb; font-weight: 700;">In Progress ({{ batches.evening.collected }}/{{ batches.evening.total }} bags picked up)</div>
+                {% endif %}
             </div>
         </div>
 

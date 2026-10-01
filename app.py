@@ -290,7 +290,7 @@ def init_database():
         ("John Michael Bretaña", "Manager", "0917-123-4567", "Active", "Main Office / Branch Manager"),
         ("Hazil Enoc", "Store Cashier", "0918-234-5678", "Active", "Front Counter / Cashier Desk"),
         ("Marvin Oclarino", "Delivery Driver", "0919-345-6789", "Active", "Motorcycle Courier 2 (Yamaha Mio)"),
-        ("Tristan Dave Plaza", "Delivery Driver", "0920-456-7890", "On Route", "Motorcycle Courier 1 (Honda Click)"),
+        ("Tristan Dave Plaza", "Delivery Driver", "0920-456-7890", "Active", "Motorcycle Courier 1 (Honda Click)"),
         ("Mark Ephraim Nicor", "Laundry Operator & Delivery Driver", "0921-567-8901", "Active", "Motorcycle Courier 3 (Honda Wave) & Wash Station"),
     ]
 
@@ -476,8 +476,25 @@ def dashboard_page():
             "ready": ready_count
         }
 
-        # Active drivers roster
+        # Active drivers roster and live operational statuses
         active_drivers = conn.execute("SELECT * FROM staff_members WHERE LOWER(COALESCE(role, '')) LIKE '%driver%' LIMIT 4").fetchall()
+
+        def get_driver_live_status(rider_name):
+            active_del = conn.execute(
+                "SELECT COUNT(*) FROM delivery_records WHERE assigned_rider LIKE ? AND LOWER(COALESCE(status, '')) = 'out for delivery'",
+                (f"%{rider_name}%",)
+            ).fetchone()[0]
+            active_pck = conn.execute(
+                "SELECT COUNT(*) FROM pickup_schedules WHERE assigned_driver LIKE ? AND LOWER(COALESCE(status, '')) in ('assigned', 'in transit')",
+                (f"%{rider_name}%",)
+            ).fetchone()[0]
+            return "On Route" if (active_del > 0 or active_pck > 0) else "Standby"
+
+        driver_statuses = {
+            "tristan": get_driver_live_status("Tristan"),
+            "marvin": get_driver_live_status("Marvin"),
+            "nicor": get_driver_live_status("Nicor"),
+        }
 
 
         recent_deliveries = conn.execute(
@@ -539,7 +556,8 @@ def dashboard_page():
             recent_pickups=recent_pickups,
             recent_payments=recent_payments,
             pipeline=pipeline,
-            active_drivers=active_drivers
+            active_drivers=active_drivers,
+            driver_statuses=driver_statuses
         )
 
     finally:

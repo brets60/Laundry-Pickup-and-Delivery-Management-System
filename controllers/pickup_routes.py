@@ -128,12 +128,34 @@ def manage_pickups():
         "cancelled": sum(1 for p in pickups if (p['status'] or '').lower() == 'cancelled')
     }
 
+    def calc_batch(time_kw, rider_kw):
+        items = [
+            p for p in pickups 
+            if time_kw in (p['pickup_time'] or '').lower() 
+            or rider_kw in (p['assigned_driver'] or '').lower()
+        ]
+        total = len(items)
+        collected = sum(1 for p in items if (p['status'] or '').lower() in ['picked up', 'completed'])
+        pct = int(round((collected / total) * 100)) if total > 0 else 0
+        return {
+            'total': total,
+            'collected': collected,
+            'pct': pct
+        }
+
+    batches = {
+        'morning': calc_batch('09:00', 'tristan'),
+        'afternoon': calc_batch('01:00', 'marvin'),
+        'evening': calc_batch('05:00', 'nicor'),
+    }
+
     conn.close()
     return render_template(
         'pickups.html',
         pickups=pickups,
         customers=customers,
-        stats=stats
+        stats=stats,
+        batches=batches
     )
 
 
