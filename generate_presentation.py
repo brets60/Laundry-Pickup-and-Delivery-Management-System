@@ -238,11 +238,37 @@ def create_deck(output_path):
         p_hb.space_after = Pt(6)
 
     # =========================================================================
-    # SLIDE 2: PROBLEM STATEMENT
+    # SLIDE 2: PROJECT INTRODUCTION & SYSTEM OVERVIEW
     # =========================================================================
     s2 = prs.slides.add_slide(blank_layout)
     set_slide_background(s2)
-    add_header(s2, "The Challenge: Bottlenecks in Traditional Laundry Shops", "Phase 1: Problem Definition", "Hazil Enoc (Store Cashier & CRM Lead)")
+    add_header(s2, "System Introduction & Project Overview", "Project Introduction", "John Michael Bretaña (Lead Architect & Manager)")
+
+    w_half = Inches(5.76)
+    h_half = Inches(5.1)
+    top_pos = Inches(1.75)
+
+    add_card(s2, Inches(0.8), top_pos, w_half, h_half, "What is LaundryCare?", [
+        "Core Purpose: A full-stack, cloud-deployed web ERP and doorstep logistics system engineered specifically for Barangay Base Camp, Maramag, Bukidnon.",
+        "Digital Transformation: Replaces chaotic manual pen-and-paper booking with an automated, transparent, and paperless operational pipeline.",
+        "Community Context: Tailored for Base Camp households, dormitories, and busy families who lack time or washing equipment.",
+        "End-to-End Scope: Integrates customers, store cashiers, laundry machine operators, and motorcycle couriers into one centralized platform.",
+        "Cloud Availability: Deployed live on Render PaaS (Linux Gunicorn WSGI) with local offline hot standby."
+    ], icon_text="🌟")
+
+    add_card(s2, Inches(6.76), top_pos, Inches(5.77), h_half, "The 3 Core Operational Pillars", [
+        "1. Public Customer Portal (Zero Login): 60-second doorstep pickup booking and real-time 5-stage tracking with GCash payment references.",
+        "2. Centralized Store Operations: Digital scale intake, automated per-kilo pricing, dynamic loyalty tiering, and wash plant machine telemetry.",
+        "3. Sector-Based Motorcycle Fleet: 100% motorcycle courier circuits across Base Camp with 1-tap GPS routing and touch signature proof-of-delivery.",
+        "4. Software Quality Standards: Backed by 78 / 78 passing automated unit, integration, and adversarial tests (100% green suite)."
+    ], icon_text="🏛️")
+
+    # =========================================================================
+    # SLIDE 3: PROBLEM STATEMENT
+    # =========================================================================
+    s3 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s3)
+    add_header(s3, "The Challenge: Bottlenecks in Traditional Laundry Shops", "Phase 1: Problem Definition", "Hazil Enoc (Store Cashier & CRM Lead)")
 
     w_col = Inches(2.78)
     h_col = Inches(5.1)
@@ -254,36 +280,36 @@ def create_deck(output_path):
     c3_x = c2_x + w_col + gap
     c4_x = c3_x + w_col + gap
 
-    add_card(s2, c1_x, top_col, w_col, h_col, "Lost Paper Slips & Tags", [
+    add_card(s3, c1_x, top_col, w_col, h_col, "Lost Paper Slips & Tags", [
         "Physical paper receipts get torn, wet, or lost on the shop floor.",
         "Manual identification tags lead to misplaced garments and bag mix-ups.",
         "Zero permanent digital audit trail for customer service histories."
     ], icon_text="🏷️")
 
-    add_card(s2, c2_x, top_col, w_col, h_col, "Customer Blindspots", [
+    add_card(s3, c2_x, top_col, w_col, h_col, "Customer Blindspots", [
         "Clients have zero visibility into washing and drying stages.",
         "Students and busy families repeatedly call staff asking if laundry is ready.",
         "No digital notifications when riders are en route for collection."
     ], icon_text="👀")
 
-    add_card(s2, c3_x, top_col, w_col, h_col, "Uncoordinated Couriers", [
+    add_card(s3, c3_x, top_col, w_col, h_col, "Uncoordinated Couriers", [
         "Riders receive unstructured phone calls with unclear landmarks.",
         "No sector planning leads to overlapping routes and wasted fuel.",
         "Peak intake hours overwhelm couriers without scheduling density checks."
     ], icon_text="🛵")
 
-    add_card(s2, c4_x, top_col, w_col, h_col, "Doorstep Math Errors", [
+    add_card(s3, c4_x, top_col, w_col, h_col, "Doorstep Math Errors", [
         "Couriers mentally compute per-kilogram rates and cash change on the road.",
         "Cashier end-of-day reconciliation deficits from arithmetic mistakes.",
         "Lack of digital Proof of Delivery (POD) signatures causes disputes."
     ], icon_text="🧮")
 
     # =========================================================================
-    # SLIDE 3: THE SOLUTION & USER PORTALS
+    # SLIDE 4: THE SOLUTION & USER PORTALS
     # =========================================================================
-    s3 = prs.slides.add_slide(blank_layout)
-    set_slide_background(s3)
-    add_header(s3, "The LaundryCare Platform: 3 Unified Portals", "Phase 2: Solution Architecture", "Mark Ephraim Nicor (Laundry Operator & Courier 3)")
+    s4 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s4)
+    add_header(s4, "The LaundryCare Platform: 3 Unified Portals", "Phase 2: Solution Architecture", "Mark Ephraim Nicor (Laundry Operator & Courier 3)")
 
     w_card3 = Inches(3.77)
     h_card3 = Inches(5.1)
@@ -293,21 +319,21 @@ def create_deck(output_path):
     p2_x = p1_x + w_card3 + gap3
     p3_x = p2_x + w_card3 + gap3
 
-    add_card(s3, p1_x, top_col, w_card3, h_card3, "Public Customer Portal", [
+    add_card(s4, p1_x, top_col, w_card3, h_card3, "Public Customer Portal", [
         "Zero Login Required: Frictionless access for dormitory students and residents.",
         "60-Second Online Booking (/book-pickup): Sector-based pickup scheduling.",
         "Live Real-Time Tracker (/track): 5-step progress bar from intake to doorstep drop-off.",
         "Transparent Payments: Electronic GCash/Maya reference modal."
     ], icon_text="📱")
 
-    add_card(s3, p2_x, top_col, w_card3, h_card3, "Cashier & Wash Operations", [
+    add_card(s4, p2_x, top_col, w_card3, h_card3, "Cashier & Wash Operations", [
         "Customer CRM Directory (/customers-page): Lifetime spend & loyalty tier tracking.",
         "Digital Scale Intake (/laundry-orders-page): Auto-pricing calculation (Weight x Rate).",
         "Wash Hub Monitor (/pickup-schedules-page): Live capacity telemetry for 6 washers & 4 dryers.",
         "Slot Bottleneck Detector: Flags high intake density (>4 bookings/slot)."
     ], icon_text="🧺")
 
-    add_card(s3, p3_x, top_col, w_card3, h_card3, "Rider Mobile Web App", [
+    add_card(s4, p3_x, top_col, w_card3, h_card3, "Rider Mobile Web App", [
         "Field Courier Interface (/rider-app): Optimized for motorcycle smartphone mounts.",
         "1-Tap GPS Navigation: Direct shortcuts into Google Maps & Waze.",
         "Quick Client Calling: 1-tap phone dialer for arrival coordination.",
@@ -315,14 +341,14 @@ def create_deck(output_path):
     ], icon_text="🛵")
 
     # =========================================================================
-    # SLIDE 4: ARCHITECTURE, SECURITY & TEST COVERAGE
+    # SLIDE 5: ARCHITECTURE, SECURITY & TEST COVERAGE
     # =========================================================================
-    s4 = prs.slides.add_slide(blank_layout)
-    set_slide_background(s4)
-    add_header(s4, "Engineering Integrity: Architecture & Adversarial Hardening", "Phase 3: Software Engineering & QA", "Tristan Dave M. Plaza (Mobile UX Lead & Courier 1)")
+    s5 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s5)
+    add_header(s5, "Engineering Integrity: Architecture & Adversarial Hardening", "Phase 3: Software Engineering & QA", "Tristan Dave M. Plaza (Mobile UX Lead & Courier 1)")
 
     # Left: Architecture Card
-    add_card(s4, Inches(0.8), top_col, Inches(5.76), Inches(5.1), "Modular System Architecture", [
+    add_card(s5, Inches(0.8), top_col, Inches(5.76), Inches(5.1), "Modular System Architecture", [
         "Backend Framework: Python 3 + Flask using 6 decoupled domain Blueprints (Customer, Order, Pickup, Delivery, Payment, Portal).",
         "Merge Conflict Prevention: Team members worked on separate controllers concurrently without Git collisions.",
         "Database Architecture: SQLite 3 with enforced foreign keys (PRAGMA foreign_keys = ON) and automatic cold-start migrations.",
@@ -331,7 +357,7 @@ def create_deck(output_path):
     ], icon_text="🏗️")
 
     # Right: Adversarial Security & QA
-    add_card(s4, Inches(6.76), top_col, Inches(5.77), Inches(5.1), "Adversarial Security & Test Evidence", [
+    add_card(s5, Inches(6.76), top_col, Inches(5.77), Inches(5.1), "Adversarial Security & Test Evidence", [
         "Stored XSS Sanitization (BUG-001): Regex-based tag stripper (strip_html_tags()) purges <script> and <style> tags before database storage.",
         "Physical Capacity Ceiling (BUG-002): Caps single order weight at 150.0 kg. Oversized loads return HTTP 422 commercial warning.",
         "Historical Date Prevention (BUG-003): Dynamic min date attribute and server-side checks block bookings in the past.",
@@ -340,14 +366,14 @@ def create_deck(output_path):
     ], icon_text="🛡️")
 
     # =========================================================================
-    # SLIDE 5: LOGISTICS, SETTLEMENT & DEMO TRANSITION
+    # SLIDE 6: LOGISTICS, SETTLEMENT & DEMO TRANSITION
     # =========================================================================
-    s5 = prs.slides.add_slide(blank_layout)
-    set_slide_background(s5)
-    add_header(s5, "Motorcycle Logistics, Financial Settlement & Live Demo", "Phase 4: Operations & Demonstration", "Marvin Oclarino (Financial Settlement Lead & Courier 2)")
+    s6 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s6)
+    add_header(s6, "Motorcycle Logistics, Financial Settlement & Live Demo", "Phase 4: Operations & Demonstration", "Marvin Oclarino (Financial Settlement Lead & Courier 2)")
 
     # Left: Logistics Card
-    add_card(s5, Inches(0.8), top_col, Inches(5.76), Inches(3.6), "Base Camp Motorcycle Logistics", [
+    add_card(s6, Inches(0.8), top_col, Inches(5.76), Inches(3.6), "Base Camp Motorcycle Logistics", [
         "Exclusive Barangay Coverage: Central washing hub located at Base Camp Proper.",
         "Zone 1 (Proper & Commercial Junction): Dispatched to Tristan Dave Plaza (Motorcycle 1).",
         "Zone 2 (Sayre Highway Corridor & Strip): Dispatched to Marvin Oclarino (Motorcycle 2).",
@@ -356,7 +382,7 @@ def create_deck(output_path):
     ], icon_text="🗺️")
 
     # Right: Financial POS Settlement
-    add_card(s5, Inches(6.76), top_col, Inches(5.77), Inches(3.6), "Doorstep Financial POS Settlement", [
+    add_card(s6, Inches(6.76), top_col, Inches(5.77), Inches(3.6), "Doorstep Financial POS Settlement", [
         "Courier Cash Change Helper: Real-time calculation displays exact change in green or a bold red alert (Short: ₱XX.XX).",
         "80mm Thermal Bluetooth Print: POS receipt modal formatted for thermal paper with zero-dependency inline SVG Code128 barcode.",
         "Multi-Channel Breakdown: Tracks Cash, GCash, and Bank Transfer with zero-division safety protection.",
@@ -364,7 +390,7 @@ def create_deck(output_path):
     ], icon_text="💳")
 
     # Bottom Demo Transition Banner
-    demo_banner = s5.shapes.add_shape(
+    demo_banner = s6.shapes.add_shape(
         MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(5.6), Inches(11.733), Inches(1.3)
     )
     demo_banner.fill.solid()

@@ -69,3 +69,29 @@ def test_create_and_read_payment(auth_admin):
     assert details_res.status_code == 200
     assert b"350.00" in details_res.data
     conn.close()
+
+
+def test_staff_can_record_payment(client):
+    """Test staff role (Cashier Hazil Enoc) can record customer payment."""
+    with client.session_transaction() as sess:
+        sess['user_id'] = 2
+        sess['username'] = 'staff'
+        sess['role'] = 'staff'
+
+    form_data = {
+        'customer': 'Hazil Walk-in Customer',
+        'payment_amount': '180.00',
+        'payment_method': 'GCash',
+        'status': 'Paid',
+        'notes': 'Recorded by staff cashier at front desk'
+    }
+    res = client.post('/payments-page', data=form_data, follow_redirects=True)
+    assert res.status_code == 200
+
+    conn = get_db_connection()
+    pmt = conn.execute("SELECT * FROM payments WHERE customer = 'Hazil Walk-in Customer'").fetchone()
+    assert pmt is not None
+    assert float(pmt['payment_amount']) == 180.00
+    assert pmt['payment_method'] == 'GCash'
+    conn.close()
+

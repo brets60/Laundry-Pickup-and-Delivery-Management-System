@@ -32,10 +32,10 @@ def manage_payments():
             return jsonify({"status": 401, "error": "Unauthorized"}), 401
         return redirect('/login')
 
-    if session.get('role', 'admin') != 'admin':
+    if session.get('role', 'admin') not in ['admin', 'staff']:
         if is_async_request():
-            return jsonify({"status": 403, "error": "Access restricted: Admin role required"}), 403
-        flash("Access restricted: Administrator role required to view financial reports.", "error")
+            return jsonify({"status": 403, "error": "Access restricted: Admin or Staff role required"}), 403
+        flash("Access restricted: Administrator or Staff role required to view payments.", "error")
         if session.get('role') == 'rider':
             return redirect('/delivery-records-page')
         return redirect('/dashboard-page')

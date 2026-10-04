@@ -55,19 +55,21 @@ def test_staff_login_and_restricted_access(client):
     with client.session_transaction() as sess:
         assert sess["role"] == "staff"
 
-    # Operational modules allowed
+    # Operational modules allowed (including front-desk payments recording)
     assert client.get("/dashboard-page").status_code == 200
     assert client.get("/laundry-orders-page").status_code == 200
     assert client.get("/customers-page").status_code == 200
+    assert client.get("/payments-page").status_code == 200
 
     # Admin-only modules redirect
     staff_res = client.get("/staff-page")
     assert staff_res.status_code == 302
     assert "/dashboard-page" in staff_res.location
 
-    pay_res = client.get("/payments-page")
-    assert pay_res.status_code == 302
-    assert "/dashboard-page" in pay_res.location
+    # Financial CSV ledger export remains Admin-only
+    export_res = client.get("/payments-page/export")
+    assert export_res.status_code == 302
+    assert "/dashboard-page" in export_res.location
 
     sett_res = client.get("/settings-page")
     assert sett_res.status_code == 302
@@ -88,9 +90,11 @@ def test_rider_login_and_redirection(client):
     assert client.get("/delivery-records-page").status_code == 200
     assert client.get("/pickup-schedules-page").status_code == 200
 
-    # Blocked from staff-page -> redirects
+    # Blocked from staff-page & payments-page -> redirects
     blocked_res = client.get("/staff-page")
     assert blocked_res.status_code == 302
+    blocked_pay = client.get("/payments-page")
+    assert blocked_pay.status_code == 302
 
 
 def test_rider_app_gps_and_status(client):
