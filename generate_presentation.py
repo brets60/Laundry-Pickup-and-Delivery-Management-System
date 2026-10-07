@@ -260,29 +260,29 @@ def create_deck(output_path):
     c3_x = c2_x + w_col + gap
     c4_x = c3_x + w_col + gap
 
-    add_card(s2, c1_x, top_col, w_col, h_col, "Lost Paper Slips", [
-        "Paper receipts get wet, torn, or misplaced on the counter.",
-        "Handwritten tags fall off bags, causing mixed-up clothes.",
-        "Hard to look up past customer records when using paper notebooks."
-    ], icon_text="🏷️")
+    add_card(s2, c1_x, top_col, w_col, h_col, "College Students & Dormers Struggle with Laundry", [
+        "Students have heavy class loads and limited time to wash clothes.",
+        "Dorms and boarding houses lack water and drying space, especially when it rains.",
+        "Carrying heavy laundry bags down Sayre Highway is exhausting."
+    ], icon_text="🎓")
 
-    add_card(s2, c2_x, top_col, w_col, h_col, "No Status Tracking", [
-        "Customers don't know if their clothes are currently being washed or dried.",
-        "Students and busy families keep calling to ask if their laundry is ready.",
-        "No notifications sent when riders are already on the way."
-    ], icon_text="👀")
+    add_card(s2, c2_x, top_col, w_col, h_col, "Inefficient and Fragile Manual Record-Keeping", [
+        "Paper receipts and tags tear, get wet, or get misplaced on the counter.",
+        "Detached tags cause clothes to be mixed up between different customers.",
+        "Staff must flip through paper notebooks to search past records."
+    ], icon_text="📝")
 
-    add_card(s2, c3_x, top_col, w_col, h_col, "Messy Delivery Dispatch", [
-        "Riders only get text messages without clear addresses or landmarks.",
-        "Riders overlap in the same area, wasting time and motorcycle fuel.",
-        "Too many pickup requests during peak hours can overwhelm riders."
-    ], icon_text="🛵")
+    add_card(s2, c3_x, top_col, w_col, h_col, "Total Lack of Order Visibility for Customers", [
+        "Customers don't know if clothes are currently being washed, dried, or folded.",
+        "Students panic about whether uniforms will be ready for class.",
+        "Customers repeatedly call and text the shop, interrupting staff work."
+    ], icon_text="🔍")
 
-    add_card(s2, c4_x, top_col, w_col, h_col, "Manual Math & Change Errors", [
-        "Riders calculate rates and change in their head at the doorstep.",
-        "Mental math mistakes cause short cash at the end of the day.",
-        "No digital signature or proof that the laundry was actually received."
-    ], icon_text="🧮")
+    add_card(s2, c4_x, top_col, w_col, h_col, "Absence of Verifiable Proof of Delivery", [
+        "No signed proof or timestamp when clothes are delivered to gates or dorms.",
+        "Packages left with roommates or caretakers risk being lost or misplaced.",
+        "Unresolvable disputes between customers and riders with no audit trail."
+    ], icon_text="✍️")
 
     # =========================================================================
     # SLIDE 3 OF 5: THE SOLUTION (3 SIMPLE PORTALS)

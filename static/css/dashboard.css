@@ -53,24 +53,37 @@ body {
 }
 
 .brand-icon-box {
-    width: 34px;
-    height: 34px;
-    background: #ffffff;
-    border-radius: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    flex-shrink: 0;
-    overflow: hidden;
-    padding: 2px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+    max-height: 34px !important;
+    background: #ffffff !important;
+    border-radius: 9px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    flex-shrink: 0 !important;
+    overflow: hidden !important;
+    padding: 2px !important;
 }
 
 .brand-icon-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 30px !important;
+    max-height: 30px !important;
+    object-fit: contain !important;
+    display: block !important;
+}
+
+.brand-icon-box svg {
+    width: 18px !important;
+    height: 18px !important;
+    stroke: currentColor;
+    fill: none;
 }
 
 .sidebar-nav {

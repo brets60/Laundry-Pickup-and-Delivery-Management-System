@@ -7,7 +7,8 @@
     <title>LaundryCare | Pickup Schedules</title>
 
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/pickup_schedules.css') }}?v=4.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}?v=4.1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pickup_schedules.css') }}?v=4.1">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 
@@ -22,8 +23,8 @@
 
         <!-- BRAND LOGO -->
         <a href="/dashboard-page" class="sidebar-brand">
-            <div class="brand-icon-box">
-                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="LaundryCare Logo">
+            <div class="brand-icon-box" style="width:34px; height:34px; min-width:34px; max-width:34px; max-height:34px; background:#ffffff; border-radius:9px; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:2px; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="LaundryCare Logo" style="width:100%; height:100%; max-width:30px; max-height:30px; object-fit:contain; display:block;">
             </div>
             <span>LaundryCare</span>
         </a>
@@ -191,11 +192,11 @@
         <!-- BARANGAY ZONE SECTOR FILTER TOOLBAR -->
         <div class="zone-filter-toolbar" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:10px 16px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                <span class="zone-label-tag">📍 Base Camp Sector:</span>
+                <span class="zone-label-tag">📍 Panadtalan Sector (Near Torres Capitol College Inc.):</span>
                 <button type="button" class="filter-pill active" onclick="setZoneFilter('all', this)">All Sectors</button>
-                <button type="button" class="filter-pill" style="border-left:3px solid #2563eb;" onclick="setZoneFilter('zone 1', this)">📍 Zone 1: Proper &amp; Junction (Tristan)</button>
-                <button type="button" class="filter-pill" style="border-left:3px solid #10b981;" onclick="setZoneFilter('zone 2', this)">🛣️ Zone 2: Highway &amp; Commercial (Marvin)</button>
-                <button type="button" class="filter-pill" style="border-left:3px solid #f59e0b;" onclick="setZoneFilter('zone 3', this)">🏡 Zone 3: Puroks 1–5 (Ephraim)</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #2563eb;" onclick="setZoneFilter('zone 1', this)">📍 Zone 1: TCCI &amp; Dorms (Tristan)</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #10b981;" onclick="setZoneFilter('zone 2', this)">🛣️ Zone 2: Sayre Highway Corridor (Marvin)</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #f59e0b;" onclick="setZoneFilter('zone 3', this)">🏡 Zone 3: Panadtalan Puroks 1–5 (Ephraim)</button>
             </div>
             <div style="font-size:12px; color:#64748b;">
                 3 Dedicated Motorcycle Couriers Assigned
@@ -210,7 +211,7 @@
                 </div>
                 <div>
                     <div style="font-size: 15px; font-weight: 700; color: #ffffff;">Wash Hub Intake &amp; Machine Status</div>
-                    <div style="font-size: 12px; color: #94a3b8;">Operator: <strong>Mark Ephraim Nicor</strong> &bull; Base Camp Central Station</div>
+                    <div style="font-size: 12px; color: #94a3b8;">Operator: <strong>Mark Ephraim Nicor</strong> &bull; Panadtalan Central Hub (TCCI)</div>
                 </div>
             </div>
             <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
@@ -303,7 +304,7 @@
                     <span class="batch-window-tag">09:00 AM - 12:00 PM</span>
                     <span class="batch-load-badge">{% if batches %}{{ batches.morning.total }}{% else %}0{% endif %} Requests</span>
                 </div>
-                <h4 class="batch-title">Morning Base Camp Proper &amp; Junction</h4>
+                <h4 class="batch-title">Morning TCCI &amp; Dorms Circuit</h4>
                 <div class="batch-driver-info">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/></svg>
                     <span>Courier: <strong>Tristan Dave Plaza (Motorcycle 1)</strong></span>
@@ -467,7 +468,7 @@
                                 data-contact="{{ p.contact_number or '09123456789' }}"
                                 data-date="{{ p.pickup_date or '' }}"
                                 data-time="{{ p.pickup_time or '09:00 AM - 12:00 PM' }}"
-                                data-address="{{ p.pickup_address or 'Base Camp, Maramag, Bukidnon' }}"
+                                data-address="{{ p.pickup_address or 'Panadtalan, Maramag, Bukidnon' }}"
                                 data-driver="{{ p.assigned_driver or '' }}"
                                 data-notes="{{ p.notes or '' }}">
                                 <td>
@@ -1011,7 +1012,7 @@ function openViewPickupModal(button) {
     const customer = row.getAttribute('data-customer') || 'N/A';
     const date = row.getAttribute('data-date') || 'TBD';
     const time = row.getAttribute('data-time') || '09:00 AM - 11:00 AM';
-    const address = row.getAttribute('data-address') || 'Base Camp, Maramag, Bukidnon';
+    const address = row.getAttribute('data-address') || 'Panadtalan, Maramag, Bukidnon';
     const driver = row.getAttribute('data-driver') || 'Unassigned';
     const notes = row.getAttribute('data-notes') || 'None';
     const status = row.getAttribute('data-status') || 'Pending';

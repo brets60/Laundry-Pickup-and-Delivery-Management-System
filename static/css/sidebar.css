@@ -84,7 +84,10 @@
 .brand-logo-icon img {
     width: 100% !important;
     height: 100% !important;
+    max-width: 30px !important;
+    max-height: 30px !important;
     object-fit: contain !important;
+    display: block !important;
 }
 
 .lc-brand-mark svg,

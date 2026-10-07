@@ -7,7 +7,8 @@
     <title>LaundryCare | Delivery Records</title>
 
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/delivery_records.css') }}?v=4.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}?v=4.1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/delivery_records.css') }}?v=4.1">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 
@@ -22,8 +23,8 @@
 
         <!-- BRAND LOGO -->
         <a href="/dashboard-page" class="sidebar-brand">
-            <div class="brand-icon-box">
-                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="LaundryCare Logo">
+            <div class="brand-icon-box" style="width:34px; height:34px; min-width:34px; max-width:34px; max-height:34px; background:#ffffff; border-radius:9px; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:2px; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="LaundryCare Logo" style="width:100%; height:100%; max-width:30px; max-height:30px; object-fit:contain; display:block;">
             </div>
             <span>LaundryCare</span>
         </a>
@@ -208,11 +209,12 @@
 
         <!-- BARANGAY ZONE SECTOR FILTER TOOLBAR -->
         <div class="zone-filter-toolbar" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:10px 16px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
-                <span class="zone-label-tag">📍 Base Camp Sector:</span>
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <span class="zone-label-tag">📍 Panadtalan Sector (Near Torres Capitol College Inc.):</span>
                 <button type="button" class="filter-pill active" id="zoneFilterAll" onclick="setZoneFilter('all', this)">All Sectors</button>
-                <button type="button" class="filter-pill" style="border-left:3px solid #2563eb;" onclick="setZoneFilter('zone 1', this)">📍 Zone 1: Proper &amp; Junction (Tristan)</button>
-                <button type="button" class="filter-pill" style="border-left:3px solid #10b981;" onclick="setZoneFilter('zone 2', this)">🛣️ Zone 2: Highway &amp; Commercial (Marvin)</button>
-                <button type="button" class="filter-pill" style="border-left:3px solid #f59e0b;" onclick="setZoneFilter('zone 3', this)">🏡 Zone 3: Puroks 1–5 (Ephraim)</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #2563eb;" onclick="setZoneFilter('zone 1', this)">📍 Zone 1: TCCI &amp; Dorms (Tristan)</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #10b981;" onclick="setZoneFilter('zone 2', this)">🛣️ Zone 2: Sayre Highway Corridor (Marvin)</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #f59e0b;" onclick="setZoneFilter('zone 3', this)">🏡 Zone 3: Panadtalan Puroks 1–5 (Ephraim)</button>
             </div>
             <div style="font-size:12px; color:#64748b;">
                 3 Dedicated Motorcycle Couriers Assigned
@@ -379,7 +381,7 @@
                     <div class="stop-content">
                         <div class="stop-time">01:15 PM &bull; Afternoon</div>
                         <div class="stop-customer">Elena Gomez</div>
-                        <div class="stop-address">Base Camp Junction, Maramag</div>
+                        <div class="stop-address">TCCI Main Gate, Panadtalan, Maramag</div>
                         <span class="stop-status-pill pill-scheduled">Scheduled</span>
                     </div>
                 </div>
@@ -1040,7 +1042,7 @@ function openViewDeliveryModal(button) {
     const id = row.getAttribute('data-id');
     const customer = row.getAttribute('data-customer') || 'N/A';
     const orderId = row.getAttribute('data-order-id') || '';
-    const address = row.getAttribute('data-address') || 'Base Camp, Maramag, Bukidnon';
+    const address = row.getAttribute('data-address') || 'Panadtalan, Maramag, Bukidnon';
     const rider = row.getAttribute('data-rider') || 'Unassigned';
     const date = row.getAttribute('data-date') || 'TBD';
     const notes = row.getAttribute('data-notes') || 'None';
@@ -1178,7 +1180,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     <div class="stop-content">
                         <div class="stop-time">01:15 PM &bull; Afternoon</div>
                         <div class="stop-customer">Elena Gomez</div>
-                        <div class="stop-address">Base Camp Junction, Maramag</div>
+                        <div class="stop-address">TCCI Main Gate, Panadtalan, Maramag</div>
                         <span class="stop-status-pill pill-scheduled">Scheduled</span>
                     </div>
                 </div>
@@ -1250,7 +1252,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     <div class="stop-content">
                         <div class="stop-time">Afternoon &bull; Scheduled</div>
                         <div class="stop-customer">3 Remaining Drops</div>
-                        <div class="stop-address">Base Camp, Camp 1, Anoling</div>
+                        <div class="stop-address">Panadtalan, Sayre Highway Corridor</div>
                         <span class="stop-status-pill pill-scheduled">On Track</span>
                     </div>
                 </div>

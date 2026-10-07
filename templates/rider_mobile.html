@@ -52,7 +52,7 @@
             </div>
             <div>
                 <div class="rider-name-val">{{ session.get('full_name') or session.get('username', 'Courier Juan') }}</div>
-                <div class="rider-sub-val">Assigned Motorcycle Courier &bull; Base Camp Fleet</div>
+                <div class="rider-sub-val">Assigned Motorcycle Courier &bull; Panadtalan Fleet (TCCI Hub)</div>
             </div>
         </div>
         <div class="shift-status-badge">
@@ -158,7 +158,7 @@
                         <div class="dest-address-card">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                             <div>
-                                <strong>Destination:</strong> {{ d.delivery_address or 'Base Camp, Maramag, Bukidnon' }}
+                                <strong>Destination:</strong> {{ d.delivery_address or 'Panadtalan, Maramag, Bukidnon' }}
                                 {% if d.delivery_notes %}
                                 <div style="font-size:11.5px; color:#64748b; margin-top:2px;"><em>Note:</em> {{ d.delivery_notes }}</div>
                                 {% endif %}
@@ -170,14 +170,14 @@
                     <div class="stop-actions-bar">
                         <!-- GPS Buttons -->
                         <div class="gps-button-group">
-                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ d.delivery_address|urlencode if d.delivery_address else 'Base+Camp+Maramag+Bukidnon' }}" 
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ d.delivery_address|urlencode if d.delivery_address else 'Panadtalan+Maramag+Bukidnon' }}" 
                                target="_blank" 
                                class="btn-gps-action btn-gmaps"
                                title="Open in Google Maps">
                                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
                                 <span>Google Maps</span>
                             </a>
-                            <a href="https://waze.com/ul?q={{ d.delivery_address|urlencode if d.delivery_address else 'Base+Camp+Maramag+Bukidnon' }}" 
+                            <a href="https://waze.com/ul?q={{ d.delivery_address|urlencode if d.delivery_address else 'Panadtalan+Maramag+Bukidnon' }}" 
                                target="_blank" 
                                class="btn-gps-action btn-waze"
                                title="Open in Waze">
@@ -253,17 +253,17 @@
                         <div class="dest-address-card">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                             <div>
-                                <strong>Pickup Location:</strong> {{ p.pickup_address or 'Base Camp, Maramag, Bukidnon' }}
+                                <strong>Pickup Location:</strong> {{ p.pickup_address or 'Panadtalan, Maramag, Bukidnon' }}
                             </div>
                         </div>
                     </div>
 
                     <div class="stop-actions-bar">
                         <div class="gps-button-group">
-                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ p.pickup_address|urlencode if p.pickup_address else 'Base+Camp+Maramag+Bukidnon' }}" target="_blank" class="btn-gps-action btn-gmaps">
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ p.pickup_address|urlencode if p.pickup_address else 'Panadtalan+Maramag+Bukidnon' }}" target="_blank" class="btn-gps-action btn-gmaps">
                                 <span>Google Maps</span>
                             </a>
-                            <a href="https://waze.com/ul?q={{ p.pickup_address|urlencode if p.pickup_address else 'Base+Camp+Maramag+Bukidnon' }}" target="_blank" class="btn-gps-action btn-waze">
+                            <a href="https://waze.com/ul?q={{ p.pickup_address|urlencode if p.pickup_address else 'Panadtalan+Maramag+Bukidnon' }}" target="_blank" class="btn-gps-action btn-waze">
                                 <span>Waze</span>
                             </a>
                         </div>

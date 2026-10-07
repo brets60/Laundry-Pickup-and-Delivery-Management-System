@@ -7,7 +7,8 @@
     <title>LaundryCare | Dashboard</title>
 
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}?v=4.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}?v=4.1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}?v=4.1">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
 
@@ -22,8 +23,8 @@
 
         <!-- BRAND LOGO -->
         <a href="/dashboard-page" class="sidebar-brand">
-            <div class="brand-icon-box">
-                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="LaundryCare Logo">
+            <div class="brand-icon-box" style="width:34px; height:34px; min-width:34px; max-width:34px; max-height:34px; background:#ffffff; border-radius:9px; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:2px; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="LaundryCare Logo" style="width:100%; height:100%; max-width:30px; max-height:30px; object-fit:contain; display:block;">
             </div>
             <span>LaundryCare</span>
         </a>
@@ -382,12 +383,12 @@
                     </div>
                 </div>
 
-                <!-- DEDICATED BASE CAMP FLEET DISPATCH ROSTER -->
+                <!-- DEDICATED PANADTALAN FLEET DISPATCH ROSTER -->
                 <div class="driver-dispatch-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <div>
-                            <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">Base Camp Motorcycle Fleet</h3>
-                            <div style="font-size: 11px; color: #64748b;">Base Camp, Maramag Sector-Based Dispatch</div>
+                            <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">Panadtalan Motorcycle Fleet</h3>
+                            <div style="font-size: 11px; color: #64748b;">Panadtalan, Maramag Sector-Based Dispatch (TCCI Hub)</div>
                         </div>
                         <a href="/delivery-records-page" style="font-size: 12px; font-weight: 700; color: #2563eb; text-decoration: none;">View All &rarr;</a>
                     </div>
@@ -398,7 +399,7 @@
                                 <div style="width: 34px; height: 34px; border-radius: 50%; background: #2563eb; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px;">TD</div>
                                 <div>
                                     <div style="font-size: 13px; font-weight: 800; color: #0f172a;">Tristan Dave Plaza (Moto 1)</div>
-                                    <div style="font-size: 11px; color: #1d4ed8; font-weight: 600;">📍 Zone 1: Base Camp Proper &amp; Junction</div>
+                                    <div style="font-size: 11px; color: #1d4ed8; font-weight: 600;">📍 Zone 1: TCCI &amp; Dorms Circuit</div>
                                 </div>
                             </div>
                             <span style="font-size: 11px; font-weight: 700; color: {% if driver_statuses and driver_statuses.tristan == 'On Route' %}#059669; background: #ecfdf5;{% else %}#2563eb; background: #eff6ff;{% endif %} padding: 3px 8px; border-radius: 10px;">{{ driver_statuses.tristan if driver_statuses else 'Standby' }}</span>
@@ -410,7 +411,7 @@
                                 <div style="width: 34px; height: 34px; border-radius: 50%; background: #059669; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px;">MO</div>
                                 <div>
                                     <div style="font-size: 13px; font-weight: 800; color: #0f172a;">Marvin Oclarino (Moto 2)</div>
-                                    <div style="font-size: 11px; color: #047857; font-weight: 600;">🛣️ Zone 2: Sayre Hwy &amp; Commercial Strip</div>
+                                    <div style="font-size: 11px; color: #047857; font-weight: 600;">🛣️ Zone 2: Sayre Hwy Corridor</div>
                                 </div>
                             </div>
                             <span style="font-size: 11px; font-weight: 700; color: {% if driver_statuses and driver_statuses.marvin == 'On Route' %}#059669; background: #ecfdf5;{% else %}#2563eb; background: #eff6ff;{% endif %} padding: 3px 8px; border-radius: 10px;">{{ driver_statuses.marvin if driver_statuses else 'Standby' }}</span>
@@ -422,7 +423,7 @@
                                 <div style="width: 34px; height: 34px; border-radius: 50%; background: #d97706; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px;">EN</div>
                                 <div>
                                     <div style="font-size: 13px; font-weight: 800; color: #0f172a;">Mark Ephraim Nicor (Moto 3)</div>
-                                    <div style="font-size: 11px; color: #b45309; font-weight: 600;">🏡 Zone 3: Puroks 1–5 Residential</div>
+                                    <div style="font-size: 11px; color: #b45309; font-weight: 600;">🏡 Zone 3: Panadtalan Puroks 1–5</div>
                                 </div>
                             </div>
                             <span style="font-size: 11px; font-weight: 700; color: {% if driver_statuses and driver_statuses.nicor == 'On Route' %}#059669; background: #ecfdf5;{% else %}#d97706; background: #fef3c7;{% endif %} padding: 3px 8px; border-radius: 10px;">{{ driver_statuses.nicor if driver_statuses else 'Standby' }}</span>
