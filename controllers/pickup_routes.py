@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, flash, session, url_for, jsonify
 import sqlite3
 from controllers.utils import is_async_request, strip_html_tags
+from controllers.notification_service import add_notification
 
 pickup_bp = Blueprint('pickup', __name__)
 DATABASE = os.environ.get("DATABASE", "laundry.db")
@@ -228,6 +229,18 @@ def edit_pickup(pickup_id):
             """,
             (customer, pickup_date, pickup_time, pickup_address, status, assigned_driver, notes, pickup_id)
         )
+
+        if status in ['Picked Up', 'Completed']:
+            driver_name = assigned_driver or 'Mark Ephraim Nicor'
+            add_notification(
+                conn,
+                title="Pickup Completed",
+                message=f"Pickup #PCK-{pickup_id:04d} for {customer} was marked {status} (Driver: {driver_name}).",
+                notif_type="pickup_completed",
+                reference_id=pickup_id,
+                reference_type="pickup"
+            )
+
         conn.commit()
         conn.close()
 

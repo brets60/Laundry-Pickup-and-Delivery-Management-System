@@ -2,6 +2,7 @@ import os
 from flask import Blueprint, render_template, request, redirect, session, flash, url_for, jsonify
 import sqlite3
 from controllers.utils import is_async_request, strip_html_tags
+from controllers.notification_service import add_notification
 
 delivery_bp = Blueprint('delivery', __name__)
 DATABASE = os.environ.get("DATABASE", "laundry.db")
@@ -409,10 +410,22 @@ def rider_update_delivery_status(id):
             WHERE id = ?
         """, (new_status, id))
 
-        # If delivered, also update linked order if present
-        del_row = conn.execute("SELECT order_id FROM delivery_records WHERE id = ?", (id,)).fetchone()
-        if del_row and del_row['order_id'] and new_status == 'Delivered':
-            conn.execute("UPDATE laundry_orders SET status = 'Completed' WHERE id = ?", (del_row['order_id'],))
+        # If delivered, also update linked order if present and alert shop staff
+        del_row = conn.execute("SELECT customer, order_id, assigned_rider FROM delivery_records WHERE id = ?", (id,)).fetchone()
+        if del_row and new_status == 'Delivered':
+            if del_row['order_id']:
+                conn.execute("UPDATE laundry_orders SET status = 'Completed' WHERE id = ?", (del_row['order_id'],))
+            rider_name = del_row['assigned_rider'] or session.get('full_name') or 'Mark Ephraim Nicor'
+            cust_name = del_row['customer'] or 'Customer'
+            order_ref = f"#ORD-{del_row['order_id']:04d}" if del_row['order_id'] else f"#DEL-{id:04d}"
+            add_notification(
+                conn,
+                title="Delivery Completed",
+                message=f"Rider {rider_name} completed Delivery {order_ref} for {cust_name}.",
+                notif_type="delivery_completed",
+                reference_id=id,
+                reference_type="delivery"
+            )
 
         conn.commit()
         return jsonify({'success': True, 'status': new_status})
@@ -435,6 +448,20 @@ def rider_update_pickup_status(id):
             SET status = ?
             WHERE id = ?
         """, (new_status, id))
+
+        pck_row = conn.execute("SELECT customer, assigned_driver FROM pickup_schedules WHERE id = ?", (id,)).fetchone()
+        if pck_row and new_status in ['Picked Up', 'Completed']:
+            rider_name = pck_row['assigned_driver'] or session.get('full_name') or 'Mark Ephraim Nicor'
+            cust_name = pck_row['customer'] or 'Customer'
+            add_notification(
+                conn,
+                title="Pickup Completed",
+                message=f"Rider {rider_name} collected laundry bag for Pickup #PCK-{id:04d} from {cust_name}.",
+                notif_type="pickup_completed",
+                reference_id=id,
+                reference_type="pickup"
+            )
+
         conn.commit()
         return jsonify({'success': True, 'status': new_status})
     finally:

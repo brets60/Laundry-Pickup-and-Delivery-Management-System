@@ -13,6 +13,7 @@ from controllers.pickup_routes import pickup_bp
 from controllers.delivery_routes import delivery_bp
 from controllers.payment_routes import payment_bp
 from controllers.customer_portal_routes import portal_bp
+from controllers.notification_routes import notification_bp
 
 app = Flask(__name__)
 
@@ -31,6 +32,7 @@ app.register_blueprint(pickup_bp)
 app.register_blueprint(delivery_bp)
 app.register_blueprint(payment_bp)
 app.register_blueprint(portal_bp)
+app.register_blueprint(notification_bp)
 
 
 DATABASE = os.environ.get("DATABASE", "laundry.db")
@@ -316,6 +318,22 @@ def init_database():
                 """,
                 (s_role, s_contact, s_status, s_station, existing_s["id"])
             )
+
+    # -------------------------
+    # NOTIFICATIONS TABLE
+    # -------------------------
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS notifications (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            message TEXT NOT NULL,
+            type TEXT DEFAULT 'info',
+            reference_id INTEGER,
+            reference_type TEXT,
+            is_read INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
 
     conn.commit()
     conn.close()
