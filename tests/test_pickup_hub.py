@@ -30,13 +30,13 @@ def test_check_pickup_slot_conflict_helper():
     conn.close()
 
 
-def test_pickup_page_renders_wash_hub_monitor(auth_operator):
-    """Verify pickups page loads wash hub monitor for operator."""
+def test_pickup_page_renders_clean_courier_deck(auth_operator):
+    """Verify pickups page loads cleanly with dedicated motorcycle courier header and without machine intake banner."""
     res = auth_operator.get('/pickup-schedules-page')
     assert res.status_code == 200
-    assert b"Wash Hub Intake &amp; Machine Status" in res.data or b"Wash Hub Intake & Machine Status" in res.data
     assert b"Mark Ephraim Nicor" in res.data
-    assert b"Washers Active" in res.data
+    assert b"Wash Hub Intake &amp; Machine Status" not in res.data
+    assert b"Washers Active" not in res.data
 
 
 def test_create_pickup_schedule(auth_operator):
