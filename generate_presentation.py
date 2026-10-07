@@ -32,11 +32,10 @@ def create_deck(output_path):
         )
         bg_shape.fill.solid()
         bg_shape.fill.fore_color.rgb = COLOR_BG
-        bg_shape.line.fill.background() # No border
+        bg_shape.line.fill.background()
         return bg_shape
 
     def add_header(slide, title_text, category_text, presenter_text):
-        # Header container banner
         header_box = slide.shapes.add_shape(
             MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(0.4), Inches(11.733), Inches(1.1)
         )
@@ -52,7 +51,6 @@ def create_deck(output_path):
         tf.margin_right = Inches(0.25)
         tf.margin_bottom = Inches(0.1)
 
-        # Category & Presenter line
         p_cat = tf.paragraphs[0]
         p_cat.text = f"{category_text.upper()}   •   PRESENTER: {presenter_text.upper()}"
         p_cat.font.name = "Calibri"
@@ -60,7 +58,6 @@ def create_deck(output_path):
         p_cat.font.bold = True
         p_cat.font.color.rgb = COLOR_BLUE_ACCENT
 
-        # Title line
         p_title = tf.add_paragraph()
         p_title.text = title_text
         p_title.font.name = "Arial"
@@ -85,7 +82,6 @@ def create_deck(output_path):
         tf.margin_right = Inches(0.25)
         tf.margin_bottom = Inches(0.2)
 
-        # Card Title
         p_title = tf.paragraphs[0]
         full_title = f"{icon_text}  {title}".strip() if icon_text else title
         p_title.text = full_title
@@ -95,7 +91,6 @@ def create_deck(output_path):
         p_title.font.color.rgb = COLOR_PRIMARY
         p_title.space_after = Pt(8)
 
-        # Bullet Points
         for item in items:
             p_item = tf.add_paragraph()
             p_item.text = f"•  {item}"
@@ -108,12 +103,11 @@ def create_deck(output_path):
         return card
 
     # =========================================================================
-    # SLIDE 1: TITLE & TEAM ROSTER
+    # SLIDE 1 OF 5: TITLE & TEAM ROSTER
     # =========================================================================
     s1 = prs.slides.add_slide(blank_layout)
     set_slide_background(s1)
 
-    # Hero Banner Box
     s1_hero = s1.shapes.add_shape(
         MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(0.5), Inches(11.733), Inches(2.2)
     )
@@ -127,11 +121,11 @@ def create_deck(output_path):
     tf1.margin_top = Inches(0.25)
 
     p1_sub = tf1.paragraphs[0]
-    p1_sub.text = "CS 106 / SOFTWARE ENGINEERING 1  •  FINAL DEFENSE & DEMO"
+    p1_sub.text = "CS 106 / SOFTWARE ENGINEERING 1  •  FINAL SYSTEM DEFENSE & LIVE DEMO"
     p1_sub.font.name = "Calibri"
     p1_sub.font.size = Pt(11)
     p1_sub.font.bold = True
-    p1_sub.font.color.rgb = RGBColor(147, 197, 253) # Light Blue
+    p1_sub.font.color.rgb = RGBColor(147, 197, 253)
 
     p1_h1 = tf1.add_paragraph()
     p1_h1.text = "LaundryCare Management System"
@@ -171,9 +165,9 @@ def create_deck(output_path):
     rtf_p0.space_after = Pt(10)
 
     members = [
-        ("John Michael Bretaña", "Lead Architect & Project Manager", "Core Architecture, RBAC, Cloud Deployment"),
-        ("Hazil Enoc", "Store Cashier & CRM Lead", "Customer Loyalty Engine, Digital Weighing & CRM"),
-        ("Mark Ephraim Nicor", "Laundry Operator & Courier 3", "Wash Hub Telemetry, Slot Densities & Zone 3"),
+        ("John Michael Bretaña", "Lead Architect & Branch Manager", "Core Architecture, RBAC, Cloud Deployment"),
+        ("Hazil Enoc", "Store Cashier & CRM Lead", "Customer Loyalty Engine, Digital Weighing & POS"),
+        ("Mark Ephraim Nicor", "Laundry Operator & Courier 3", "Wash Hub Telemetry, Machine Densities & Zone 3"),
         ("Tristan Dave M. Plaza", "Mobile UX Lead & Courier 1", "Rider Mobile Web App, Touch Signature & Zone 1"),
         ("Marvin Oclarino", "Financial Lead & Courier 2", "Doorstep Change Calculator, Thermal POS & Zone 2"),
     ]
@@ -216,9 +210,9 @@ def create_deck(output_path):
     qp0.space_after = Pt(10)
 
     highlights = [
-        ("✅ 78 / 78 Passing Tests", "100% green automated Pytest test suite covering RBAC, arithmetic, and failure paths."),
+        ("✅ 79 / 79 Passing Tests", "100% green automated Pytest test suite covering RBAC, arithmetic, and failure paths."),
         ("🌐 Live Cloud Deployment", "Hosted on Render PaaS (Linux Gunicorn WSGI) with offline local hot standby."),
-        ("🛵 100% Motorcycle Fleet", "Exclusively customized for Barangay Base Camp sectors with 3 dedicated riders."),
+        ("🛵 100% Bajaj Motorcycle Fleet", "Exclusively customized for Barangay Base Camp sectors with 3 dedicated riders."),
         ("✍️ Paperless Touch Signatures", "HTML5 Canvas touch signatures for verifiable proof of delivery.")
     ]
 
@@ -228,7 +222,7 @@ def create_deck(output_path):
         p_h.font.name = "Calibri"
         p_h.font.size = Pt(12)
         p_h.font.bold = True
-        p_h.font.color.rgb = COLOR_GREEN if "78" in h_title else COLOR_BLUE_ACCENT
+        p_h.font.color.rgb = COLOR_GREEN if "79" in h_title else COLOR_BLUE_ACCENT
 
         p_hb = qtf.add_paragraph()
         p_hb.text = h_body
@@ -238,37 +232,11 @@ def create_deck(output_path):
         p_hb.space_after = Pt(6)
 
     # =========================================================================
-    # SLIDE 2: PROJECT INTRODUCTION & SYSTEM OVERVIEW
+    # SLIDE 2 OF 5: THE CHALLENGE (PROBLEM DEFINITION)
     # =========================================================================
     s2 = prs.slides.add_slide(blank_layout)
     set_slide_background(s2)
-    add_header(s2, "System Introduction & Project Overview", "Project Introduction", "John Michael Bretaña (Lead Architect & Manager)")
-
-    w_half = Inches(5.76)
-    h_half = Inches(5.1)
-    top_pos = Inches(1.75)
-
-    add_card(s2, Inches(0.8), top_pos, w_half, h_half, "What is LaundryCare?", [
-        "Core Purpose: A full-stack, cloud-deployed web ERP and doorstep logistics system engineered specifically for Barangay Base Camp, Maramag, Bukidnon.",
-        "Digital Transformation: Replaces chaotic manual pen-and-paper booking with an automated, transparent, and paperless operational pipeline.",
-        "Community Context: Tailored for Base Camp households, dormitories, and busy families who lack time or washing equipment.",
-        "End-to-End Scope: Integrates customers, store cashiers, laundry machine operators, and motorcycle couriers into one centralized platform.",
-        "Cloud Availability: Deployed live on Render PaaS (Linux Gunicorn WSGI) with local offline hot standby."
-    ], icon_text="🌟")
-
-    add_card(s2, Inches(6.76), top_pos, Inches(5.77), h_half, "The 3 Core Operational Pillars", [
-        "1. Public Customer Portal (Zero Login): 60-second doorstep pickup booking and real-time 5-stage tracking with GCash payment references.",
-        "2. Centralized Store Operations: Digital scale intake, automated per-kilo pricing, dynamic loyalty tiering, and wash plant machine telemetry.",
-        "3. Sector-Based Motorcycle Fleet: 100% motorcycle courier circuits across Base Camp with 1-tap GPS routing and touch signature proof-of-delivery.",
-        "4. Software Quality Standards: Backed by 78 / 78 passing automated unit, integration, and adversarial tests (100% green suite)."
-    ], icon_text="🏛️")
-
-    # =========================================================================
-    # SLIDE 3: PROBLEM STATEMENT
-    # =========================================================================
-    s3 = prs.slides.add_slide(blank_layout)
-    set_slide_background(s3)
-    add_header(s3, "The Challenge: Bottlenecks in Traditional Laundry Shops", "Phase 1: Problem Definition", "Hazil Enoc (Store Cashier & CRM Lead)")
+    add_header(s2, "The Challenge: Operational Gaps in Traditional Laundry Shops", "Phase 1: Problem Definition", "Hazil Enoc (Store Cashier & CRM Lead)")
 
     w_col = Inches(2.78)
     h_col = Inches(5.1)
@@ -280,36 +248,36 @@ def create_deck(output_path):
     c3_x = c2_x + w_col + gap
     c4_x = c3_x + w_col + gap
 
-    add_card(s3, c1_x, top_col, w_col, h_col, "Lost Paper Slips & Tags", [
+    add_card(s2, c1_x, top_col, w_col, h_col, "Lost Paper Slips & Tags", [
         "Physical paper receipts get torn, wet, or lost on the shop floor.",
         "Manual identification tags lead to misplaced garments and bag mix-ups.",
         "Zero permanent digital audit trail for customer service histories."
     ], icon_text="🏷️")
 
-    add_card(s3, c2_x, top_col, w_col, h_col, "Customer Blindspots", [
+    add_card(s2, c2_x, top_col, w_col, h_col, "Customer Blindspots", [
         "Clients have zero visibility into washing and drying stages.",
         "Students and busy families repeatedly call staff asking if laundry is ready.",
         "No digital notifications when riders are en route for collection."
     ], icon_text="👀")
 
-    add_card(s3, c3_x, top_col, w_col, h_col, "Uncoordinated Couriers", [
+    add_card(s2, c3_x, top_col, w_col, h_col, "Uncoordinated Couriers", [
         "Riders receive unstructured phone calls with unclear landmarks.",
         "No sector planning leads to overlapping routes and wasted fuel.",
         "Peak intake hours overwhelm couriers without scheduling density checks."
     ], icon_text="🛵")
 
-    add_card(s3, c4_x, top_col, w_col, h_col, "Doorstep Math Errors", [
+    add_card(s2, c4_x, top_col, w_col, h_col, "Doorstep Math Errors", [
         "Couriers mentally compute per-kilogram rates and cash change on the road.",
         "Cashier end-of-day reconciliation deficits from arithmetic mistakes.",
         "Lack of digital Proof of Delivery (POD) signatures causes disputes."
     ], icon_text="🧮")
 
     # =========================================================================
-    # SLIDE 4: THE SOLUTION & USER PORTALS
+    # SLIDE 3 OF 5: THE SOLUTION & 3 UNIFIED PORTALS
     # =========================================================================
-    s4 = prs.slides.add_slide(blank_layout)
-    set_slide_background(s4)
-    add_header(s4, "The LaundryCare Platform: 3 Unified Portals", "Phase 2: Solution Architecture", "Mark Ephraim Nicor (Laundry Operator & Courier 3)")
+    s3 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s3)
+    add_header(s3, "The LaundryCare Solution: 3 Unified Portals", "Phase 2: Solution Architecture", "Mark Ephraim Nicor (Laundry Operator & Courier 3)")
 
     w_card3 = Inches(3.77)
     h_card3 = Inches(5.1)
@@ -319,21 +287,21 @@ def create_deck(output_path):
     p2_x = p1_x + w_card3 + gap3
     p3_x = p2_x + w_card3 + gap3
 
-    add_card(s4, p1_x, top_col, w_card3, h_card3, "Public Customer Portal", [
+    add_card(s3, p1_x, top_col, w_card3, h_card3, "Public Customer Portal", [
         "Zero Login Required: Frictionless access for dormitory students and residents.",
         "60-Second Online Booking (/book-pickup): Sector-based pickup scheduling.",
         "Live Real-Time Tracker (/track): 5-step progress bar from intake to doorstep drop-off.",
         "Transparent Payments: Electronic GCash/Maya reference modal."
     ], icon_text="📱")
 
-    add_card(s4, p2_x, top_col, w_card3, h_card3, "Cashier & Wash Operations", [
+    add_card(s3, p2_x, top_col, w_card3, h_card3, "Cashier & Wash Operations", [
         "Customer CRM Directory (/customers-page): Lifetime spend & loyalty tier tracking.",
         "Digital Scale Intake (/laundry-orders-page): Auto-pricing calculation (Weight x Rate).",
         "Wash Hub Monitor (/pickup-schedules-page): Live capacity telemetry for 6 washers & 4 dryers.",
-        "Slot Bottleneck Detector: Flags high intake density (>4 bookings/slot)."
+        "Payments & Settlement (/payments-page): Walk-in settlement & POS payment recording."
     ], icon_text="🧺")
 
-    add_card(s4, p3_x, top_col, w_card3, h_card3, "Rider Mobile Web App", [
+    add_card(s3, p3_x, top_col, w_card3, h_card3, "Rider Mobile Web App", [
         "Field Courier Interface (/rider-app): Optimized for motorcycle smartphone mounts.",
         "1-Tap GPS Navigation: Direct shortcuts into Google Maps & Waze.",
         "Quick Client Calling: 1-tap phone dialer for arrival coordination.",
@@ -341,14 +309,14 @@ def create_deck(output_path):
     ], icon_text="🛵")
 
     # =========================================================================
-    # SLIDE 5: ARCHITECTURE, SECURITY & TEST COVERAGE
+    # SLIDE 4 OF 5: ENGINEERING INTEGRITY & TEST COVERAGE
     # =========================================================================
-    s5 = prs.slides.add_slide(blank_layout)
-    set_slide_background(s5)
-    add_header(s5, "Engineering Integrity: Architecture & Adversarial Hardening", "Phase 3: Software Engineering & QA", "Tristan Dave M. Plaza (Mobile UX Lead & Courier 1)")
+    s4 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s4)
+    add_header(s4, "Engineering Integrity: Architecture, RBAC & Test Evidence", "Phase 3: Software Engineering & QA", "Tristan Dave M. Plaza (Mobile UX Lead & Courier 1)")
 
     # Left: Architecture Card
-    add_card(s5, Inches(0.8), top_col, Inches(5.76), Inches(5.1), "Modular System Architecture", [
+    add_card(s4, Inches(0.8), top_col, Inches(5.76), Inches(5.1), "Modular System Architecture", [
         "Backend Framework: Python 3 + Flask using 6 decoupled domain Blueprints (Customer, Order, Pickup, Delivery, Payment, Portal).",
         "Merge Conflict Prevention: Team members worked on separate controllers concurrently without Git collisions.",
         "Database Architecture: SQLite 3 with enforced foreign keys (PRAGMA foreign_keys = ON) and automatic cold-start migrations.",
@@ -357,40 +325,40 @@ def create_deck(output_path):
     ], icon_text="🏗️")
 
     # Right: Adversarial Security & QA
-    add_card(s5, Inches(6.76), top_col, Inches(5.77), Inches(5.1), "Adversarial Security & Test Evidence", [
+    add_card(s4, Inches(6.76), top_col, Inches(5.77), Inches(5.1), "Adversarial Security & Test Evidence", [
         "Stored XSS Sanitization (BUG-001): Regex-based tag stripper (strip_html_tags()) purges <script> and <style> tags before database storage.",
         "Physical Capacity Ceiling (BUG-002): Caps single order weight at 150.0 kg. Oversized loads return HTTP 422 commercial warning.",
         "Historical Date Prevention (BUG-003): Dynamic min date attribute and server-side checks block bookings in the past.",
         "Modal Freezing Resolution (BUG-004): Universal Escape key event handler cleanly dismisses dialogs across all browsers.",
-        "78 / 78 Passing Pytest Tests: 100% green suite validating RBAC, arithmetic precision, and adversarial boundary limits."
+        "79 / 79 Passing Pytest Tests: 100% green suite validating RBAC, arithmetic precision, and adversarial boundary limits."
     ], icon_text="🛡️")
 
     # =========================================================================
-    # SLIDE 6: LOGISTICS, SETTLEMENT & DEMO TRANSITION
+    # SLIDE 5 OF 5: OPERATIONS & SYSTEM DEMONSTRATION WORKFLOW
     # =========================================================================
-    s6 = prs.slides.add_slide(blank_layout)
-    set_slide_background(s6)
-    add_header(s6, "Motorcycle Logistics, Financial Settlement & Live Demo", "Phase 4: Operations & Demonstration", "Marvin Oclarino (Financial Settlement Lead & Courier 2)")
+    s5 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s5)
+    add_header(s5, "Motorcycle Logistics, POS Settlement & Live System Demo", "Phase 4: Operations & Live Demonstration", "Marvin Oclarino (Financial Settlement Lead & Courier 2)")
 
     # Left: Logistics Card
-    add_card(s6, Inches(0.8), top_col, Inches(5.76), Inches(3.6), "Base Camp Motorcycle Logistics", [
+    add_card(s5, Inches(0.8), top_col, Inches(5.76), Inches(3.6), "Base Camp Bajaj Motorcycle Logistics", [
         "Exclusive Barangay Coverage: Central washing hub located at Base Camp Proper.",
-        "Zone 1 (Proper & Commercial Junction): Dispatched to Tristan Dave Plaza (Motorcycle 1).",
-        "Zone 2 (Sayre Highway Corridor & Strip): Dispatched to Marvin Oclarino (Motorcycle 2).",
-        "Zone 3 (Puroks 1 to 5 Residential): Dispatched to Mark Ephraim Nicor (Motorcycle 3).",
+        "Zone 1 (Proper & Commercial Junction): Dispatched to Tristan Dave Plaza (Bajaj Moto 1).",
+        "Zone 2 (Sayre Highway Corridor & Strip): Dispatched to Marvin Oclarino (Bajaj Moto 2).",
+        "Zone 3 (Puroks 1 to 5 Residential): Dispatched to Mark Ephraim Nicor (Bajaj Moto 3).",
         "Smart Sector Dispatch: Booking engine automatically resolves addresses into courier assignments."
     ], icon_text="🗺️")
 
     # Right: Financial POS Settlement
-    add_card(s6, Inches(6.76), top_col, Inches(5.77), Inches(3.6), "Doorstep Financial POS Settlement", [
+    add_card(s5, Inches(6.76), top_col, Inches(5.77), Inches(3.6), "Doorstep Financial POS & Contact Hub", [
         "Courier Cash Change Helper: Real-time calculation displays exact change in green or a bold red alert (Short: ₱XX.XX).",
         "80mm Thermal Bluetooth Print: POS receipt modal formatted for thermal paper with zero-dependency inline SVG Code128 barcode.",
-        "Multi-Channel Breakdown: Tracks Cash, GCash, and Bank Transfer with zero-division safety protection.",
-        "Verifiable Proof of Delivery: Base64 touch signature stored directly with the delivery record."
+        "Customer Hotline & Socials: Official Hotline 0906-188-8611 • Store Hours: 8:00 AM - 4:30 PM (Mon-Sat).",
+        "Official Facebook Page: Direct integration to https://www.facebook.com/LaundryCare."
     ], icon_text="💳")
 
     # Bottom Demo Transition Banner
-    demo_banner = s6.shapes.add_shape(
+    demo_banner = s5.shapes.add_shape(
         MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(5.6), Inches(11.733), Inches(1.3)
     )
     demo_banner.fill.solid()
@@ -404,14 +372,14 @@ def create_deck(output_path):
     dtf.margin_top = Inches(0.18)
 
     dp0 = dtf.paragraphs[0]
-    dp0.text = "READY FOR LIVE DEMONSTRATION  •  TRANSITIONING TO BROWSER"
+    dp0.text = "LIVE SYSTEM DEMONSTRATION WORKFLOW  •  TRANSITIONING TO APPLICATION"
     dp0.font.name = "Arial"
     dp0.font.size = Pt(13)
     dp0.font.bold = True
     dp0.font.color.rgb = COLOR_GREEN
 
     dp1 = dtf.add_paragraph()
-    dp1.text = "Live Demo Steps: 1. Public Booking  ➔  2. Scale Weighing & Pricing  ➔  3. Wash Hub Telemetry  ➔  4. Customer Tracker  ➔  5. Mobile Touch Signature Handover  ➔  6. Thermal POS Receipt & Change Helper."
+    dp1.text = "Demo Steps: 1. Public 60s Booking (/book-pickup)  ➔  2. Scale Weighing & Pricing (/laundry-orders-page)  ➔  3. Wash Hub Telemetry (/pickup-schedules-page)  ➔  4. Customer Tracker (/track)  ➔  5. Mobile Courier Touch Signature (/rider-app)  ➔  6. Thermal POS Receipt & Payment Settlement (/payments-page)."
     dp1.font.name = "Calibri"
     dp1.font.size = Pt(11)
     dp1.font.color.rgb = COLOR_TEXT_MAIN
