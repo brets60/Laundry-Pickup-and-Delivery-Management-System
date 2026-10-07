@@ -201,6 +201,7 @@
         .form-input:focus { background: rgba(7, 27, 49, 1) !important; color: #ffffff !important; border-color: #22d3ee !important; box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.08) !important; }
     </style>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 <body>
 
@@ -213,11 +214,7 @@
         <!-- BRAND LOGO -->
         <a href="/dashboard-page" class="brand-box">
             <div class="brand-logo-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="4" width="20" height="16" rx="2"/>
-                    <circle cx="12" cy="12" r="5"/>
-                    <path d="M12 9a3 3 0 0 0-3 3"/>
-                </svg>
+                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="LaundryCare Logo">
             </div>
             <span>LaundryCare</span>
         </a>

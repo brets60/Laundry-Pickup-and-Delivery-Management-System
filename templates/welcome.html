@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LaundryCare Panadtalan | Premier Doorstep Laundry Pickup &amp; Delivery</title>
     <meta name="description" content="Professional laundry pickup and delivery service located near Torres Capitol College Inc., P2B Sayre Highway, Panadtalan, Maramag, Bukidnon. Doorstep convenience for students, dormitories, and households.">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome.css') }}?v=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}?v=1.0">
 </head>
@@ -28,7 +29,9 @@
     <!-- TOP NAVIGATION -->
     <header class="welcome-nav">
         <a href="/" class="welcome-brand">
-            <div class="brand-icon-box">🧺</div>
+            <div class="brand-icon-box" style="background:#ffffff; padding:2px; box-shadow:0 2px 8px rgba(0,0,0,0.1); border-radius:10px; width:40px; height:40px; display:flex; align-items:center; justify-content:center;">
+                <img src="{{ url_for('static', filename='images/logo_icon.png') }}" alt="LaundryCare Logo" style="width:100%; height:100%; object-fit:contain;">
+            </div>
             <div>
                 <div class="brand-title">LaundryCare</div>
                 <div class="brand-subtitle">Panadtalan, Maramag, Bukidnon</div>

@@ -143,6 +143,17 @@ def create_deck(output_path):
     p1_desc.font.color.rgb = RGBColor(224, 231, 255)
     p1_desc.space_before = Pt(4)
 
+    # Official Logo Emblem on Hero Banner
+    logo_path = os.path.join(os.path.dirname(__file__), "static", "images", "logo_icon.png")
+    if os.path.exists(logo_path):
+        logo_bg = s1.shapes.add_shape(
+            MSO_SHAPE.ROUNDED_RECTANGLE, Inches(10.6), Inches(0.65), Inches(1.75), Inches(1.75)
+        )
+        logo_bg.fill.solid()
+        logo_bg.fill.fore_color.rgb = RGBColor(255, 255, 255)
+        logo_bg.line.fill.background()
+        s1.shapes.add_picture(logo_path, Inches(10.7), Inches(0.75), width=Inches(1.55), height=Inches(1.55))
+
     # Team Members Card
     roster_box = s1.shapes.add_shape(
         MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(2.95), Inches(7.5), Inches(4.0)
