@@ -32,9 +32,9 @@
     <!-- HERO HEADER -->
     <section class="portal-hero">
         <div class="portal-hero-container">
-            <div class="maramag-badge">📍 Main Hub: Base Camp, Maramag, Bukidnon &bull; Exclusively Catering to Barangay Base Camp</div>
+            <div class="maramag-badge">📍 Main Hub: P2B Sayre Highway, Panadtalan, Maramag &bull; Near Torres Capitol College Inc.</div>
             <h1>Request Doorstep Laundry Pickup</h1>
-            <p>Fresh, clean clothes without leaving your house or dormitory. Picked up, professionally washed, and delivered right to your door in Base Camp.</p>
+            <p>Fresh, clean clothes without leaving your boarding house or home. Picked up, professionally washed, and delivered right to your door near Torres Capitol College Inc. and across Panadtalan.</p>
         </div>
     </section>
 
@@ -46,7 +46,7 @@
             <a href="/" style="display: inline-flex; align-items: center; gap: 6px; color: #2563eb; font-weight: 700; font-size: 13px; text-decoration: none; padding: 6px 14px; background: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe; transition: all 0.2s;" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
                 &larr; Back to Customer Welcome Page
             </a>
-            <span style="font-size: 12px; color: #64748b;">📍 Base Camp, Maramag, Bukidnon Online Booking</span>
+            <span style="font-size: 12px; color: #64748b;">📍 P2B Panadtalan, Maramag (Near Torres Capitol College Inc.) Online Booking</span>
         </div>
 
         {% if success and booking %}
@@ -78,8 +78,8 @@
                 <a href="/book-pickup" class="btn-track-success" style="background:#475569; color:#ffffff;">
                     + Book Another Pickup
                 </a>
-                <a href="https://wa.me/639171234567?text=Hi%20LaundryCare!%20I%20just%20booked%20pickup%20%23{{ booking.ref }}%20at%20{{ booking.address|urlencode }}" target="_blank" class="btn-track-success" style="background:#2563eb;">
-                    💬 Notify via WhatsApp
+                <a href="https://www.facebook.com/LaundryCare" target="_blank" rel="noopener noreferrer" class="btn-track-success" style="background:#1877f2;">
+                    💬 Inquire on Facebook
                 </a>
             </div>
         </div>
@@ -116,23 +116,23 @@
                     </div>
                 </div>
 
-                <!-- SECTION 2: BASE CAMP PICKUP ADDRESS & ZONE DISPATCH -->
+                <!-- SECTION 2: PICKUP ADDRESS & ZONE DISPATCH -->
                 <div style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:#2563eb; margin:16px 0 12px;">
-                    2. Base Camp Pickup Location &amp; Dedicated Sector Courier
+                    2. Pickup Location &amp; Dedicated Sector Courier
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Base Camp Sector / Purok Area <span class="required">*</span></label>
+                    <label class="form-label">Sector / Neighborhood Area <span class="required">*</span></label>
                     <select name="barangay" id="barangaySelect" class="form-control" required onchange="updateSectorBadge()">
-                        <option value="Base Camp Proper & Junction" data-zone="Zone 1: Base Camp Proper & Junction" data-rider="Tristan Dave Plaza (Motorcycle 1)" selected>📍 Base Camp Proper &amp; Commercial Junction [Zone 1 &bull; Tristan Dave Plaza (Moto 1)]</option>
-                        <option value="Base Camp Public Market / Brgy Hall" data-zone="Zone 1: Base Camp Proper & Junction" data-rider="Tristan Dave Plaza (Motorcycle 1)">🏛️ Public Market &amp; Barangay Hall Vicinity [Zone 1 &bull; Tristan Dave Plaza (Moto 1)]</option>
-                        <option value="Sayre Highway, Base Camp" data-zone="Zone 2: Base Camp Highway & Commercial" data-rider="Marvin Oclarino (Motorcycle 2)">🛣️ Sayre Highway, Base Camp Sector [Zone 2 &bull; Marvin Oclarino (Moto 2)]</option>
-                        <option value="Base Camp Commercial Strip" data-zone="Zone 2: Base Camp Highway & Commercial" data-rider="Marvin Oclarino (Motorcycle 2)">🛍️ Commercial Strip, Base Camp [Zone 2 &bull; Marvin Oclarino (Moto 2)]</option>
-                        <option value="Purok 1 (Central), Base Camp" data-zone="Zone 3: Puroks 1-5 Residential" data-rider="Mark Ephraim Nicor (Motorcycle 3)">🏡 Purok 1 (Central), Base Camp [Zone 3 &bull; Mark Ephraim Nicor (Moto 3)]</option>
-                        <option value="Purok 2 (East), Base Camp" data-zone="Zone 3: Puroks 1-5 Residential" data-rider="Mark Ephraim Nicor (Motorcycle 3)">🏡 Purok 2 (East), Base Camp [Zone 3 &bull; Mark Ephraim Nicor (Moto 3)]</option>
-                        <option value="Purok 3 (Riverside), Base Camp" data-zone="Zone 3: Puroks 1-5 Residential" data-rider="Mark Ephraim Nicor (Motorcycle 3)">🏡 Purok 3 (Riverside), Base Camp [Zone 3 &bull; Mark Ephraim Nicor (Moto 3)]</option>
-                        <option value="Purok 4 (Hillside), Base Camp" data-zone="Zone 3: Puroks 1-5 Residential" data-rider="Mark Ephraim Nicor (Motorcycle 3)">🏡 Purok 4 (Hillside), Base Camp [Zone 3 &bull; Mark Ephraim Nicor (Moto 3)]</option>
-                        <option value="Purok 5 (South), Base Camp" data-zone="Zone 3: Puroks 1-5 Residential" data-rider="Mark Ephraim Nicor (Motorcycle 3)">🏡 Purok 5 (South), Base Camp [Zone 3 &bull; Mark Ephraim Nicor (Moto 3)]</option>
+                        <option value="Torres Capitol College Inc. (TCCI Campus)" data-zone="Zone 1: Torres Capitol College & Student Dorms" data-rider="Tristan Dave Plaza (Bajaj Moto 1)" selected>🎓 Torres Capitol College Inc. (Campus &amp; Main Gate) [Zone 1 &bull; Tristan Dave Plaza (Moto 1)]</option>
+                        <option value="P2B Student Boarding Houses & Dormitories" data-zone="Zone 1: Torres Capitol College & Student Dorms" data-rider="Tristan Dave Plaza (Bajaj Moto 1)">🏡 P2B Student Dormitories &amp; Boarding Houses [Zone 1 &bull; Tristan Dave Plaza (Moto 1)]</option>
+                        <option value="P2B Sayre Highway Corridor" data-zone="Zone 2: Sayre Highway Commercial Corridor" data-rider="Marvin Oclarino (Bajaj Moto 2)">🛣️ P2B Sayre Highway Commercial Corridor [Zone 2 &bull; Marvin Oclarino (Moto 2)]</option>
+                        <option value="Panadtalan Commercial Strip & Public Market" data-zone="Zone 2: Sayre Highway Commercial Corridor" data-rider="Marvin Oclarino (Bajaj Moto 2)">🛍️ Panadtalan Commercial Strip &amp; Market Vicinity [Zone 2 &bull; Marvin Oclarino (Moto 2)]</option>
+                        <option value="Purok 1 (Central), Panadtalan" data-zone="Zone 3: Barangay Panadtalan Residential Puroks" data-rider="Mark Ephraim Nicor (Bajaj Moto 3)">🏡 Purok 1 (Central), Panadtalan [Zone 3 &bull; Mark Ephraim Nicor (Moto 3)]</option>
+                        <option value="Purok 2 (P2B Proper), Panadtalan" data-zone="Zone 3: Barangay Panadtalan Residential Puroks" data-rider="Mark Ephraim Nicor (Bajaj Moto 3)">🏡 Purok 2 (P2B Proper), Panadtalan [Zone 3 &bull; Mark Ephraim Nicor (Moto 3)]</option>
+                        <option value="Purok 3 (East), Panadtalan" data-zone="Zone 3: Barangay Panadtalan Residential Puroks" data-rider="Mark Ephraim Nicor (Bajaj Moto 3)">🏡 Purok 3 (East), Panadtalan [Zone 3 &bull; Mark Ephraim Nicor (Moto 3)]</option>
+                        <option value="Purok 4 (Riverside), Panadtalan" data-zone="Zone 3: Barangay Panadtalan Residential Puroks" data-rider="Mark Ephraim Nicor (Bajaj Moto 3)">🏡 Purok 4 (Riverside), Panadtalan [Zone 3 &bull; Mark Ephraim Nicor (Moto 3)]</option>
+                        <option value="Purok 5 (South), Panadtalan" data-zone="Zone 3: Barangay Panadtalan Residential Puroks" data-rider="Mark Ephraim Nicor (Bajaj Moto 3)">🏡 Purok 5 (South), Panadtalan [Zone 3 &bull; Mark Ephraim Nicor (Moto 3)]</option>
                     </select>
                 </div>
 
@@ -240,16 +240,16 @@
     </main>
 
     <footer class="portal-footer">
-        <p><strong>LaundryCare Base Camp</strong> &bull; Base Camp, Maramag, Bukidnon</p>
-        <p style="margin-top:4px;">Hotline: (088) 356-1234 &bull; Mobile: 0917-123-4567 &bull; Exclusively Catering to Barangay Base Camp</p>
+        <p><strong>LaundryCare Panadtalan</strong> &bull; P2B Sayre Highway, Panadtalan, Maramag, Bukidnon (Near Torres Capitol College Inc.)</p>
+        <p style="margin-top:4px;">Hotline: (088) 356-1234 &bull; Mobile: 0906-188-8611 &bull; Hours: Mon–Sat 8:00 AM – 4:30 PM</p>
     </footer>
 
     <script>
         function updateSectorBadge() {
             const select = document.getElementById('barangaySelect');
             const selectedOpt = select.options[select.selectedIndex];
-            const zone = selectedOpt.getAttribute('data-zone') || 'Zone 1: Base Camp Proper & Junction';
-            const rider = selectedOpt.getAttribute('data-rider') || 'Tristan Dave Plaza (Motorcycle 1)';
+            const zone = selectedOpt.getAttribute('data-zone') || 'Zone 1: Torres Capitol College & Student Dorms';
+            const rider = selectedOpt.getAttribute('data-rider') || 'Tristan Dave Plaza (Bajaj Moto 1)';
 
             document.getElementById('sectorZoneLabel').textContent = zone + ' Circuit';
             document.getElementById('sectorRiderLabel').textContent = rider;

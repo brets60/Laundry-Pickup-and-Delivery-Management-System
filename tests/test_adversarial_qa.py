@@ -1,3 +1,4 @@
+from datetime import date
 import pytest
 from app import app, get_db_connection
 
@@ -143,7 +144,7 @@ def test_booking_notes_xss_tags_stripped(client):
         'address_details': 'Purok 2',
         'service_type': 'Wash & Fold',
         'estimated_load': 'Medium Bag (~6-8 kg)',
-        'pickup_date': '2026-10-05',
+        'pickup_date': date.today().strftime('%Y-%m-%d'),
         'pickup_time': '09:00 AM - 12:00 PM',
         'payment_method': 'Cash on Delivery (COD)',
         'notes': xss_payload

@@ -137,7 +137,7 @@ def create_deck(output_path):
     p1_h1.space_before = Pt(4)
 
     p1_desc = tf1.add_paragraph()
-    p1_desc.text = "Doorstep Laundry Pickup and Delivery System for Base Camp, Maramag, Bukidnon"
+    p1_desc.text = "Doorstep Laundry Pickup & Delivery System | P2B Sayre Highway, Panadtalan, Maramag (Near Torres Capitol College Inc.)"
     p1_desc.font.name = "Calibri"
     p1_desc.font.size = Pt(14)
     p1_desc.font.color.rgb = RGBColor(224, 231, 255)
@@ -168,9 +168,9 @@ def create_deck(output_path):
     members = [
         ("John Michael Bretaña", "Project Leader & Admin", "Overall system design, user permissions, and deployment"),
         ("Hazil Enoc", "Front Desk Cashier", "Customer records, order encoding, and billing"),
-        ("Mark Ephraim Nicor", "Laundry Operator & Rider 3", "Washing and drying schedule, deliveries for Puroks 1-5"),
-        ("Tristan Dave M. Plaza", "Mobile App & Rider 1", "Rider mobile view, digital signature, deliveries for Base Camp Proper"),
-        ("Marvin Oclarino", "Payments & Rider 2", "Payment recording, change calculator, deliveries along Highway"),
+        ("Mark Ephraim Nicor", "Laundry Operator & Rider 3", "Washing and drying schedule, deliveries across Panadtalan Puroks 1-5"),
+        ("Tristan Dave M. Plaza", "Mobile App & Rider 1", "Rider mobile view, digital signature, deliveries for Torres Capitol College Inc. & Dorms"),
+        ("Marvin Oclarino", "Payments & Rider 2", "Payment recording, change calculator, deliveries along Sayre Highway"),
     ]
 
     for m_name, m_role, m_desc in members:
@@ -211,7 +211,7 @@ def create_deck(output_path):
     qp0.space_after = Pt(10)
 
     highlights = [
-        ("📍 Location Covered", "Exclusively serves Barangay Base Camp, Maramag, Bukidnon."),
+        ("📍 Location Covered", "Near Torres Capitol College Inc., P2B Sayre Highway, Panadtalan, Maramag."),
         ("🛵 3 Bajaj Delivery Motorcycles", "3 dedicated riders assigned to specific neighborhood zones."),
         ("📞 Contact & Support", "Hotline: 0906-188-8611 • Hours: 8:00 AM - 4:30 PM (Mon-Sat)."),
         ("✅ Fully Tested & Working", "Passed all 79 automated software tests with 0 errors.")
@@ -329,7 +329,7 @@ def create_deck(output_path):
         "No Invalid Inputs: System blocks accidental mistakes like negative weights, past dates, or empty names.",
         "79 / 79 Automated Tests Passed: We created 79 test programs to test every button, route, and calculation with zero errors.",
         "Safe and Private: Protects against web attacks and prevents sensitive business reports from leaking.",
-        "Always Online: Deployed live on the cloud (Render), ready to use anytime from anywhere in Base Camp."
+        "Always Online: Deployed live on the cloud (Render), ready to use anytime from anywhere across Panadtalan and school campus."
     ], icon_text="🛡️")
 
     # =========================================================================
@@ -340,12 +340,12 @@ def create_deck(output_path):
     add_header(s5, "Motorcycle Logistics & Live System Demonstration", "Operations & Demo", "Marvin Oclarino (Payments & Rider 2)")
 
     # Left: Bajaj Motorcycle Logistics
-    add_card(s5, Inches(0.8), top_col, Inches(5.76), Inches(3.6), "Motorcycle Delivery in Base Camp", [
-        "Central Hub: Main laundry facility located at Base Camp Proper.",
-        "Zone 1 (Base Camp Proper & Junction): Handled by Tristan Dave Plaza (Bajaj Moto 1).",
-        "Zone 2 (Sayre Highway Corridor): Handled by Marvin Oclarino (Bajaj Moto 2).",
-        "Zone 3 (Puroks 1 to 5 Residential): Handled by Mark Ephraim Nicor (Bajaj Moto 3).",
-        "Automatic Assignment: The system reads the customer's barangay zone and assigns the right rider."
+    add_card(s5, Inches(0.8), top_col, Inches(5.76), Inches(3.6), "Bajaj Motorcycle Delivery in Panadtalan", [
+        "Central Hub: Main laundry hub located at P2B Sayre Highway, Panadtalan (Near Torres Capitol College Inc.).",
+        "Zone 1 (Torres Capitol College Inc. & Dorms): Handled by Tristan Dave Plaza (Bajaj Moto 1).",
+        "Zone 2 (Sayre Highway Commercial Corridor): Handled by Marvin Oclarino (Bajaj Moto 2).",
+        "Zone 3 (Panadtalan Puroks 1 to 5 Residential): Handled by Mark Ephraim Nicor (Bajaj Moto 3).",
+        "Automatic Assignment: The system matches student dorms, campus gates, or puroks to the assigned courier."
     ], icon_text="🛵")
 
     # Right: Payment & Contact

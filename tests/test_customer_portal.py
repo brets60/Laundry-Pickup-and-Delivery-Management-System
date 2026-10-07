@@ -11,12 +11,12 @@ def client():
 
 
 def test_book_pickup_get(client):
-    """Test that the customer booking form loads properly with Base Camp options."""
+    """Test that the customer booking form loads properly with TCCI and Panadtalan options."""
     res = client.get('/book-pickup')
     assert res.status_code == 200
     assert b"Request Doorstep Laundry Pickup" in res.data
-    assert b"Base Camp Proper & Junction" in res.data
-    assert b"Sayre Highway, Base Camp" in res.data
+    assert b"Torres Capitol College Inc." in res.data
+    assert b"P2B Sayre Highway" in res.data
 
 
 def test_book_pickup_post_success(client):
@@ -83,25 +83,25 @@ def test_api_track_lookup(client):
 
 
 def test_barangay_zone_auto_assignment(client):
-    """Test that booking in different Base Camp sectors routes to dedicated motorcycle couriers."""
+    """Test that booking in different Panadtalan sectors routes to dedicated Bajaj motorcycle couriers."""
     from controllers.customer_portal_routes import resolve_maramag_zone_and_rider
 
-    # Zone 1: Base Camp Proper & Junction -> Tristan Dave Plaza (Moto 1)
-    z1, r1 = resolve_maramag_zone_and_rider("Base Camp Proper & Junction, Maramag")
+    # Zone 1: Torres Capitol College Inc. & Dorms -> Tristan Dave Plaza (Bajaj Moto 1)
+    z1, r1 = resolve_maramag_zone_and_rider("Torres Capitol College Inc. (TCCI Campus)")
     assert "Zone 1" in z1
     assert "Tristan Dave" in r1
 
-    # Zone 2: Sayre Highway & Commercial -> Marvin Oclarino (Moto 2)
-    z2, r2 = resolve_maramag_zone_and_rider("Sayre Highway, Base Camp, Maramag")
+    # Zone 2: Sayre Highway & Commercial -> Marvin Oclarino (Bajaj Moto 2)
+    z2, r2 = resolve_maramag_zone_and_rider("Sayre Highway, Panadtalan, Maramag")
     assert "Zone 2" in z2
     assert "Marvin" in r2
 
-    # Zone 3: Puroks 1-5 Residential -> Mark Ephraim Nicor (Moto 3)
-    z3, r3 = resolve_maramag_zone_and_rider("Purok 3 (Riverside), Base Camp")
+    # Zone 3: Puroks 1-5 Residential -> Mark Ephraim Nicor (Bajaj Moto 3)
+    z3, r3 = resolve_maramag_zone_and_rider("Purok 3 (Riverside), Panadtalan")
     assert "Zone 3" in z3
     assert "Nicor" in r3 or "Ephraim" in r3
 
-    z3_b, r3_b = resolve_maramag_zone_and_rider("Purok 1 Central, Base Camp, Maramag")
+    z3_b, r3_b = resolve_maramag_zone_and_rider("Purok 1 Central, Panadtalan, Maramag")
     assert "Zone 3" in z3_b
     assert "Nicor" in r3_b or "Ephraim" in r3_b
 
@@ -111,7 +111,8 @@ def test_welcome_home_routes_and_navigation(client):
     res_root = client.get('/')
     assert res_root.status_code == 200
     assert b"LaundryCare" in res_root.data
-    assert b"Base Camp" in res_root.data
+    assert b"Panadtalan" in res_root.data
+    assert b"Torres Capitol College Inc." in res_root.data
 
     res_welcome = client.get('/welcome')
     assert res_welcome.status_code == 200

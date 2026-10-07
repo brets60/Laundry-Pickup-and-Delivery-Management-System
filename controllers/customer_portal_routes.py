@@ -17,18 +17,19 @@ def get_db_connection():
 
 def resolve_maramag_zone_and_rider(barangay_or_address):
     addr = (barangay_or_address or '').lower()
-    # Zone 1: Base Camp Proper & Junction -> Tristan Dave Plaza (Motorcycle 1)
-    if any(k in addr for k in ['proper', 'junction', 'cmu', 'musuan', 'camp 1', 'sampaguita', 'dorm', 'university', 'colambugan', 'market']):
-        return 'Zone 1: Base Camp Proper & Junction', 'Tristan Dave Plaza (Moto 1)'
-    # Zone 2: Sayre Highway & Commercial (Base Camp) -> Marvin Oclarino (Motorcycle 2)
-    elif any(k in addr for k in ['sayre', 'highway', 'commercial', 'poblacion']):
-        return 'Zone 2: Base Camp Highway & Commercial', 'Marvin Oclarino (Moto 2)'
-    # Zone 3: Puroks 1-5 Residential (Base Camp) -> Mark Ephraim Nicor (Motorcycle 3)
+    # Zone 1: Torres Capitol College Inc. & Campus Dorms -> Tristan Dave Plaza (Bajaj Moto 1)
+    if any(k in addr for k in ['torres', 'college', 'school', 'tcci', 'p2b', 'dorm', 'boarding', 'student', 'proper', 'junction']):
+        return 'Zone 1: Torres Capitol College & Student Dorms', 'Tristan Dave Plaza (Bajaj Moto 1)'
+    # Zone 2: Sayre Highway Commercial Corridor -> Marvin Oclarino (Bajaj Moto 2)
+    elif any(k in addr for k in ['sayre', 'highway', 'commercial', 'market', 'strip']):
+        return 'Zone 2: Sayre Highway Commercial Corridor (Panadtalan)', 'Marvin Oclarino (Bajaj Moto 2)'
+    # Zone 3: Barangay Panadtalan Residential Puroks -> Mark Ephraim Nicor (Bajaj Moto 3)
     else:
-        return 'Zone 3: Puroks 1-5 Residential (Base Camp)', 'Mark Ephraim Nicor (Moto 3)'
+        return 'Zone 3: Barangay Panadtalan Residential Puroks', 'Mark Ephraim Nicor (Bajaj Moto 3)'
 
 
 resolve_basecamp_zone_and_rider = resolve_maramag_zone_and_rider
+resolve_panadtalan_zone_and_rider = resolve_maramag_zone_and_rider
 
 
 # ============================================================
