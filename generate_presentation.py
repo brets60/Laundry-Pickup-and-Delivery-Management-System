@@ -13,18 +13,17 @@ def create_deck(output_path):
     prs.slide_height = Inches(7.5)
     blank_layout = prs.slide_layouts[6] # Blank slide layout
 
-    # Color Palette
-    COLOR_BG = RGBColor(248, 250, 252)        # Slate 50 (#F8FAFC)
-    COLOR_PRIMARY = RGBColor(30, 58, 138)      # Blue 900 (#1E3A8A)
-    COLOR_BLUE_ACCENT = RGBColor(37, 99, 235)  # Blue 600 (#2563EB)
-    COLOR_TEAL_ACCENT = RGBColor(13, 148, 136) # Teal 600 (#0D9488)
-    COLOR_GREEN = RGBColor(5, 150, 105)        # Emerald 600 (#059669)
-    COLOR_TEXT_MAIN = RGBColor(15, 23, 42)     # Slate 900 (#0F172A)
-    COLOR_TEXT_MUTED = RGBColor(71, 85, 105)   # Slate 600 (#475569)
+    # Clean, Friendly Color Palette
+    COLOR_BG = RGBColor(248, 250, 252)        # Soft clean light gray (#F8FAFC)
+    COLOR_PRIMARY = RGBColor(30, 58, 138)      # Trustworthy Navy Blue (#1E3A8A)
+    COLOR_BLUE_ACCENT = RGBColor(37, 99, 235)  # Bright Blue (#2563EB)
+    COLOR_GREEN = RGBColor(5, 150, 105)        # Clean Emerald (#059669)
+    COLOR_TEXT_MAIN = RGBColor(15, 23, 42)     # Dark Slate (#0F172A)
+    COLOR_TEXT_MUTED = RGBColor(71, 85, 105)   # Slate Gray (#475569)
     COLOR_CARD_BG = RGBColor(255, 255, 255)    # White
-    COLOR_CARD_BORDER = RGBColor(226, 232, 240)# Slate 200 (#E2E8F0)
-    COLOR_LIGHT_BLUE = RGBColor(239, 246, 255) # Blue 50 (#EFF6FF)
-    COLOR_LIGHT_GREEN = RGBColor(236, 253, 245)# Emerald 50 (#ECFDF5)
+    COLOR_CARD_BORDER = RGBColor(226, 232, 240)# Soft border (#E2E8F0)
+    COLOR_LIGHT_BLUE = RGBColor(239, 246, 255) # Light blue card (#EFF6FF)
+    COLOR_LIGHT_GREEN = RGBColor(236, 253, 245)# Light green card (#ECFDF5)
 
     def set_slide_background(slide):
         bg_shape = slide.shapes.add_shape(
@@ -46,11 +45,12 @@ def create_deck(output_path):
 
         tf = header_box.text_frame
         tf.word_wrap = True
-        tf.margin_left = Inches(0.25)
+        tf.margin_left = Inches(0.3)
         tf.margin_top = Inches(0.12)
         tf.margin_right = Inches(0.25)
         tf.margin_bottom = Inches(0.1)
 
+        # Small top category
         p_cat = tf.paragraphs[0]
         p_cat.text = f"{category_text.upper()}   •   PRESENTER: {presenter_text.upper()}"
         p_cat.font.name = "Calibri"
@@ -58,6 +58,7 @@ def create_deck(output_path):
         p_cat.font.bold = True
         p_cat.font.color.rgb = COLOR_BLUE_ACCENT
 
+        # Big clear title
         p_title = tf.add_paragraph()
         p_title.text = title_text
         p_title.font.name = "Arial"
@@ -121,11 +122,11 @@ def create_deck(output_path):
     tf1.margin_top = Inches(0.25)
 
     p1_sub = tf1.paragraphs[0]
-    p1_sub.text = "CS 106 / SOFTWARE ENGINEERING 1  •  FINAL SYSTEM DEFENSE & LIVE DEMO"
+    p1_sub.text = "FINAL PROJECT DEFENSE & SYSTEM DEMO"
     p1_sub.font.name = "Calibri"
     p1_sub.font.size = Pt(11)
     p1_sub.font.bold = True
-    p1_sub.font.color.rgb = RGBColor(147, 197, 253)
+    p1_sub.font.color.rgb = RGBColor(147, 200, 253)
 
     p1_h1 = tf1.add_paragraph()
     p1_h1.text = "LaundryCare Management System"
@@ -136,13 +137,13 @@ def create_deck(output_path):
     p1_h1.space_before = Pt(4)
 
     p1_desc = tf1.add_paragraph()
-    p1_desc.text = "Automated Doorstep Laundry ERP & Sector-Based Logistics for Barangay Base Camp, Maramag, Bukidnon"
+    p1_desc.text = "Doorstep Laundry Pickup and Delivery System for Base Camp, Maramag, Bukidnon"
     p1_desc.font.name = "Calibri"
     p1_desc.font.size = Pt(14)
     p1_desc.font.color.rgb = RGBColor(224, 231, 255)
     p1_desc.space_before = Pt(4)
 
-    # Team Roster Table / Card
+    # Team Members Card
     roster_box = s1.shapes.add_shape(
         MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(2.95), Inches(7.5), Inches(4.0)
     )
@@ -157,7 +158,7 @@ def create_deck(output_path):
     rtf.margin_top = Inches(0.2)
 
     rtf_p0 = rtf.paragraphs[0]
-    rtf_p0.text = "PROJECT TEAM & CODEBASE OWNERSHIP"
+    rtf_p0.text = "OUR TEAM & ROLES"
     rtf_p0.font.name = "Arial"
     rtf_p0.font.size = Pt(14)
     rtf_p0.font.bold = True
@@ -165,11 +166,11 @@ def create_deck(output_path):
     rtf_p0.space_after = Pt(10)
 
     members = [
-        ("John Michael Bretaña", "Lead Architect & Branch Manager", "Core Architecture, RBAC, Cloud Deployment"),
-        ("Hazil Enoc", "Store Cashier & CRM Lead", "Customer Loyalty Engine, Digital Weighing & POS"),
-        ("Mark Ephraim Nicor", "Laundry Operator & Courier 3", "Wash Hub Telemetry, Machine Densities & Zone 3"),
-        ("Tristan Dave M. Plaza", "Mobile UX Lead & Courier 1", "Rider Mobile Web App, Touch Signature & Zone 1"),
-        ("Marvin Oclarino", "Financial Lead & Courier 2", "Doorstep Change Calculator, Thermal POS & Zone 2"),
+        ("John Michael Bretaña", "Project Leader & Admin", "Overall system design, user permissions, and deployment"),
+        ("Hazil Enoc", "Front Desk Cashier", "Customer records, order encoding, and billing"),
+        ("Mark Ephraim Nicor", "Laundry Operator & Rider 3", "Washing and drying schedule, deliveries for Puroks 1-5"),
+        ("Tristan Dave M. Plaza", "Mobile App & Rider 1", "Rider mobile view, digital signature, deliveries for Base Camp Proper"),
+        ("Marvin Oclarino", "Payments & Rider 2", "Payment recording, change calculator, deliveries along Highway"),
     ]
 
     for m_name, m_role, m_desc in members:
@@ -181,13 +182,13 @@ def create_deck(output_path):
         p_m.font.color.rgb = COLOR_TEXT_MAIN
 
         p_sub = rtf.add_paragraph()
-        p_sub.text = f"    Domain: {m_desc}"
+        p_sub.text = f"    Role: {m_desc}"
         p_sub.font.name = "Calibri"
         p_sub.font.size = Pt(11)
         p_sub.font.color.rgb = COLOR_TEXT_MUTED
         p_sub.space_after = Pt(4)
 
-    # Right Quality Badges Box
+    # Right Quick Summary Card
     right_box = s1.shapes.add_shape(
         MSO_SHAPE.ROUNDED_RECTANGLE, Inches(8.55), Inches(2.95), Inches(3.98), Inches(4.0)
     )
@@ -202,7 +203,7 @@ def create_deck(output_path):
     qtf.margin_top = Inches(0.25)
 
     qp0 = qtf.paragraphs[0]
-    qp0.text = "KEY PROJECT HIGHLIGHTS"
+    qp0.text = "QUICK PROJECT OVERVIEW"
     qp0.font.name = "Arial"
     qp0.font.size = Pt(14)
     qp0.font.bold = True
@@ -210,10 +211,10 @@ def create_deck(output_path):
     qp0.space_after = Pt(10)
 
     highlights = [
-        ("✅ 79 / 79 Passing Tests", "100% green automated Pytest test suite covering RBAC, arithmetic, and failure paths."),
-        ("🌐 Live Cloud Deployment", "Hosted on Render PaaS (Linux Gunicorn WSGI) with offline local hot standby."),
-        ("🛵 100% Bajaj Motorcycle Fleet", "Exclusively customized for Barangay Base Camp sectors with 3 dedicated riders."),
-        ("✍️ Paperless Touch Signatures", "HTML5 Canvas touch signatures for verifiable proof of delivery.")
+        ("📍 Location Covered", "Exclusively serves Barangay Base Camp, Maramag, Bukidnon."),
+        ("🛵 3 Bajaj Delivery Motorcycles", "3 dedicated riders assigned to specific neighborhood zones."),
+        ("📞 Contact & Support", "Hotline: 0906-188-8611 • Hours: 8:00 AM - 4:30 PM (Mon-Sat)."),
+        ("✅ Fully Tested & Working", "Passed all 79 automated software tests with 0 errors.")
     ]
 
     for h_title, h_body in highlights:
@@ -222,7 +223,7 @@ def create_deck(output_path):
         p_h.font.name = "Calibri"
         p_h.font.size = Pt(12)
         p_h.font.bold = True
-        p_h.font.color.rgb = COLOR_GREEN if "79" in h_title else COLOR_BLUE_ACCENT
+        p_h.font.color.rgb = COLOR_BLUE_ACCENT
 
         p_hb = qtf.add_paragraph()
         p_hb.text = h_body
@@ -232,11 +233,11 @@ def create_deck(output_path):
         p_hb.space_after = Pt(6)
 
     # =========================================================================
-    # SLIDE 2 OF 5: THE CHALLENGE (PROBLEM DEFINITION)
+    # SLIDE 2 OF 5: THE PROBLEM
     # =========================================================================
     s2 = prs.slides.add_slide(blank_layout)
     set_slide_background(s2)
-    add_header(s2, "The Challenge: Operational Gaps in Traditional Laundry Shops", "Phase 1: Problem Definition", "Hazil Enoc (Store Cashier & CRM Lead)")
+    add_header(s2, "The Problem: What Traditional Laundry Shops Struggle With", "Why We Built This", "Hazil Enoc (Front Desk Cashier)")
 
     w_col = Inches(2.78)
     h_col = Inches(5.1)
@@ -248,36 +249,36 @@ def create_deck(output_path):
     c3_x = c2_x + w_col + gap
     c4_x = c3_x + w_col + gap
 
-    add_card(s2, c1_x, top_col, w_col, h_col, "Lost Paper Slips & Tags", [
-        "Physical paper receipts get torn, wet, or lost on the shop floor.",
-        "Manual identification tags lead to misplaced garments and bag mix-ups.",
-        "Zero permanent digital audit trail for customer service histories."
+    add_card(s2, c1_x, top_col, w_col, h_col, "Lost Paper Slips", [
+        "Paper receipts get wet, torn, or misplaced on the counter.",
+        "Handwritten tags fall off bags, causing mixed-up clothes.",
+        "Hard to look up past customer records when using paper notebooks."
     ], icon_text="🏷️")
 
-    add_card(s2, c2_x, top_col, w_col, h_col, "Customer Blindspots", [
-        "Clients have zero visibility into washing and drying stages.",
-        "Students and busy families repeatedly call staff asking if laundry is ready.",
-        "No digital notifications when riders are en route for collection."
+    add_card(s2, c2_x, top_col, w_col, h_col, "No Status Tracking", [
+        "Customers don't know if their clothes are currently being washed or dried.",
+        "Students and busy families keep calling to ask if their laundry is ready.",
+        "No notifications sent when riders are already on the way."
     ], icon_text="👀")
 
-    add_card(s2, c3_x, top_col, w_col, h_col, "Uncoordinated Couriers", [
-        "Riders receive unstructured phone calls with unclear landmarks.",
-        "No sector planning leads to overlapping routes and wasted fuel.",
-        "Peak intake hours overwhelm couriers without scheduling density checks."
+    add_card(s2, c3_x, top_col, w_col, h_col, "Messy Delivery Dispatch", [
+        "Riders only get text messages without clear addresses or landmarks.",
+        "Riders overlap in the same area, wasting time and motorcycle fuel.",
+        "Too many pickup requests during peak hours can overwhelm riders."
     ], icon_text="🛵")
 
-    add_card(s2, c4_x, top_col, w_col, h_col, "Doorstep Math Errors", [
-        "Couriers mentally compute per-kilogram rates and cash change on the road.",
-        "Cashier end-of-day reconciliation deficits from arithmetic mistakes.",
-        "Lack of digital Proof of Delivery (POD) signatures causes disputes."
+    add_card(s2, c4_x, top_col, w_col, h_col, "Manual Math & Change Errors", [
+        "Riders calculate rates and change in their head at the doorstep.",
+        "Mental math mistakes cause short cash at the end of the day.",
+        "No digital signature or proof that the laundry was actually received."
     ], icon_text="🧮")
 
     # =========================================================================
-    # SLIDE 3 OF 5: THE SOLUTION & 3 UNIFIED PORTALS
+    # SLIDE 3 OF 5: THE SOLUTION (3 SIMPLE PORTALS)
     # =========================================================================
     s3 = prs.slides.add_slide(blank_layout)
     set_slide_background(s3)
-    add_header(s3, "The LaundryCare Solution: 3 Unified Portals", "Phase 2: Solution Architecture", "Mark Ephraim Nicor (Laundry Operator & Courier 3)")
+    add_header(s3, "The Solution: 3 Simple Portals for Everyone", "Our Solution", "Mark Ephraim Nicor (Laundry Operator & Rider 3)")
 
     w_card3 = Inches(3.77)
     h_card3 = Inches(5.1)
@@ -287,74 +288,73 @@ def create_deck(output_path):
     p2_x = p1_x + w_card3 + gap3
     p3_x = p2_x + w_card3 + gap3
 
-    add_card(s3, p1_x, top_col, w_card3, h_card3, "Public Customer Portal", [
-        "Zero Login Required: Frictionless access for dormitory students and residents.",
-        "60-Second Online Booking (/book-pickup): Sector-based pickup scheduling.",
-        "Live Real-Time Tracker (/track): 5-step progress bar from intake to doorstep drop-off.",
-        "Transparent Payments: Electronic GCash/Maya reference modal."
+    add_card(s3, p1_x, top_col, w_card3, h_card3, "1. For Customers", [
+        "No Account Needed: Anyone can book without complicated registration.",
+        "Book in 1 Minute: Choose your neighborhood zone, date, and preferred time.",
+        "Live Laundry Tracker: Enter your tracking code to see 5 real-time stages from intake to doorstep delivery.",
+        "Easy Payment Info: Clear rates (₱50/kilo) with Cash on Delivery or GCash options."
     ], icon_text="📱")
 
-    add_card(s3, p2_x, top_col, w_card3, h_card3, "Cashier & Wash Operations", [
-        "Customer CRM Directory (/customers-page): Lifetime spend & loyalty tier tracking.",
-        "Digital Scale Intake (/laundry-orders-page): Auto-pricing calculation (Weight x Rate).",
-        "Wash Hub Monitor (/pickup-schedules-page): Live capacity telemetry for 6 washers & 4 dryers.",
-        "Payments & Settlement (/payments-page): Walk-in settlement & POS payment recording."
+    add_card(s3, p2_x, top_col, w_card3, h_card3, "2. For Shop Staff", [
+        "Customer Records: Easily search customer phone numbers and past orders.",
+        "Order Encoding: Staff enters the weight in kg, and the system auto-computes the total bill.",
+        "Machine Telemetry: Shows how many washing machines and dryers are currently busy or free.",
+        "Cashier Payments: Record customer payments (Cash/GCash) and print paper receipts."
     ], icon_text="🧺")
 
-    add_card(s3, p3_x, top_col, w_card3, h_card3, "Rider Mobile Web App", [
-        "Field Courier Interface (/rider-app): Optimized for motorcycle smartphone mounts.",
-        "1-Tap GPS Navigation: Direct shortcuts into Google Maps & Waze.",
-        "Quick Client Calling: 1-tap phone dialer for arrival coordination.",
-        "HTML5 Signature Canvas: Paperless touch signature handover."
+    add_card(s3, p3_x, top_col, w_card3, h_card3, "3. For Delivery Riders", [
+        "Mobile-Friendly Screen: Designed to be easily used while mounted on a motorcycle.",
+        "1-Tap GPS Button: Opens the customer's location directly in Google Maps or Waze.",
+        "Call Customer: One tap to call the customer's phone when arriving.",
+        "Screen Signature: Customer signs with their finger on the screen as proof of delivery."
     ], icon_text="🛵")
 
     # =========================================================================
-    # SLIDE 4 OF 5: ENGINEERING INTEGRITY & TEST COVERAGE
+    # SLIDE 4 OF 5: HOW IT WORKS & SECURITY
     # =========================================================================
     s4 = prs.slides.add_slide(blank_layout)
     set_slide_background(s4)
-    add_header(s4, "Engineering Integrity: Architecture, RBAC & Test Evidence", "Phase 3: Software Engineering & QA", "Tristan Dave M. Plaza (Mobile UX Lead & Courier 1)")
+    add_header(s4, "How We Built & Tested the System", "Engineering & Testing", "Tristan Dave M. Plaza (Mobile App & Rider 1)")
 
-    # Left: Architecture Card
-    add_card(s4, Inches(0.8), top_col, Inches(5.76), Inches(5.1), "Modular System Architecture", [
-        "Backend Framework: Python 3 + Flask using 6 decoupled domain Blueprints (Customer, Order, Pickup, Delivery, Payment, Portal).",
-        "Merge Conflict Prevention: Team members worked on separate controllers concurrently without Git collisions.",
-        "Database Architecture: SQLite 3 with enforced foreign keys (PRAGMA foreign_keys = ON) and automatic cold-start migrations.",
-        "Dual-Mode Error Handler: Returns JSON for AJAX fetch calls and branded HTML for browser navigation (zero stack trace leakage).",
-        "Role-Based Access Control: Decorator checks session roles (Admin, Staff, Rider) preventing privilege escalation."
-    ], icon_text="🏗️")
+    # Left: Simple Architecture
+    add_card(s4, Inches(0.8), top_col, Inches(5.76), Inches(5.1), "How the System Works Behind the Scenes", [
+        "Built with Python & Flask: A fast and lightweight web framework that runs smoothly on laptops and phones.",
+        "Organized Code: The project is divided into clean modules (Customers, Orders, Pickups, Deliveries, Payments) so team members can work together easily.",
+        "Secure Role Logins: Admin, Staff, and Riders each have their own login so staff only see what they need.",
+        "Reliable Database: Uses SQLite to store all orders, payments, and customer records safely."
+    ], icon_text="💻")
 
-    # Right: Adversarial Security & QA
-    add_card(s4, Inches(6.76), top_col, Inches(5.77), Inches(5.1), "Adversarial Security & Test Evidence", [
-        "Stored XSS Sanitization (BUG-001): Regex-based tag stripper (strip_html_tags()) purges <script> and <style> tags before database storage.",
-        "Physical Capacity Ceiling (BUG-002): Caps single order weight at 150.0 kg. Oversized loads return HTTP 422 commercial warning.",
-        "Historical Date Prevention (BUG-003): Dynamic min date attribute and server-side checks block bookings in the past.",
-        "Modal Freezing Resolution (BUG-004): Universal Escape key event handler cleanly dismisses dialogs across all browsers.",
-        "79 / 79 Passing Pytest Tests: 100% green suite validating RBAC, arithmetic precision, and adversarial boundary limits."
+    # Right: Testing & Safety
+    add_card(s4, Inches(6.76), top_col, Inches(5.77), Inches(5.1), "System Safety & Automated Testing", [
+        "No Invalid Inputs: System blocks accidental mistakes like negative weights, past dates, or empty names.",
+        "79 / 79 Automated Tests Passed: We created 79 test programs to test every button, route, and calculation with zero errors.",
+        "Safe and Private: Protects against web attacks and prevents sensitive business reports from leaking.",
+        "Always Online: Deployed live on the cloud (Render), ready to use anytime from anywhere in Base Camp."
     ], icon_text="🛡️")
 
     # =========================================================================
-    # SLIDE 5 OF 5: OPERATIONS & SYSTEM DEMONSTRATION WORKFLOW
+    # SLIDE 5 OF 5: MOTORCYCLE LOGISTICS & LIVE DEMO
     # =========================================================================
     s5 = prs.slides.add_slide(blank_layout)
     set_slide_background(s5)
-    add_header(s5, "Motorcycle Logistics, POS Settlement & Live System Demo", "Phase 4: Operations & Live Demonstration", "Marvin Oclarino (Financial Settlement Lead & Courier 2)")
+    add_header(s5, "Motorcycle Logistics & Live System Demonstration", "Operations & Demo", "Marvin Oclarino (Payments & Rider 2)")
 
-    # Left: Logistics Card
-    add_card(s5, Inches(0.8), top_col, Inches(5.76), Inches(3.6), "Base Camp Bajaj Motorcycle Logistics", [
-        "Exclusive Barangay Coverage: Central washing hub located at Base Camp Proper.",
-        "Zone 1 (Proper & Commercial Junction): Dispatched to Tristan Dave Plaza (Bajaj Moto 1).",
-        "Zone 2 (Sayre Highway Corridor & Strip): Dispatched to Marvin Oclarino (Bajaj Moto 2).",
-        "Zone 3 (Puroks 1 to 5 Residential): Dispatched to Mark Ephraim Nicor (Bajaj Moto 3).",
-        "Smart Sector Dispatch: Booking engine automatically resolves addresses into courier assignments."
-    ], icon_text="🗺️")
+    # Left: Bajaj Motorcycle Logistics
+    add_card(s5, Inches(0.8), top_col, Inches(5.76), Inches(3.6), "Motorcycle Delivery in Base Camp", [
+        "Central Hub: Main laundry facility located at Base Camp Proper.",
+        "Zone 1 (Base Camp Proper & Junction): Handled by Tristan Dave Plaza (Bajaj Moto 1).",
+        "Zone 2 (Sayre Highway Corridor): Handled by Marvin Oclarino (Bajaj Moto 2).",
+        "Zone 3 (Puroks 1 to 5 Residential): Handled by Mark Ephraim Nicor (Bajaj Moto 3).",
+        "Automatic Assignment: The system reads the customer's barangay zone and assigns the right rider."
+    ], icon_text="🛵")
 
-    # Right: Financial POS Settlement
-    add_card(s5, Inches(6.76), top_col, Inches(5.77), Inches(3.6), "Doorstep Financial POS & Contact Hub", [
-        "Courier Cash Change Helper: Real-time calculation displays exact change in green or a bold red alert (Short: ₱XX.XX).",
-        "80mm Thermal Bluetooth Print: POS receipt modal formatted for thermal paper with zero-dependency inline SVG Code128 barcode.",
-        "Customer Hotline & Socials: Official Hotline 0906-188-8611 • Store Hours: 8:00 AM - 4:30 PM (Mon-Sat).",
-        "Official Facebook Page: Direct integration to https://www.facebook.com/LaundryCare."
+    # Right: Payment & Contact
+    add_card(s5, Inches(6.76), top_col, Inches(5.77), Inches(3.6), "Payments, Receipts & Support", [
+        "Change Calculator: Shows rider the exact change to give the customer to avoid mistakes.",
+        "Thermal Receipts: Prints clean 80mm laundry receipts with barcodes for easy pickup.",
+        "Official Hotline: 0906-188-8611 (Calls & SMS).",
+        "Store Hours: 8:00 AM to 4:30 PM, Monday to Saturday (Closed Sundays).",
+        "Official Facebook Page: facebook.com/LaundryCare."
     ], icon_text="💳")
 
     # Bottom Demo Transition Banner
@@ -372,14 +372,14 @@ def create_deck(output_path):
     dtf.margin_top = Inches(0.18)
 
     dp0 = dtf.paragraphs[0]
-    dp0.text = "LIVE SYSTEM DEMONSTRATION WORKFLOW  •  TRANSITIONING TO APPLICATION"
+    dp0.text = "NOW STARTING THE LIVE SYSTEM DEMONSTRATION"
     dp0.font.name = "Arial"
     dp0.font.size = Pt(13)
     dp0.font.bold = True
     dp0.font.color.rgb = COLOR_GREEN
 
     dp1 = dtf.add_paragraph()
-    dp1.text = "Demo Steps: 1. Public 60s Booking (/book-pickup)  ➔  2. Scale Weighing & Pricing (/laundry-orders-page)  ➔  3. Wash Hub Telemetry (/pickup-schedules-page)  ➔  4. Customer Tracker (/track)  ➔  5. Mobile Courier Touch Signature (/rider-app)  ➔  6. Thermal POS Receipt & Payment Settlement (/payments-page)."
+    dp1.text = "Demo Flow: 1. Customer Books Online  ➔  2. Staff Encodes Weight & Computes Bill  ➔  3. Machine Telemetry Status  ➔  4. Customer Checks Live Tracker  ➔  5. Rider Delivers & Gets Finger Signature  ➔  6. Cashier Records Payment & Prints Receipt."
     dp1.font.name = "Calibri"
     dp1.font.size = Pt(11)
     dp1.font.color.rgb = COLOR_TEXT_MAIN
