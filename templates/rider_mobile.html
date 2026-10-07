@@ -155,13 +155,42 @@
                             </div>
                         </div>
 
+                        {% set d_dest = d.delivery_address if d.delivery_address else 'Panadtalan, Maramag, Bukidnon' %}
+                        {% set d_map_query = (d_dest ~ ', Panadtalan, Maramag, Bukidnon') if ('maramag' not in d_dest|lower and 'panadtalan' not in d_dest|lower and 'bukidnon' not in d_dest|lower) else d_dest %}
                         <div class="dest-address-card">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                            <div>
+                            <div style="flex:1;">
                                 <strong>Destination:</strong> {{ d.delivery_address or 'Panadtalan, Maramag, Bukidnon' }}
                                 {% if d.delivery_notes %}
                                 <div style="font-size:11.5px; color:#64748b; margin-top:2px;"><em>Note:</em> {{ d.delivery_notes }}</div>
                                 {% endif %}
+
+                                <!-- LIVE EMBEDDED GOOGLE MAP ACCORDION (SEE PLACE DIRECTLY ON SCREEN) -->
+                                <details class="map-pin-accordion" style="margin-top: 10px; border-radius: 9px; border: 1px solid #cbd5e1; background: #f8fafc; overflow: hidden;">
+                                    <summary style="padding: 8px 12px; font-size: 12px; font-weight: 700; color: #1d4ed8; cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: space-between; background: #eff6ff;">
+                                        <span style="display:inline-flex; align-items:center; gap:6px;">
+                                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                                            <span>📍 See Place on Google Map (Live Pin)</span>
+                                        </span>
+                                        <span style="font-size:11px; font-weight:600; color:#2563eb;">View Map ▾</span>
+                                    </summary>
+                                    <div style="padding: 10px; background: #ffffff;">
+                                        <div style="border-radius:8px; overflow:hidden; border:1px solid #cbd5e1; box-shadow:0 2px 6px rgba(0,0,0,0.06); line-height:0;">
+                                            <iframe 
+                                                width="100%" 
+                                                height="190" 
+                                                style="border:0; display:block;" 
+                                                loading="lazy" 
+                                                referrerpolicy="no-referrer-when-downgrade" 
+                                                src="https://maps.google.com/maps?q={{ d_map_query|urlencode }}&t=&z=16&ie=UTF8&iwloc=&output=embed">
+                                            </iframe>
+                                        </div>
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:11px; color:#64748b; flex-wrap:wrap; gap:4px;">
+                                            <span>Pinned: <strong>{{ d_map_query }}</strong></span>
+                                            <a href="https://www.google.com/maps/search/?api=1&query={{ d_map_query|urlencode }}" target="_blank" style="color:#2563eb; text-decoration:none; font-weight:700;">Open Map App ↗</a>
+                                        </div>
+                                    </div>
+                                </details>
                             </div>
                         </div>
                     </div>
@@ -170,17 +199,17 @@
                     <div class="stop-actions-bar">
                         <!-- GPS Buttons -->
                         <div class="gps-button-group">
-                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ d.delivery_address|urlencode if d.delivery_address else 'Panadtalan+Maramag+Bukidnon' }}" 
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ d_map_query|urlencode }}" 
                                target="_blank" 
                                class="btn-gps-action btn-gmaps"
-                               title="Open in Google Maps">
+                               title="Turn-by-turn navigation in Google Maps">
                                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
                                 <span>Google Maps</span>
                             </a>
-                            <a href="https://waze.com/ul?q={{ d.delivery_address|urlencode if d.delivery_address else 'Panadtalan+Maramag+Bukidnon' }}" 
+                            <a href="https://waze.com/ul?q={{ d_map_query|urlencode }}&navigate=yes" 
                                target="_blank" 
                                class="btn-gps-action btn-waze"
-                               title="Open in Waze">
+                               title="Turn-by-turn navigation in Waze">
                                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
                                 <span>Waze</span>
                             </a>
@@ -250,20 +279,54 @@
                             </div>
                         </div>
 
+                        {% set p_dest = p.pickup_address if p.pickup_address else 'Panadtalan, Maramag, Bukidnon' %}
+                        {% set p_map_query = (p_dest ~ ', Panadtalan, Maramag, Bukidnon') if ('maramag' not in p_dest|lower and 'panadtalan' not in p_dest|lower and 'bukidnon' not in p_dest|lower) else p_dest %}
                         <div class="dest-address-card">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                            <div>
+                            <div style="flex:1;">
                                 <strong>Pickup Location:</strong> {{ p.pickup_address or 'Panadtalan, Maramag, Bukidnon' }}
+                                {% if p.notes %}
+                                <div style="font-size:11.5px; color:#64748b; margin-top:2px;"><em>Note:</em> {{ p.notes }}</div>
+                                {% endif %}
+
+                                <!-- LIVE EMBEDDED GOOGLE MAP ACCORDION (SEE PLACE DIRECTLY ON SCREEN) -->
+                                <details class="map-pin-accordion" style="margin-top: 10px; border-radius: 9px; border: 1px solid #a7f3d0; background: #f0fdf4; overflow: hidden;">
+                                    <summary style="padding: 8px 12px; font-size: 12px; font-weight: 700; color: #065f46; cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: space-between; background: #ecfdf5;">
+                                        <span style="display:inline-flex; align-items:center; gap:6px;">
+                                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                                            <span>📍 See Pickup on Google Map (Live Pin)</span>
+                                        </span>
+                                        <span style="font-size:11px; font-weight:600; color:#059669;">View Map ▾</span>
+                                    </summary>
+                                    <div style="padding: 10px; background: #ffffff;">
+                                        <div style="border-radius:8px; overflow:hidden; border:1px solid #cbd5e1; box-shadow:0 2px 6px rgba(0,0,0,0.06); line-height:0;">
+                                            <iframe 
+                                                width="100%" 
+                                                height="190" 
+                                                style="border:0; display:block;" 
+                                                loading="lazy" 
+                                                referrerpolicy="no-referrer-when-downgrade" 
+                                                src="https://maps.google.com/maps?q={{ p_map_query|urlencode }}&t=&z=16&ie=UTF8&iwloc=&output=embed">
+                                            </iframe>
+                                        </div>
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:11px; color:#64748b; flex-wrap:wrap; gap:4px;">
+                                            <span>Pinned: <strong>{{ p_map_query }}</strong></span>
+                                            <a href="https://www.google.com/maps/search/?api=1&query={{ p_map_query|urlencode }}" target="_blank" style="color:#059669; text-decoration:none; font-weight:700;">Open Map App ↗</a>
+                                        </div>
+                                    </div>
+                                </details>
                             </div>
                         </div>
                     </div>
 
                     <div class="stop-actions-bar">
                         <div class="gps-button-group">
-                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ p.pickup_address|urlencode if p.pickup_address else 'Panadtalan+Maramag+Bukidnon' }}" target="_blank" class="btn-gps-action btn-gmaps">
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ p_map_query|urlencode }}" target="_blank" class="btn-gps-action btn-gmaps" title="Turn-by-turn navigation in Google Maps">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
                                 <span>Google Maps</span>
                             </a>
-                            <a href="https://waze.com/ul?q={{ p.pickup_address|urlencode if p.pickup_address else 'Panadtalan+Maramag+Bukidnon' }}" target="_blank" class="btn-gps-action btn-waze">
+                            <a href="https://waze.com/ul?q={{ p_map_query|urlencode }}&navigate=yes" target="_blank" class="btn-gps-action btn-waze" title="Turn-by-turn navigation in Waze">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
                                 <span>Waze</span>
                             </a>
                         </div>

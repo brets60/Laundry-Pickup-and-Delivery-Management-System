@@ -511,6 +511,19 @@
                                     <div class="customer-address" title="{{ d.delivery_address or 'No address specified' }}">
                                         {{ d.delivery_address or 'No address specified' }}
                                     </div>
+                                    {% if d.delivery_address %}
+                                    {% set d_tbl_dest = d.delivery_address %}
+                                    {% set d_tbl_q = (d_tbl_dest ~ ', Panadtalan, Maramag, Bukidnon') if ('maramag' not in d_tbl_dest|lower and 'panadtalan' not in d_tbl_dest|lower and 'bukidnon' not in d_tbl_dest|lower) else d_tbl_dest %}
+                                    <div style="margin-top: 3px; display: flex; gap: 8px;">
+                                        <a href="https://www.google.com/maps/search/?api=1&query={{ d_tbl_q|urlencode }}" target="_blank" style="font-size: 11px; color: #0284c7; text-decoration: none; display: inline-flex; align-items: center; gap: 3px; font-weight: 600;" title="View pin on Google Maps">
+                                            <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                            <span>Map Pin</span>
+                                        </a>
+                                        <a href="https://waze.com/ul?q={{ d_tbl_q|urlencode }}&navigate=yes" target="_blank" style="font-size: 11px; color: #059669; text-decoration: none; display: inline-flex; align-items: center; gap: 3px; font-weight: 600;" title="Route in Waze">
+                                            <span>Waze</span>
+                                        </a>
+                                    </div>
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {% if d.assigned_rider %}
@@ -799,6 +812,19 @@
                     <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin-bottom: 4px;">Dispatch Notes</div>
                     <div style="font-size: 13px; font-weight: 500; color: #334155;" id="viewDelNotes">-</div>
                 </div>
+                <!-- LIVE EMBEDDED GOOGLE MAP IN MODAL -->
+                <div style="grid-column: span 2;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+                        <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b;">📍 Live Google Map Destination Pin</span>
+                        <div style="display:flex; gap: 8px;">
+                            <a id="viewDelGmapsLink" href="#" target="_blank" style="font-size: 11.5px; color: #2563eb; font-weight: 700; text-decoration: none;">Google Maps ↗</a>
+                            <a id="viewDelWazeLink" href="#" target="_blank" style="font-size: 11.5px; color: #0284c7; font-weight: 700; text-decoration: none;">Waze ↗</a>
+                        </div>
+                    </div>
+                    <div style="border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1; height: 160px; background: #f8fafc; line-height: 0;">
+                        <iframe id="viewDelMapFrame" width="100%" height="160" style="border:0; display:block;" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src=""></iframe>
+                    </div>
+                </div>
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
@@ -1058,6 +1084,25 @@ function openViewDeliveryModal(button) {
     document.getElementById('viewDelRider').textContent = rider;
     document.getElementById('viewDelDate').textContent = date;
     document.getElementById('viewDelNotes').textContent = notes;
+
+    let mapQuery = address;
+    const lowerAddr = address.toLowerCase();
+    if (!lowerAddr.includes('maramag') && !lowerAddr.includes('panadtalan') && !lowerAddr.includes('bukidnon')) {
+        mapQuery += ', Panadtalan, Maramag, Bukidnon';
+    }
+    const encQuery = encodeURIComponent(mapQuery);
+    const mapFrame = document.getElementById('viewDelMapFrame');
+    if (mapFrame) {
+        mapFrame.src = `https://maps.google.com/maps?q=${encQuery}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+    }
+    const gmapsLink = document.getElementById('viewDelGmapsLink');
+    if (gmapsLink) {
+        gmapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encQuery}`;
+    }
+    const wazeLink = document.getElementById('viewDelWazeLink');
+    if (wazeLink) {
+        wazeLink.href = `https://waze.com/ul?q=${encQuery}&navigate=yes`;
+    }
 
     const badge = document.getElementById('viewDelStatusBadge');
     badge.textContent = status.charAt(0).toUpperCase() + status.slice(1);

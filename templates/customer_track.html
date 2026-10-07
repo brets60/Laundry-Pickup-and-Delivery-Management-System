@@ -187,22 +187,35 @@
                 <div style="font-weight:700; color:#0f172a; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
                     <span>📍 Destination / Pickup Address:</span>
                 </div>
-                <div style="color:#475569;">
-                    {% if result.delivery and result.delivery.delivery_address %}
-                        {{ result.delivery.delivery_address }}
-                    {% elif result.pickup and result.pickup.pickup_address %}
-                        {{ result.pickup.pickup_address }}
-                    {% elif result.customer and result.customer.address %}
-                        {{ result.customer.address }}
-                    {% else %}
-                        Poblacion, Maramag, Bukidnon
-                    {% endif %}
+                {% set track_addr = (result.delivery.delivery_address if (result.delivery and result.delivery.delivery_address) else (result.pickup.pickup_address if (result.pickup and result.pickup.pickup_address) else (result.customer.address if (result.customer and result.customer.address) else 'Panadtalan, Maramag, Bukidnon')))|string %}
+                {% set track_full_addr = (track_addr ~ ', Panadtalan, Maramag, Bukidnon') if ('maramag' not in track_addr|lower and 'panadtalan' not in track_addr|lower and 'bukidnon' not in track_addr|lower) else track_addr %}
+                <div style="color:#475569; font-weight:500;">
+                    {{ track_addr }}
                 </div>
                 {% if result.delivery and result.delivery.assigned_rider %}
                 <div style="margin-top:8px; font-size:12.5px; color:#2563eb; font-weight:700;">
                     🚚 Assigned Courier: {{ result.delivery.assigned_rider }}
                 </div>
                 {% endif %}
+
+                <!-- LIVE GOOGLE MAP EMBED (SEE PLACE ON GOOGLE MAP) -->
+                <div style="margin-top:12px; border-radius:10px; overflow:hidden; border:1px solid #cbd5e1; line-height:0; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                    <iframe 
+                        width="100%" 
+                        height="180" 
+                        style="border:0; display:block;" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade" 
+                        src="https://maps.google.com/maps?q={{ track_full_addr|urlencode }}&t=&z=16&ie=UTF8&iwloc=&output=embed">
+                    </iframe>
+                </div>
+                <div style="margin-top:8px; display:flex; justify-content:space-between; align-items:center; font-size:11.5px; color:#64748b; flex-wrap:wrap; gap:6px;">
+                    <span>Location: <strong>{{ track_full_addr }}</strong></span>
+                    <div style="display:flex; gap:10px;">
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ track_full_addr|urlencode }}" target="_blank" style="color:#2563eb; font-weight:700; text-decoration:none;">Open in Google Maps ↗</a>
+                        <a href="https://waze.com/ul?q={{ track_full_addr|urlencode }}&navigate=yes" target="_blank" style="color:#0284c7; font-weight:700; text-decoration:none;">Open in Waze ↗</a>
+                    </div>
+                </div>
             </div>
 
             <!-- ACTION BUTTONS (PAY VIA GCASH & WHATSAPP) -->
