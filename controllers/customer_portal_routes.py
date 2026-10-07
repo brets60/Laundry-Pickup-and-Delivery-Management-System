@@ -17,15 +17,13 @@ def get_db_connection():
 
 def resolve_maramag_zone_and_rider(barangay_or_address):
     addr = (barangay_or_address or '').lower()
-    # Zone 1: Torres Capitol College Inc. & Campus Dorms -> Tristan Dave Plaza (Bajaj Moto 1)
     if any(k in addr for k in ['torres', 'college', 'school', 'tcci', 'p2b', 'dorm', 'boarding', 'student', 'proper', 'junction']):
-        return 'Zone 1: Torres Capitol College & Student Dorms', 'Tristan Dave Plaza (Bajaj Moto 1)'
-    # Zone 2: Sayre Highway Commercial Corridor -> Marvin Oclarino (Bajaj Moto 2)
+        zone = 'Zone 1: Torres Capitol College & Student Dorms'
     elif any(k in addr for k in ['sayre', 'highway', 'commercial', 'market', 'strip']):
-        return 'Zone 2: Sayre Highway Commercial Corridor (Panadtalan)', 'Marvin Oclarino (Bajaj Moto 2)'
-    # Zone 3: Barangay Panadtalan Residential Puroks -> Mark Ephraim Nicor (Bajaj Moto 3)
+        zone = 'Zone 2: Sayre Highway Commercial Corridor (Panadtalan)'
     else:
-        return 'Zone 3: Barangay Panadtalan Residential Puroks', 'Mark Ephraim Nicor (Bajaj Moto 3)'
+        zone = 'Zone 3: Barangay Panadtalan Residential Puroks'
+    return zone, 'Mark Ephraim Nicor (Motorcycle Courier)'
 
 
 resolve_basecamp_zone_and_rider = resolve_maramag_zone_and_rider

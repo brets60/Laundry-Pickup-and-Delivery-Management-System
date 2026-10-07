@@ -132,9 +132,9 @@
                     {{ (session.get('username') or 'A')[0]|upper }}
                 </div>
                 <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    <div style="font-size: 13px; font-weight: 600; color: #f8fafc;">{{ session.get('username', 'Admin')|capitalize }}</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #f8fafc;">{{ session.get('full_name') or session.get('username', 'Admin')|capitalize }}</div>
                     <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: {% if session.get('role') == 'rider' %}#fdba74{% elif session.get('role') == 'staff' %}#6ee7b7{% else %}#93c5fd{% endif %};">
-                        {{ session.get('role', 'admin')|upper }}
+                        {% if session.get('role') == 'staff' %}STAFF DESK{% elif session.get('role') == 'rider' %}RIDER{% else %}MANAGER{% endif %}
                     </div>
                 </div>
             </div>
@@ -393,40 +393,16 @@
                         <a href="/delivery-records-page" style="font-size: 12px; font-weight: 700; color: #2563eb; text-decoration: none;">View All &rarr;</a>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <!-- Courier 1: Tristan Dave Plaza (Zone 1) -->
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #eff6ff; border-radius: 10px; border: 1px solid #bfdbfe;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="width: 34px; height: 34px; border-radius: 50%; background: #2563eb; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px;">TD</div>
+                        <!-- Dedicated Courier: Mark Ephraim Nicor -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #eff6ff; border-radius: 12px; border: 1px solid #bfdbfe;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 38px; height: 38px; border-radius: 50%; background: #2563eb; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">EN</div>
                                 <div>
-                                    <div style="font-size: 13px; font-weight: 800; color: #0f172a;">Tristan Dave Plaza (Moto 1)</div>
-                                    <div style="font-size: 11px; color: #1d4ed8; font-weight: 600;">📍 Zone 1: TCCI &amp; Dorms Circuit</div>
+                                    <div style="font-size: 14px; font-weight: 800; color: #0f172a;">Mark Ephraim Nicor</div>
+                                    <div style="font-size: 11.5px; color: #1d4ed8; font-weight: 600;">🛵 Dedicated Motorcycle Courier &bull; Panadtalan &amp; Maramag Hub</div>
                                 </div>
                             </div>
-                            <span style="font-size: 11px; font-weight: 700; color: {% if driver_statuses and driver_statuses.tristan == 'On Route' %}#059669; background: #ecfdf5;{% else %}#2563eb; background: #eff6ff;{% endif %} padding: 3px 8px; border-radius: 10px;">{{ driver_statuses.tristan if driver_statuses else 'Standby' }}</span>
-                        </div>
-
-                        <!-- Courier 2: Marvin Oclarino (Zone 2) -->
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #ecfdf5; border-radius: 10px; border: 1px solid #a7f3d0;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="width: 34px; height: 34px; border-radius: 50%; background: #059669; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px;">MO</div>
-                                <div>
-                                    <div style="font-size: 13px; font-weight: 800; color: #0f172a;">Marvin Oclarino (Moto 2)</div>
-                                    <div style="font-size: 11px; color: #047857; font-weight: 600;">🛣️ Zone 2: Sayre Hwy Corridor</div>
-                                </div>
-                            </div>
-                            <span style="font-size: 11px; font-weight: 700; color: {% if driver_statuses and driver_statuses.marvin == 'On Route' %}#059669; background: #ecfdf5;{% else %}#2563eb; background: #eff6ff;{% endif %} padding: 3px 8px; border-radius: 10px;">{{ driver_statuses.marvin if driver_statuses else 'Standby' }}</span>
-                        </div>
-
-                        <!-- Courier 3: Mark Ephraim Nicor (Zone 3) -->
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #fffbeb; border-radius: 10px; border: 1px solid #fde68a;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="width: 34px; height: 34px; border-radius: 50%; background: #d97706; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px;">EN</div>
-                                <div>
-                                    <div style="font-size: 13px; font-weight: 800; color: #0f172a;">Mark Ephraim Nicor (Moto 3)</div>
-                                    <div style="font-size: 11px; color: #b45309; font-weight: 600;">🏡 Zone 3: Panadtalan Puroks 1–5</div>
-                                </div>
-                            </div>
-                            <span style="font-size: 11px; font-weight: 700; color: {% if driver_statuses and driver_statuses.nicor == 'On Route' %}#059669; background: #ecfdf5;{% else %}#d97706; background: #fef3c7;{% endif %} padding: 3px 8px; border-radius: 10px;">{{ driver_statuses.nicor if driver_statuses else 'Standby' }}</span>
+                            <span style="font-size: 11px; font-weight: 700; color: #059669; background: #ecfdf5; padding: 4px 10px; border-radius: 10px; border: 1px solid #a7f3d0;">Active On Duty</span>
                         </div>
                     </div>
                 </div>

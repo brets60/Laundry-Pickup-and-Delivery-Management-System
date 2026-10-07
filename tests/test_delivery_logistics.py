@@ -13,7 +13,7 @@ def client():
 def auth_driver(client):
     with client.session_transaction() as sess:
         sess['user_id'] = 4
-        sess['username'] = 'tristan'
+        sess['username'] = 'ephraim'
         sess['role'] = 'rider'
     return client
 
@@ -23,8 +23,7 @@ def test_delivery_page_renders_fleet_logistics(auth_driver):
     res = auth_driver.get('/delivery-records-page')
     assert res.status_code == 200
     assert b"Active Fleet Logistics" in res.data or b"Driver Stop Timeline" in res.data
-    assert b"Motorcycle 1 (Tristan Dave Plaza)" in res.data
-    assert b"Delivery Van 1 (Marvin Oclarino)" in res.data
+    assert b"Mark Ephraim Nicor" in res.data
 
 
 def test_create_and_assign_delivery_to_rider(auth_driver):
@@ -33,7 +32,7 @@ def test_create_and_assign_delivery_to_rider(auth_driver):
         'customer': 'Elena Gomez',
         'delivery_date': '2026-10-02',
         'delivery_address': 'Dorm 2, CMU Musuan, Maramag',
-        'assigned_rider': 'Tristan Dave Plaza (Motorcycle 1)',
+        'assigned_rider': 'Mark Ephraim Nicor (Motorcycle Courier)',
         'status': 'Scheduled',
         'delivery_notes': 'Call upon arriving at the guardhouse'
     }
@@ -43,7 +42,7 @@ def test_create_and_assign_delivery_to_rider(auth_driver):
     conn = get_db_connection()
     deliv = conn.execute("SELECT * FROM delivery_records WHERE customer = 'Elena Gomez' ORDER BY id DESC LIMIT 1").fetchone()
     assert deliv is not None
-    assert deliv['assigned_rider'] == 'Tristan Dave Plaza (Motorcycle 1)'
+    assert 'Mark Ephraim Nicor' in deliv['assigned_rider']
     assert 'CMU Musuan' in deliv['delivery_address']
     assert deliv['status'] == 'Scheduled'
     conn.close()
@@ -60,7 +59,7 @@ def test_delivery_status_transition_to_delivered(auth_driver):
         'customer': 'Elena Gomez',
         'delivery_date': '2026-10-02',
         'delivery_address': 'Dorm 2, CMU Musuan, Maramag',
-        'assigned_rider': 'Tristan Dave Plaza (Motorcycle 1)',
+        'assigned_rider': 'Mark Ephraim Nicor (Motorcycle Courier)',
         'status': 'Delivered',
         'delivery_notes': 'Handed over and customer signature verified'
     }

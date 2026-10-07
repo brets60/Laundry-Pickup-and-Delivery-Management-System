@@ -130,9 +130,9 @@
                     {{ (session.get('username') or 'A')[0]|upper }}
                 </div>
                 <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    <div style="font-size: 13px; font-weight: 600; color: #f8fafc;">{{ session.get('username', 'Admin')|capitalize }}</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #f8fafc;">{{ session.get('full_name') or session.get('username', 'Admin')|capitalize }}</div>
                     <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: {% if session.get('role') == 'rider' %}#fdba74{% elif session.get('role') == 'staff' %}#6ee7b7{% else %}#93c5fd{% endif %};">
-                        {{ session.get('role', 'admin')|upper }}
+                        {% if session.get('role') == 'staff' %}STAFF DESK{% elif session.get('role') == 'rider' %}RIDER{% else %}MANAGER{% endif %}
                     </div>
                 </div>
             </div>

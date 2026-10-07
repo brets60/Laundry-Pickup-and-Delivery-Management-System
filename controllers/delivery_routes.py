@@ -49,7 +49,9 @@ def manage_deliveries():
         delivery_date = (data.get('delivery_date') or '').strip()
         delivery_address = (data.get('delivery_address') or '').strip()
         status = (data.get('status') or 'Scheduled').strip()
-        assigned_rider = (data.get('assigned_rider') or '').strip()
+        assigned_rider = (data.get('assigned_rider') or 'Mark Ephraim Nicor').strip()
+        if not assigned_rider:
+            assigned_rider = 'Mark Ephraim Nicor'
         delivery_notes = (data.get('delivery_notes') or '').strip()
         order_id_val = data.get('order_id')
 
@@ -331,27 +333,26 @@ def rider_app_view():
         role = session.get('role', 'admin')
         username = session.get('username', '')
 
-        if role == 'rider' and username != 'rider':
+        if role == 'rider':
+            # Single dedicated courier Mark Ephraim Nicor manages all fleet deliveries & pickups
             deliveries = conn.execute("""
                 SELECT d.*, o.laundry_weight, o.service_type, o.total_price, c.contact_number, c.name as customer_name
                 FROM delivery_records d
                 LEFT JOIN laundry_orders o ON d.order_id = o.id
                 LEFT JOIN customers c ON d.customer = c.name
-                WHERE d.assigned_rider LIKE ? OR d.assigned_rider IS NULL OR d.assigned_rider = ''
                 ORDER BY CASE 
                     WHEN d.status = 'Out for Delivery' THEN 1
                     WHEN d.status = 'Scheduled' THEN 2
                     ELSE 3 END, d.id ASC
-            """, (f"%{username}%",)).fetchall()
+            """).fetchall()
 
             pickups = conn.execute("""
                 SELECT p.*, c.contact_number
                 FROM pickup_schedules p
                 LEFT JOIN customers c ON p.customer = c.name
-                WHERE (p.assigned_driver LIKE ? OR p.assigned_driver IS NULL OR p.assigned_driver = '')
-                  AND p.status != 'Picked Up' AND p.status != 'Cancelled'
+                WHERE p.status != 'Picked Up' AND p.status != 'Cancelled'
                 ORDER BY p.id ASC
-            """, (f"%{username}%",)).fetchall()
+            """).fetchall()
         else:
             deliveries = conn.execute("""
                 SELECT d.*, o.laundry_weight, o.service_type, o.total_price, c.contact_number, c.name as customer_name

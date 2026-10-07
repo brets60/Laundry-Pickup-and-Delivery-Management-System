@@ -112,16 +112,52 @@
         });
     }
 
+    /**
+     * 5. Universal Mobile Sidebar Toggle & Drawer Support
+     */
+    function initMobileSidebar() {
+        const topHeaders = document.querySelectorAll(
+            '.orders-top-header, .deliveries-top-header, .pickups-top-header, .dashboard-topbar, .customers-top-header, .payments-top-header, .topbar'
+        );
+
+        topHeaders.forEach(header => {
+            if (!header.querySelector('.mobile-menu-toggle')) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'mobile-menu-toggle';
+                btn.setAttribute('aria-label', 'Toggle Navigation Menu');
+                btn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.body.classList.toggle('sidebar-open');
+                });
+                header.insertBefore(btn, header.firstChild);
+            }
+        });
+
+        let overlay = document.querySelector('.lc-sidebar-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'lc-sidebar-overlay';
+            document.body.appendChild(overlay);
+        }
+        overlay.addEventListener('click', () => {
+            document.body.classList.remove('sidebar-open');
+        });
+    }
+
     // Auto-init on DOMContentLoaded
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             initCounters();
             initStaggeredTables();
             initButtonFeedback();
+            initMobileSidebar();
         });
     } else {
         initCounters();
         initStaggeredTables();
         initButtonFeedback();
+        initMobileSidebar();
     }
 })();

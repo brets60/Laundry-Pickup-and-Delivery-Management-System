@@ -311,14 +311,8 @@ def dispatch_order(order_id):
             flash(f"Order #ORD-{order_id:04d} is already dispatched as Delivery #DEL-{existing_del['id']:04d}.", "info")
             return redirect('/delivery-records-page')
 
-        # Smart zone and rider resolution based on customer address
-        addr_lower = cust_address.lower()
-        if any(k in addr_lower for k in ['highway', 'sayre', 'commercial', 'zone 2']):
-            rider = "Marvin Oclarino"
-        elif any(k in addr_lower for k in ['purok', 'residential', 'zone 3']):
-            rider = "Mark Ephraim Nicor"
-        else:
-            rider = "Tristan Dave Plaza"
+        # Dedicated motorcycle courier for all dispatches: Mark Ephraim Nicor
+        rider = "Mark Ephraim Nicor"
 
         today = datetime.now().strftime("%Y-%m-%d")
         cursor = conn.cursor()

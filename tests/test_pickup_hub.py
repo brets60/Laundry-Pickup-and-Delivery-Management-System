@@ -46,7 +46,7 @@ def test_create_pickup_schedule(auth_operator):
         'pickup_date': '2026-10-05',
         'pickup_time': '01:00 PM - 04:00 PM',
         'pickup_address': 'Poblacion, Maramag, Bukidnon',
-        'assigned_driver': 'Marvin Oclarino (Delivery Van 1)',
+        'assigned_driver': 'Mark Ephraim Nicor (Motorcycle Courier)',
         'status': 'Pending',
         'notes': 'Heavy curtains intake'
     }

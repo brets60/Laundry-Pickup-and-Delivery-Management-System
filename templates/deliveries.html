@@ -132,9 +132,9 @@
                     {{ (session.get('username') or 'A')[0]|upper }}
                 </div>
                 <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    <div style="font-size: 13px; font-weight: 600; color: #f8fafc;">{{ session.get('username', 'Admin')|capitalize }}</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #f8fafc;">{{ session.get('full_name') or session.get('username', 'Admin')|capitalize }}</div>
                     <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: {% if session.get('role') == 'rider' %}#fdba74{% elif session.get('role') == 'staff' %}#6ee7b7{% else %}#93c5fd{% endif %};">
-                        {{ session.get('role', 'admin')|upper }}
+                        {% if session.get('role') == 'staff' %}STAFF DESK{% elif session.get('role') == 'rider' %}RIDER{% else %}MANAGER{% endif %}
                     </div>
                 </div>
             </div>
@@ -303,9 +303,7 @@
                     </div>
                 </div>
                 <div class="driver-route-tabs">
-                    <button type="button" class="driver-tab-btn active" onclick="switchDriverRoute('van1', this)">Van 1 (Marvin Oclarino)</button>
-                    <button type="button" class="driver-tab-btn" onclick="switchDriverRoute('moto1', this)">Motorcycle 1 (Tristan Dave Plaza)</button>
-                    <button type="button" class="driver-tab-btn" onclick="switchDriverRoute('all', this)">All Fleet Stops</button>
+                    <button type="button" class="driver-tab-btn active" onclick="switchDriverRoute('all', this)">Motorcycle Courier (Mark Ephraim Nicor)</button>
                 </div>
             </div>
 
@@ -641,11 +639,7 @@
                     <div class="form-group">
                         <label class="form-label" for="new_assigned_rider">Assigned Rider</label>
                         <select id="new_assigned_rider" name="assigned_rider" class="form-control">
-                            <option value="">-- Select Courier --</option>
-                            <option value="Tristan Dave Plaza">Tristan Dave Plaza (Motorcycle 1)</option>
-                            <option value="Marvin Oclarino">Marvin Oclarino (Motorcycle 2)</option>
-                            <option value="Mark Ephraim Nicor">Mark Ephraim Nicor (Motorcycle 3)</option>
-                            <option value="Rider Mike">Rider Mike (Motorcycle Backup)</option>
+                            <option value="Mark Ephraim Nicor" selected>Mark Ephraim Nicor (Motorcycle Courier)</option>
                         </select>
                     </div>
 
@@ -716,11 +710,7 @@
                     <div class="form-group">
                         <label class="form-label" for="edit_assigned_rider">Assigned Rider</label>
                         <select id="edit_assigned_rider" name="assigned_rider" class="form-control">
-                            <option value="">-- Unassigned --</option>
-                            <option value="Tristan Dave Plaza">Tristan Dave Plaza (Motorcycle 1)</option>
-                            <option value="Marvin Oclarino">Marvin Oclarino (Motorcycle 2)</option>
-                            <option value="Mark Ephraim Nicor">Mark Ephraim Nicor (Motorcycle 3)</option>
-                            <option value="Rider Mike">Rider Mike (Motorcycle Backup)</option>
+                            <option value="Mark Ephraim Nicor" selected>Mark Ephraim Nicor (Motorcycle Courier)</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -996,13 +986,7 @@ function onOrderSelected(selectElem) {
         const addrLower = address.toLowerCase();
         const riderSelect = document.getElementById('new_assigned_rider');
         if (riderSelect) {
-            if (addrLower.includes('highway') || addrLower.includes('sayre') || addrLower.includes('commercial') || addrLower.includes('zone 2')) {
-                riderSelect.value = 'Marvin Oclarino';
-            } else if (addrLower.includes('purok') || addrLower.includes('residential') || addrLower.includes('zone 3')) {
-                riderSelect.value = 'Mark Ephraim Nicor';
-            } else {
-                riderSelect.value = 'Tristan Dave Plaza';
-            }
+            riderSelect.value = 'Mark Ephraim Nicor';
         }
     }
 }

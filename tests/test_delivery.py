@@ -191,7 +191,7 @@ def test_dispatch_order_creates_delivery_and_updates_status(auth_client):
 
     assert del_rec is not None
     assert del_rec['customer'] == 'Test Dorm Student'
-    assert del_rec['assigned_rider'] == 'Tristan Dave Plaza'
+    assert del_rec['assigned_rider'] == 'Mark Ephraim Nicor'
     assert order_rec['status'] == 'Out for Delivery'
 
 

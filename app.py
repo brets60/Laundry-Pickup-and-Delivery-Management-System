@@ -242,18 +242,15 @@ def init_database():
         conn.execute("ALTER TABLE users ADD COLUMN full_name TEXT")
 
     # -------------------------
-    # SEED 5 SYSTEM USERS & ROLES
+    # SEED SYSTEM USERS & ROLES
     # -------------------------
     default_users = [
         ("admin", "admin123", "admin", "John Michael Bretaña (Manager)"),
         ("johnmichael", "admin123", "admin", "John Michael Bretaña"),
-        ("hazil", "cashier123", "staff", "Hazil Enoc (Store Cashier)"),
-        ("marvin", "driver123", "rider", "Marvin Oclarino (Motorcycle Courier 2)"),
-        ("tristan", "driver123", "rider", "Tristan Dave Plaza (Motorcycle Courier 1)"),
-        ("ephraim", "driver123", "rider", "Mark Ephraim Nicor (Motorcycle Courier 3)"),
-        ("mark", "operator123", "staff", "Mark Ephraim Nicor (Laundry Operator)"),
-        ("staff", "staff123", "staff", "Staff Desk (Hazil Enoc & Mark Ephraim Nicor)"),
-        ("rider", "rider123", "rider", "Motorcycle Fleet (Tristan, Marvin & Ephraim)"),
+        ("hazil", "cashier123", "staff", "Hazil Enoc (Staff Desk)"),
+        ("staff", "staff123", "staff", "Hazil Enoc (Staff Desk)"),
+        ("ephraim", "driver123", "rider", "Mark Ephraim Nicor (Motorcycle Courier)"),
+        ("rider", "driver123", "rider", "Mark Ephraim Nicor (Motorcycle Courier)"),
     ]
 
     for uname, upass, urole, ufullname in default_users:
@@ -284,15 +281,16 @@ def init_database():
                 (hashed_pw, urole, ufullname, existing_u["id"])
             )
 
+    # Clean up deprecated riders if present in users
+    conn.execute("DELETE FROM users WHERE username IN ('marvin', 'tristan', 'mark')")
+
     # -------------------------
-    # SEED OFFICIAL 5-MEMBER STAFF ROSTER
+    # SEED OFFICIAL STAFF ROSTER
     # -------------------------
     official_staff = [
         ("John Michael Bretaña", "Manager", "0906-188-8611", "Active", "Main Hub / Panadtalan Office (Near Torres Capitol College Inc.)"),
-        ("Hazil Enoc", "Store Cashier", "0918-234-5678", "Active", "Front Counter / Panadtalan Cashier Desk"),
-        ("Marvin Oclarino", "Delivery Driver", "0919-345-6789", "Active", "Bajaj Moto 2 (Sayre Highway & Commercial Corridor)"),
-        ("Tristan Dave Plaza", "Delivery Driver", "0920-456-7890", "Active", "Bajaj Moto 1 (Torres Capitol College Inc. & Dorms)"),
-        ("Mark Ephraim Nicor", "Laundry Operator & Delivery Driver", "0921-567-8901", "Active", "Bajaj Moto 3 (Panadtalan Residential Puroks 1-5) & Wash Station"),
+        ("Hazil Enoc", "Staff Desk", "0918-234-5678", "Active", "Front Counter / Panadtalan Reception & Staff Desk"),
+        ("Mark Ephraim Nicor", "Motorcycle Courier", "0921-567-8901", "Active", "Dedicated Motorcycle Courier (Panadtalan & Maramag Hub)"),
     ]
 
     for s_name, s_role, s_contact, s_status, s_station in official_staff:

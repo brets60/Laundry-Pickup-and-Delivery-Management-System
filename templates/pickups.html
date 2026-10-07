@@ -132,9 +132,9 @@
                     {{ (session.get('username') or 'A')[0]|upper }}
                 </div>
                 <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    <div style="font-size: 13px; font-weight: 600; color: #f8fafc;">{{ session.get('username', 'Admin')|capitalize }}</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #f8fafc;">{{ session.get('full_name') or session.get('username', 'Admin')|capitalize }}</div>
                     <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: {% if session.get('role') == 'rider' %}#fdba74{% elif session.get('role') == 'staff' %}#6ee7b7{% else %}#93c5fd{% endif %};">
-                        {{ session.get('role', 'admin')|upper }}
+                        {% if session.get('role') == 'staff' %}STAFF DESK{% elif session.get('role') == 'rider' %}RIDER{% else %}MANAGER{% endif %}
                     </div>
                 </div>
             </div>
@@ -194,12 +194,12 @@
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                 <span class="zone-label-tag">📍 Panadtalan Sector (Near Torres Capitol College Inc.):</span>
                 <button type="button" class="filter-pill active" onclick="setZoneFilter('all', this)">All Sectors</button>
-                <button type="button" class="filter-pill" style="border-left:3px solid #2563eb;" onclick="setZoneFilter('zone 1', this)">📍 Zone 1: TCCI &amp; Dorms (Tristan)</button>
-                <button type="button" class="filter-pill" style="border-left:3px solid #10b981;" onclick="setZoneFilter('zone 2', this)">🛣️ Zone 2: Sayre Highway Corridor (Marvin)</button>
-                <button type="button" class="filter-pill" style="border-left:3px solid #f59e0b;" onclick="setZoneFilter('zone 3', this)">🏡 Zone 3: Panadtalan Puroks 1–5 (Ephraim)</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #2563eb;" onclick="setZoneFilter('zone 1', this)">📍 Zone 1: TCCI &amp; Dorms</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #10b981;" onclick="setZoneFilter('zone 2', this)">🛣️ Zone 2: Sayre Highway</button>
+                <button type="button" class="filter-pill" style="border-left:3px solid #f59e0b;" onclick="setZoneFilter('zone 3', this)">🏡 Zone 3: Puroks 1–5</button>
             </div>
             <div style="font-size:12px; color:#64748b;">
-                3 Dedicated Motorcycle Couriers Assigned
+                Dedicated Motorcycle Courier: <strong>Mark Ephraim Nicor</strong>
             </div>
         </div>
 
@@ -307,7 +307,7 @@
                 <h4 class="batch-title">Morning TCCI &amp; Dorms Circuit</h4>
                 <div class="batch-driver-info">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/></svg>
-                    <span>Courier: <strong>Tristan Dave Plaza (Motorcycle 1)</strong></span>
+                    <span>Courier: <strong>Mark Ephraim Nicor (Motorcycle Courier)</strong></span>
                 </div>
                 <div class="batch-progress-bar">
                     <div class="batch-progress-fill" style="width: {% if batches %}{{ batches.morning.pct }}{% else %}0{% endif %}%; background: #10b981;"></div>
@@ -330,7 +330,7 @@
                 <h4 class="batch-title">Afternoon Sayre Highway &amp; Commercial Strip</h4>
                 <div class="batch-driver-info">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <span>Courier: <strong>Marvin Oclarino (Motorcycle 2)</strong></span>
+                    <span>Courier: <strong>Mark Ephraim Nicor (Motorcycle Courier)</strong></span>
                 </div>
                 <div class="batch-progress-bar">
                     <div class="batch-progress-fill" style="width: {% if batches %}{{ batches.afternoon.pct }}{% else %}0{% endif %}%; background: #2563eb;"></div>
@@ -353,7 +353,7 @@
                 <h4 class="batch-title">Evening Puroks 1–5 Residential Circuit</h4>
                 <div class="batch-driver-info">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 8"/></svg>
-                    <span>Courier: <strong>Mark Ephraim Nicor (Motorcycle 3)</strong></span>
+                    <span>Courier: <strong>Mark Ephraim Nicor (Motorcycle Courier)</strong></span>
                 </div>
                 <div class="batch-progress-bar">
                     <div class="batch-progress-fill" style="width: {% if batches %}{{ batches.evening.pct }}{% else %}0{% endif %}%; background: #94a3b8;"></div>
@@ -612,11 +612,7 @@
                     <div class="form-group">
                         <label class="form-label" for="new_assigned_driver">Assigned Driver</label>
                         <select id="new_assigned_driver" name="assigned_driver" class="form-control">
-                            <option value="">-- Assign Courier --</option>
-                            <option value="Tristan Dave Plaza">Tristan Dave Plaza (Motorcycle 1)</option>
-                            <option value="Marvin Oclarino">Marvin Oclarino (Motorcycle 2)</option>
-                            <option value="Mark Ephraim Nicor">Mark Ephraim Nicor (Motorcycle 3)</option>
-                            <option value="Driver Mike">Driver Mike (Motorcycle Backup)</option>
+                            <option value="Mark Ephraim Nicor" selected>Mark Ephraim Nicor (Motorcycle Courier)</option>
                         </select>
                     </div>
 
@@ -688,11 +684,7 @@
                     <div class="form-group">
                         <label class="form-label" for="edit_assigned_driver">Assigned Driver</label>
                         <select id="edit_assigned_driver" name="assigned_driver" class="form-control">
-                            <option value="">-- Unassigned --</option>
-                            <option value="Tristan Dave Plaza">Tristan Dave Plaza (Motorcycle 1)</option>
-                            <option value="Marvin Oclarino">Marvin Oclarino (Motorcycle 2)</option>
-                            <option value="Mark Ephraim Nicor">Mark Ephraim Nicor (Motorcycle 3)</option>
-                            <option value="Driver Mike">Driver Mike (Motorcycle Backup)</option>
+                            <option value="Mark Ephraim Nicor" selected>Mark Ephraim Nicor (Motorcycle Courier)</option>
                         </select>
                     </div>
                     <div class="form-group">

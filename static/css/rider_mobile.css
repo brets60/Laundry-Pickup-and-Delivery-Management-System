@@ -687,3 +687,114 @@ body {
     color: #0f766e;
     border: 1px solid #99f6e4;
 }
+
+/* =========================================================
+   PHONE SCREEN OPTIMIZATIONS (<= 540px)
+   ========================================================= */
+@media (max-width: 540px) {
+    .portal-header {
+        padding: 10px 14px;
+    }
+    .portal-header-row {
+        gap: 8px;
+    }
+    .portal-brand {
+        gap: 8px;
+    }
+    .portal-title-text {
+        font-size: 15px;
+    }
+    .portal-subtitle-text {
+        display: none;
+    }
+    .portal-header-actions {
+        gap: 6px;
+    }
+    .btn-portal-outline {
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 6px;
+    }
+    .btn-portal-outline span {
+        display: none;
+    }
+    .rider-shift-banner {
+        padding: 12px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .shift-status-badge {
+        align-self: flex-start;
+    }
+    .portal-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 10px 12px 0;
+    }
+    .portal-kpi-card {
+        padding: 10px 12px;
+    }
+    .kpi-main-number {
+        font-size: 18px;
+    }
+    .portal-body {
+        padding: 12px 12px 36px;
+        gap: 12px;
+    }
+    .tab-toolbar {
+        padding: 4px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .tab-button-group {
+        width: 100%;
+        display: flex;
+        gap: 4px;
+    }
+    .tab-btn-pill {
+        flex: 1;
+        text-align: center;
+        padding: 10px 6px;
+        font-size: 12.5px;
+        min-height: 44px;
+    }
+    .stop-card-pro {
+        padding: 14px 14px;
+        border-radius: 12px;
+        gap: 12px;
+    }
+    .stop-customer-name {
+        font-size: 15px;
+    }
+    .stop-actions-bar {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .gps-button-group {
+        display: flex;
+        width: 100%;
+        gap: 6px;
+    }
+    .btn-gps-nav {
+        flex: 1;
+        min-height: 40px;
+        justify-content: center;
+        font-size: 12px;
+    }
+    .workflow-status-btn {
+        width: 100%;
+        min-height: 46px;
+        font-size: 13.5px;
+        justify-content: center;
+    }
+    .modal-content-pro {
+        width: 94% !important;
+        margin: 10px auto !important;
+        padding: 18px 16px !important;
+        border-radius: 16px !important;
+    }
+    #proSignatureCanvas {
+        height: 130px !important;
+    }
+}

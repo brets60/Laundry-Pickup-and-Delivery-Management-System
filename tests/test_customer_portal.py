@@ -86,17 +86,17 @@ def test_barangay_zone_auto_assignment(client):
     """Test that booking in different Panadtalan sectors routes to dedicated Bajaj motorcycle couriers."""
     from controllers.customer_portal_routes import resolve_maramag_zone_and_rider
 
-    # Zone 1: Torres Capitol College Inc. & Dorms -> Tristan Dave Plaza (Bajaj Moto 1)
+    # Zone 1: Torres Capitol College Inc. & Dorms -> Mark Ephraim Nicor
     z1, r1 = resolve_maramag_zone_and_rider("Torres Capitol College Inc. (TCCI Campus)")
     assert "Zone 1" in z1
-    assert "Tristan Dave" in r1
+    assert "Nicor" in r1 or "Ephraim" in r1
 
-    # Zone 2: Sayre Highway & Commercial -> Marvin Oclarino (Bajaj Moto 2)
+    # Zone 2: Sayre Highway & Commercial -> Mark Ephraim Nicor
     z2, r2 = resolve_maramag_zone_and_rider("Sayre Highway, Panadtalan, Maramag")
     assert "Zone 2" in z2
-    assert "Marvin" in r2
+    assert "Nicor" in r2 or "Ephraim" in r2
 
-    # Zone 3: Puroks 1-5 Residential -> Mark Ephraim Nicor (Bajaj Moto 3)
+    # Zone 3: Puroks 1-5 Residential -> Mark Ephraim Nicor
     z3, r3 = resolve_maramag_zone_and_rider("Purok 3 (Riverside), Panadtalan")
     assert "Zone 3" in z3
     assert "Nicor" in r3 or "Ephraim" in r3

@@ -23,7 +23,7 @@ def auth_admin(client):
 def auth_rider(client):
     with client.session_transaction() as sess:
         sess['user_id'] = 4
-        sess['username'] = 'tristan'
+        sess['username'] = 'ephraim'
         sess['role'] = 'rider'
     return client
 
