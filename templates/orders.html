@@ -395,7 +395,7 @@
                                         <a href="/laundry-orders-page/edit/{{ order.id }}" class="btn-action-outline btn-interactive">
                                             Edit
                                         </a>
-                                        <a href="/delivery-records-page?order_id={{ order.id }}&customer={{ order.customer }}" class="btn-action-outline btn-action-dispatch btn-interactive" title="Dispatch order with rider">
+                                        <a href="/laundry-orders-page/dispatch/{{ order.id }}" class="btn-action-outline btn-action-dispatch btn-interactive" title="Dispatch order with rider">
                                             Dispatch
                                         </a>
                                         <button type="button" class="btn-action-outline btn-action-delete btn-interactive"
@@ -640,7 +640,7 @@ function openOrderInspectionDrawer(id, code, cust, phone, service, weight, price
     document.getElementById('drawerPrintTagBtn').onclick = function() {
         openPrintModal(code, cust, weight, service, price);
     };
-    document.getElementById('drawerDispatchLink').href = '/delivery-records-page?order_id=' + id + '&customer=' + encodeURIComponent(cust);
+    document.getElementById('drawerDispatchLink').href = '/laundry-orders-page/dispatch/' + id;
 
     // Show slide-over drawer
     document.getElementById('orderInspectionBackdrop').classList.add('active');

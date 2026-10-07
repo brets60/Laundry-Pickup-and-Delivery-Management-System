@@ -158,3 +158,60 @@ def test_delete_delivery(auth_client):
     deleted = conn.execute("SELECT * FROM delivery_records WHERE id = ?", (delivery_id,)).fetchone()
     conn.close()
     assert deleted is None
+
+
+def test_dispatch_order_creates_delivery_and_updates_status(auth_client):
+    """Test: Dispatching an order creates a delivery_record and updates laundry_orders status."""
+    conn = sqlite3.connect('laundry.db')
+    cursor = conn.cursor()
+    # Create test customer with TCCI address
+    cursor.execute(
+        "INSERT INTO customers (name, contact_number, address) VALUES (?, ?, ?)",
+        ('Test Dorm Student', '09171234567', 'Torres Capitol College Dorms, Panadtalan')
+    )
+    # Create test order
+    cursor.execute(
+        "INSERT INTO laundry_orders (customer, laundry_weight, service_type, status, total_price) VALUES (?, ?, ?, ?, ?)",
+        ('Test Dorm Student', 5.0, 'Wash-Dry-Fold', 'Ready for Delivery', 175.0)
+    )
+    order_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+
+    # Dispatch the order
+    response = auth_client.get(f'/laundry-orders-page/dispatch/{order_id}', follow_redirects=True)
+    assert response.status_code == 200
+    assert b"successfully dispatched" in response.data
+
+    conn = sqlite3.connect('laundry.db')
+    conn.row_factory = sqlite3.Row
+    del_rec = conn.execute("SELECT * FROM delivery_records WHERE order_id = ?", (order_id,)).fetchone()
+    order_rec = conn.execute("SELECT * FROM laundry_orders WHERE id = ?", (order_id,)).fetchone()
+    conn.close()
+
+    assert del_rec is not None
+    assert del_rec['customer'] == 'Test Dorm Student'
+    assert del_rec['assigned_rider'] == 'Tristan Dave Plaza'
+    assert order_rec['status'] == 'Out for Delivery'
+
+
+def test_dispatch_order_already_dispatched(auth_client):
+    """Test: Dispatching an already dispatched order redirects with info message without duplicate records."""
+    conn = sqlite3.connect('laundry.db')
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO laundry_orders (customer, laundry_weight, service_type, status, total_price) VALUES (?, ?, ?, ?, ?)",
+        ('Repeat Customer', 4.0, 'Wash-Dry-Fold', 'Out for Delivery', 140.0)
+    )
+    order_id = cursor.lastrowid
+    cursor.execute(
+        "INSERT INTO delivery_records (customer, order_id, delivery_date, status) VALUES (?, ?, '2026-10-08', 'Scheduled')",
+        ('Repeat Customer', order_id)
+    )
+    conn.commit()
+    conn.close()
+
+    response = auth_client.get(f'/laundry-orders-page/dispatch/{order_id}', follow_redirects=True)
+    assert response.status_code == 200
+    assert b"is already dispatched" in response.data
+

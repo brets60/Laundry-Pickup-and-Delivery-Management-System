@@ -82,6 +82,8 @@ def manage_deliveries():
                 (customer, order_id, delivery_date, delivery_address, status, assigned_rider, delivery_notes)
             )
             new_id = cursor.lastrowid
+            if order_id:
+                conn.execute("UPDATE laundry_orders SET status = 'Out for Delivery' WHERE id = ?", (order_id,))
             conn.commit()
             flash(f"Delivery record for '{customer}' created successfully!", "success")
 
@@ -123,8 +125,13 @@ def manage_deliveries():
         """
     ).fetchall()
 
-    customers = conn.execute("SELECT id, name, contact_number FROM customers ORDER BY name ASC").fetchall()
-    orders = conn.execute("SELECT id, customer, laundry_weight, service_type FROM laundry_orders ORDER BY id DESC").fetchall()
+    customers = conn.execute("SELECT id, name, contact_number, address FROM customers ORDER BY name ASC").fetchall()
+    orders = conn.execute("""
+        SELECT o.id, o.customer, o.laundry_weight, o.service_type, c.address as customer_address
+        FROM laundry_orders o
+        LEFT JOIN customers c ON o.customer = c.name
+        ORDER BY o.id DESC
+    """).fetchall()
 
     # Calculate status counts for UI summary cards
     stats = {

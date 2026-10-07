@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, flash, jsonify
 import sqlite3
 from controllers.utils import is_async_request
@@ -287,3 +288,55 @@ def delete_order(order_id):
         }), 200
 
     return redirect('/laundry-orders-page')
+
+
+# ==========================================
+# 5. DISPATCH ORDER TO DELIVERY
+# ==========================================
+@order_bp.route('/laundry-orders-page/dispatch/<int:order_id>', methods=['GET', 'POST'])
+def dispatch_order(order_id):
+    conn = get_db_connection()
+    try:
+        order = conn.execute("SELECT * FROM laundry_orders WHERE id = ?", (order_id,)).fetchone()
+        if not order:
+            flash(f"Order #{order_id} not found.", "warning")
+            return redirect('/laundry-orders-page')
+
+        customer = conn.execute("SELECT * FROM customers WHERE name = ?", (order['customer'],)).fetchone()
+        cust_address = customer['address'] if customer and customer['address'] else "Panadtalan, Maramag, Bukidnon (Near TCCI)"
+        
+        # Check if delivery record already exists for this order
+        existing_del = conn.execute("SELECT * FROM delivery_records WHERE order_id = ?", (order_id,)).fetchone()
+        if existing_del:
+            flash(f"Order #ORD-{order_id:04d} is already dispatched as Delivery #DEL-{existing_del['id']:04d}.", "info")
+            return redirect('/delivery-records-page')
+
+        # Smart zone and rider resolution based on customer address
+        addr_lower = cust_address.lower()
+        if any(k in addr_lower for k in ['highway', 'sayre', 'commercial', 'zone 2']):
+            rider = "Marvin Oclarino"
+        elif any(k in addr_lower for k in ['purok', 'residential', 'zone 3']):
+            rider = "Mark Ephraim Nicor"
+        else:
+            rider = "Tristan Dave Plaza"
+
+        today = datetime.now().strftime("%Y-%m-%d")
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO delivery_records 
+            (customer, order_id, delivery_date, delivery_address, status, assigned_rider, delivery_notes)
+            VALUES (?, ?, ?, ?, 'Scheduled', ?, ?)
+            """,
+            (order['customer'], order_id, today, cust_address, rider, f"Dispatched from Order #ORD-{order_id:04d}")
+        )
+        new_del_id = cursor.lastrowid
+        
+        # Update order status
+        conn.execute("UPDATE laundry_orders SET status = 'Out for Delivery' WHERE id = ?", (order_id,))
+        conn.commit()
+        
+        flash(f"Order #ORD-{order_id:04d} successfully dispatched to {rider}! Delivery record #DEL-{new_del_id:04d} created.", "success")
+        return redirect('/delivery-records-page')
+    finally:
+        conn.close()

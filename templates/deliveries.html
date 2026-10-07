@@ -604,7 +604,7 @@
                     <input type="text" id="new_customer" name="customer" class="form-control" list="customerList" placeholder="e.g. Maria Santos" required>
                     <datalist id="customerList">
                         {% for c in customers %}
-                            <option value="{{ c.name }}">{{ c.name }}</option>
+                            <option value="{{ c.name }}" data-address="{{ c.address or '' }}">{{ c.name }}</option>
                         {% endfor %}
                     </datalist>
                 </div>
@@ -616,7 +616,7 @@
                         <select id="new_order_id" name="order_id" class="form-control" onchange="onOrderSelected(this)">
                             <option value="">-- None / Custom --</option>
                             {% for ord in orders %}
-                                <option value="{{ ord.id }}" data-customer="{{ ord.customer }}">
+                                <option value="{{ ord.id }}" data-customer="{{ ord.customer }}" data-address="{{ ord.customer_address or '' }}">
                                     #ORD-{{ "%04d"|format(ord.id) }} ({{ ord.customer }})
                                 </option>
                             {% endfor %}
@@ -981,10 +981,29 @@ document.getElementById('openDispatchModalBtn').addEventListener('click', () => 
 
 // Handle auto-population from Order Select
 function onOrderSelected(selectElem) {
+    if (!selectElem) return;
     const selectedOption = selectElem.options[selectElem.selectedIndex];
+    if (!selectedOption) return;
     const customer = selectedOption.getAttribute('data-customer');
+    const address = selectedOption.getAttribute('data-address');
     if (customer) {
-        document.getElementById('new_customer').value = customer;
+        const custInput = document.getElementById('new_customer');
+        if (custInput) custInput.value = customer;
+    }
+    if (address) {
+        const addrInput = document.getElementById('new_delivery_address');
+        if (addrInput) addrInput.value = address;
+        const addrLower = address.toLowerCase();
+        const riderSelect = document.getElementById('new_assigned_rider');
+        if (riderSelect) {
+            if (addrLower.includes('highway') || addrLower.includes('sayre') || addrLower.includes('commercial') || addrLower.includes('zone 2')) {
+                riderSelect.value = 'Marvin Oclarino';
+            } else if (addrLower.includes('purok') || addrLower.includes('residential') || addrLower.includes('zone 3')) {
+                riderSelect.value = 'Mark Ephraim Nicor';
+            } else {
+                riderSelect.value = 'Tristan Dave Plaza';
+            }
+        }
     }
 }
 
@@ -1115,7 +1134,7 @@ function openSlipModal(button) {
 }
 
 // Check URL query params for auto-dispatch from Orders page
-window.addEventListener('DOMContentLoaded', () => {
+function checkAutoDispatchParams() {
     const params = new URLSearchParams(window.location.search);
     const orderId = params.get('order_id');
     const customer = params.get('customer');
@@ -1123,11 +1142,16 @@ window.addEventListener('DOMContentLoaded', () => {
     if (orderId || customer) {
         if (orderId) {
             const orderSelect = document.getElementById('new_order_id');
-            if (orderSelect) orderSelect.value = orderId;
+            if (orderSelect) {
+                orderSelect.value = orderId;
+                onOrderSelected(orderSelect);
+            }
         }
         if (customer) {
             const customerInput = document.getElementById('new_customer');
-            if (customerInput) customerInput.value = customer;
+            if (customerInput && !customerInput.value) {
+                customerInput.value = customer;
+            }
         }
         const today = new Date().toISOString().split('T')[0];
         const dateInput = document.getElementById('new_delivery_date');
@@ -1136,7 +1160,13 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         openModal('dispatchModal');
     }
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkAutoDispatchParams);
+} else {
+    checkAutoDispatchParams();
+}
 
     // Switch Driver Routes Interactive Logic
     const routeDatasets = {

@@ -1783,6 +1783,31 @@
                     <a href="/track" style="color: #2563eb; font-weight: 700; text-decoration: none;">Track Order</a>
                 </div>
 
+                <!-- QUICK DEMO ACCOUNTS HELPER -->
+                <div style="margin-top: 22px; padding: 14px 16px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px;">
+                    <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                        <span>Demo Accounts (Click to Auto-Fill)</span>
+                        <span style="font-size: 10px; color: #94a3b8; font-weight: 600;">Staff Roles</span>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                        <button type="button" onclick="fillCredentials('admin', 'admin123')" style="cursor: pointer; border: 1px solid #bfdbfe; background: #eff6ff; color: #1e40af; padding: 5px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; transition: background 0.15s;" title="Manager: John Michael Bretaña">
+                            👑 Admin
+                        </button>
+                        <button type="button" onclick="fillCredentials('hazil', 'cashier123')" style="cursor: pointer; border: 1px solid #fed7aa; background: #fff7ed; color: #c2410c; padding: 5px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; transition: background 0.15s;" title="Store Cashier: Hazil">
+                            🧺 Cashier
+                        </button>
+                        <button type="button" onclick="fillCredentials('tristan', 'driver123')" style="cursor: pointer; border: 1px solid #bbf7d0; background: #f0fdf4; color: #15803d; padding: 5px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; transition: background 0.15s;" title="Rider 1: Tristan Dave Plaza (TCCI & Dorms)">
+                            🛵 Tristan (Rider 1)
+                        </button>
+                        <button type="button" onclick="fillCredentials('marvin', 'driver123')" style="cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e; padding: 5px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; transition: background 0.15s;" title="Rider 2: Marvin Oclarino (Sayre Highway)">
+                            🛣️ Marvin (Rider 2)
+                        </button>
+                        <button type="button" onclick="fillCredentials('ephraim', 'driver123')" style="cursor: pointer; border: 1px solid #e9d5ff; background: #faf5ff; color: #7e22ce; padding: 5px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; transition: background 0.15s;" title="Rider 3: Mark Ephraim Nicor (Panadtalan Puroks 1-5)">
+                            🏡 Ephraim (Rider 3)
+                        </button>
+                    </div>
+                </div>
+
 
 
 
@@ -2146,6 +2171,18 @@
 
         }
     );
+
+    function fillCredentials(u, p) {
+        const uInput = document.getElementById('username');
+        const pInput = document.getElementById('password');
+        if (uInput && pInput) {
+            uInput.value = u;
+            pInput.value = p;
+            uInput.removeAttribute('aria-invalid');
+            pInput.removeAttribute('aria-invalid');
+            uInput.focus();
+        }
+    }
 
 </script>
 
