@@ -9,11 +9,7 @@ pickup_bp = Blueprint('pickup', __name__)
 DATABASE = os.environ.get("DATABASE", "laundry.db")
 
 
-def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
-    conn.execute("PRAGMA foreign_keys = ON;")
-    conn.row_factory = sqlite3.Row
-    return conn
+from db import get_db_connection
 
 
 def is_authenticated():

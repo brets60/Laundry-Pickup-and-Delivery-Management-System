@@ -42,11 +42,7 @@ DATABASE = os.environ.get("DATABASE", "laundry.db")
 # DATABASE CONNECTION
 # ============================================================
 
-def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
-    conn.execute("PRAGMA foreign_keys = ON;")
-    conn.row_factory = sqlite3.Row
-    return conn
+from db import get_db_connection, is_postgres
 
 
 # ============================================================
@@ -54,6 +50,8 @@ def get_db_connection():
 # ============================================================
 
 def init_database():
+    if is_postgres():
+        return
 
     conn = get_db_connection()
 

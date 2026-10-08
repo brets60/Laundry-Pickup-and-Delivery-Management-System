@@ -8,11 +8,7 @@ portal_bp = Blueprint('customer_portal', __name__)
 DATABASE = "laundry.db"
 
 
-def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
-    conn.execute("PRAGMA foreign_keys = ON;")
-    conn.row_factory = sqlite3.Row
-    return conn
+from db import get_db_connection
 
 
 def resolve_maramag_zone_and_rider(barangay_or_address):
