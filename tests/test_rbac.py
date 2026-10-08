@@ -25,11 +25,11 @@ def test_three_users_exist():
     assert "admin" in user_dict
     assert user_dict["admin"]["role"] == "admin"
 
-    assert "staff" in user_dict
-    assert user_dict["staff"]["role"] == "staff"
+    assert "hazil" in user_dict
+    assert user_dict["hazil"]["role"] == "staff"
 
-    assert "rider" in user_dict
-    assert user_dict["rider"]["role"] == "rider"
+    assert "ephraim" in user_dict
+    assert user_dict["ephraim"]["role"] == "rider"
 
 
 def test_admin_login_and_full_access(client):
@@ -49,7 +49,7 @@ def test_admin_login_and_full_access(client):
 
 def test_staff_login_and_restricted_access(client):
     """Staff logs in, can access operational modules, but blocked from admin-only sections."""
-    res = client.post("/login", data={"username": "staff", "password": "staff123"}, follow_redirects=True)
+    res = client.post("/login", data={"username": "hazil", "password": "cashier123"}, follow_redirects=True)
     assert res.status_code == 200
 
     with client.session_transaction() as sess:
@@ -78,7 +78,7 @@ def test_staff_login_and_restricted_access(client):
 
 def test_rider_login_and_redirection(client):
     """Rider logs in and redirects to rider mobile app, and is restricted from admin pages."""
-    res = client.post("/login", data={"username": "rider", "password": "rider123"})
+    res = client.post("/login", data={"username": "ephraim", "password": "driver123"})
     assert res.status_code == 302
     assert ("/rider-app" in res.location) or ("/delivery-records-page" in res.location)
 
@@ -99,7 +99,7 @@ def test_rider_login_and_redirection(client):
 
 def test_rider_app_gps_and_status(client):
     """Test Rider mobile app view with GPS navigation links and status transitions."""
-    client.post("/login", data={"username": "rider", "password": "rider123"})
+    client.post("/login", data={"username": "ephraim", "password": "driver123"})
     res = client.get("/rider-app")
     assert res.status_code == 200
     assert b"Google Maps" in res.data

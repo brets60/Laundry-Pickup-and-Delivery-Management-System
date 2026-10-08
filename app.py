@@ -245,12 +245,9 @@ def init_database():
     # SEED SYSTEM USERS & ROLES
     # -------------------------
     default_users = [
-        ("admin", "admin123", "admin", "John Michael Bretaña (Manager)"),
-        ("johnmichael", "admin123", "admin", "John Michael Bretaña"),
-        ("hazil", "cashier123", "staff", "Hazil Enoc (Staff Desk)"),
-        ("staff", "staff123", "staff", "Hazil Enoc (Staff Desk)"),
-        ("ephraim", "driver123", "rider", "Mark Ephraim Nicor (Motorcycle Courier)"),
-        ("rider", "driver123", "rider", "Mark Ephraim Nicor (Motorcycle Courier)"),
+        ("admin", "admin123", "admin", "John Michael Bretaña"),
+        ("hazil", "cashier123", "staff", "Hazil Enoc"),
+        ("ephraim", "driver123", "rider", "Mark Ephraim Nicor"),
     ]
 
     for uname, upass, urole, ufullname in default_users:
