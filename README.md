@@ -1,5 +1,14 @@
 
 
+# LaundryCare — Laundry Pickup and Delivery Management System
+
+**Live Web Application:** [https://laundrycare-management.onrender.com](https://laundrycare-management.onrender.com)  
+**GitHub Repository:** [https://github.com/brets60/Laundry-Pickup-and-Delivery-Management-System](https://github.com/brets60/Laundry-Pickup-and-Delivery-Management-System)  
+**Cloud Database:** Supabase (PostgreSQL - Singapore Region)  
+**Application Hosting:** Render Cloud Platform (PaaS)
+
+---
+
 # Problem Statement
 
 Many laundry shops still use manual methods to record customer information, laundry orders, pickup schedules, and delivery transactions. This often leads to lost records, delayed deliveries, and poor communication with customers. The proposed Laundry Pickup and Delivery Management System aims to automate these processes by allowing customers to schedule pickups and deliveries, monitor the status of their laundry, and help administrators efficiently manage orders and records.
