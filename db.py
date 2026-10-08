@@ -68,6 +68,9 @@ class PostgresCursorWrapper:
         # Convert '?' placeholders to '%s'
         converted_sql = re.sub(r'\?', '%s', trimmed)
 
+        # Convert SQLite datetime('now') to standard CURRENT_TIMESTAMP
+        converted_sql = re.sub(r"datetime\(['\"]now['\"]\)", "CURRENT_TIMESTAMP", converted_sql, flags=re.IGNORECASE)
+
         is_insert = converted_sql.strip().upper().startswith("INSERT INTO")
         has_returning = "RETURNING" in converted_sql.upper()
         if is_insert and not has_returning:

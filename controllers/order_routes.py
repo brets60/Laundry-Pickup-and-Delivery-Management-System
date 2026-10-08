@@ -66,7 +66,7 @@ def manage_orders():
         cursor.execute(
             """
             INSERT INTO laundry_orders (customer, laundry_weight, service_type, total_price, status, created_at)
-            VALUES (?, ?, ?, ?, ?, datetime('now'))
+            VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
             """,
             (customer, weight_val, service_type, price_val, status)
         )
