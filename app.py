@@ -248,6 +248,8 @@ def init_database():
         ("admin", "admin123", "admin", "John Michael Bretaña"),
         ("hazil", "cashier123", "staff", "Hazil Enoc"),
         ("ephraim", "driver123", "rider", "Mark Ephraim Nicor"),
+        ("marvin", "driver123", "rider", "Marvin Oclarino"),
+        ("tristan", "driver123", "rider", "Tristan Dave M. Plaza"),
     ]
 
     for uname, upass, urole, ufullname in default_users:
@@ -278,9 +280,6 @@ def init_database():
                 (hashed_pw, urole, ufullname, existing_u["id"])
             )
 
-    # Clean up deprecated riders if present in users
-    conn.execute("DELETE FROM users WHERE username IN ('marvin', 'tristan', 'mark')")
-
     # -------------------------
     # SEED OFFICIAL STAFF ROSTER
     # -------------------------
@@ -288,6 +287,8 @@ def init_database():
         ("John Michael Bretaña", "Manager", "0906-188-8611", "Active", "Main Hub / Panadtalan Office (Near Torres Capitol College Inc.)"),
         ("Hazil Enoc", "Staff Desk", "0918-234-5678", "Active", "Front Counter / Panadtalan Reception & Staff Desk"),
         ("Mark Ephraim Nicor", "Motorcycle Courier", "0921-567-8901", "Active", "Dedicated Motorcycle Courier (Panadtalan & Maramag Hub)"),
+        ("Marvin Oclarino", "Delivery Driver", "0917-345-6789", "Active", "Delivery Logistics (Panadtalan & Maramag Service Area)"),
+        ("Tristan Dave M. Plaza", "Delivery Driver", "0920-456-7890", "Active", "Pickup & Delivery Operations (Sayre Highway Corridor)"),
     ]
 
     for s_name, s_role, s_contact, s_status, s_station in official_staff:
