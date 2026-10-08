@@ -11,6 +11,24 @@ def is_postgres():
     target = os.environ.get("DATABASE_URL", DATABASE_URL).strip()
     return target.startswith("postgres://") or target.startswith("postgresql://")
 
+def normalize_supabase_url(url):
+    """
+    Supabase direct connections (db.[ref].supabase.co:5432) only provide IPv6 DNS.
+    Render and many cloud hosts do not support IPv6 outbound connections.
+    This helper automatically translates direct URLs to the Supabase IPv4 Pooler URL.
+    """
+    trimmed = url.strip()
+    if trimmed.startswith("postgres://"):
+        trimmed = trimmed.replace("postgres://", "postgresql://", 1)
+
+    m = re.match(r'postgresql://([^:]+):([^@]+)@db\.([a-zA-Z0-9]+)\.supabase\.co:5432/(.+)', trimmed)
+    if m:
+        user, pw, ref, dbname = m.groups()
+        pooler_user = f"{user}.{ref}" if "." not in user else user
+        return f"postgresql://{pooler_user}:{pw}@aws-0-ap-southeast-1.pooler.supabase.com:5432/{dbname}"
+    return trimmed
+
+
 class PostgresRowWrapper(dict):
     def __init__(self, raw_row, cursor_description):
         super().__init__()
@@ -148,19 +166,25 @@ class PostgresConnectionWrapper:
         self._conn.close()
 
 
+def get_sqlite_fallback(database_path=None):
+    target_file = database_path or DEFAULT_SQLITE_DB
+    conn = sqlite3.connect(target_file)
+    conn.execute("PRAGMA foreign_keys = ON;")
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
 def get_db_connection(database_path=None):
     db_target = os.environ.get("DATABASE_URL", DATABASE_URL).strip()
     
     if db_target.startswith("postgres://") or db_target.startswith("postgresql://"):
         import psycopg2
-        if db_target.startswith("postgres://"):
-            db_target = db_target.replace("postgres://", "postgresql://", 1)
-        
-        raw_conn = psycopg2.connect(db_target)
-        return PostgresConnectionWrapper(raw_conn)
+        normalized_url = normalize_supabase_url(db_target)
+        try:
+            raw_conn = psycopg2.connect(normalized_url, connect_timeout=6)
+            return PostgresConnectionWrapper(raw_conn)
+        except Exception as err:
+            print(f"[Database Connection Warning] Failed to connect to PostgreSQL ({err}). Falling back to SQLite.")
+            return get_sqlite_fallback(database_path)
     else:
-        target_file = database_path or DEFAULT_SQLITE_DB
-        conn = sqlite3.connect(target_file)
-        conn.execute("PRAGMA foreign_keys = ON;")
-        conn.row_factory = sqlite3.Row
-        return conn
+        return get_sqlite_fallback(database_path)
