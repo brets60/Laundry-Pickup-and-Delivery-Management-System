@@ -510,6 +510,130 @@
         setInterval(poll, 2500); // 2.5 second polling interval
     }
 
+    /**
+     * 8. Quick Account Switcher Modal Engine
+     */
+    function initAccountSwitcher() {
+        let modal = document.getElementById('lcAccountSwitcherModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'lcAccountSwitcherModal';
+            modal.style.cssText = 'display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(15,23,42,0.65); backdrop-filter:blur(4px); z-index:9999999; align-items:center; justify-content:center; padding:16px; font-family:Inter,system-ui,sans-serif; animation:fadeIn 0.2s ease-out; box-sizing:border-box;';
+            modal.innerHTML = `
+                <div style="background:#ffffff; border-radius:16px; width:100%; max-width:440px; box-shadow:0 24px 50px rgba(0,0,0,0.25); overflow:hidden; border:1px solid #cbd5e1; animation:scaleUp 0.2s ease-out;">
+                    <div style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color:#ffffff; padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-size:22px;">👥</span>
+                            <div>
+                                <h3 style="margin:0; font-size:15px; font-weight:800; color:#f8fafc;">Switch User Account</h3>
+                                <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;">Instant role testing &amp; multi-user session switcher</div>
+                            </div>
+                        </div>
+                        <button type="button" id="lcCloseSwitcherBtn" style="background:rgba(255,255,255,0.12); border:none; color:#cbd5e1; font-size:20px; cursor:pointer; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; line-height:1;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'">&times;</button>
+                    </div>
+
+                    <div id="lcAccountsList" style="padding:14px 18px; max-height:420px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;">
+                        <div style="padding:24px; text-align:center; color:#94a3b8; font-size:13px;">Loading system accounts...</div>
+                    </div>
+
+                    <div style="background:#f8fafc; border-top:1px solid #e2e8f0; padding:12px 18px; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:11.5px; color:#64748b;">Instant login &bull; No password needed</span>
+                        <a href="/logout" onclick="return confirm('Sign out of LaundryCare?');" style="font-size:12px; font-weight:700; color:#ef4444; text-decoration:none; display:flex; align-items:center; gap:4px;">
+                            <span>Sign Out &rarr;</span>
+                        </a>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            const closeBtn = modal.querySelector('#lcCloseSwitcherBtn');
+            if (closeBtn) {
+                closeBtn.onclick = () => { modal.style.display = 'none'; };
+            }
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.style.display = 'none';
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.style.display === 'flex') {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        function renderAccounts(accounts, currentUser) {
+            const listEl = document.getElementById('lcAccountsList');
+            if (!listEl) return;
+            if (!accounts || accounts.length === 0) {
+                listEl.innerHTML = '<div style="padding:20px; text-align:center; color:#94a3b8; font-size:13px;">No accounts found.</div>';
+                return;
+            }
+
+            listEl.innerHTML = accounts.map(u => {
+                const isCurrent = (u.username === currentUser || u.is_current);
+                const role = (u.role || 'staff').toLowerCase();
+                const roleBg = role === 'admin' ? '#eff6ff' : (role === 'staff' ? '#ecfdf5' : '#fff7ed');
+                const roleColor = role === 'admin' ? '#2563eb' : (role === 'staff' ? '#059669' : '#ea580c');
+                const roleIcon = role === 'admin' ? '👑' : (role === 'staff' ? '📋' : '🛵');
+                const roleLabel = role === 'admin' ? 'Administrator' : (role === 'staff' ? 'Front Desk Staff' : 'Courier Rider');
+                const avatarBg = role === 'admin' ? '#2563eb' : (role === 'staff' ? '#059669' : '#ea580c');
+
+                return `
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:${isCurrent ? '#f0fdf4' : '#ffffff'}; border:1.5px solid ${isCurrent ? '#86efac' : '#e2e8f0'}; border-radius:12px; transition:all 0.15s; gap:12px;" onmouseover="if(!${isCurrent}) this.style.borderColor='#93c5fd';" onmouseout="if(!${isCurrent}) this.style.borderColor='#e2e8f0';">
+                        <div style="display:flex; align-items:center; gap:12px; min-width:0; flex:1;">
+                            <div style="width:36px; height:36px; border-radius:50%; background:${avatarBg}; color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                ${(u.full_name || u.username)[0].toUpperCase()}
+                            </div>
+                            <div style="min-width:0; flex:1;">
+                                <div style="font-size:13px; font-weight:700; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${u.full_name}</div>
+                                <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
+                                    <span style="font-size:10px; font-weight:800; padding:1px 6px; border-radius:5px; background:${roleBg}; color:${roleColor};">${roleIcon} ${roleLabel}</span>
+                                    <span style="font-size:11px; color:#64748b;">@${u.username}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            ${isCurrent ? `
+                                <span style="font-size:11px; font-weight:800; color:#059669; background:#dcfce7; padding:4px 9px; border-radius:7px; border:1px solid #86efac; display:inline-flex; align-items:center; gap:4px;">
+                                    ✓ Active
+                                </span>
+                            ` : `
+                                <a href="/switch-account/${u.username}" style="font-size:11.5px; font-weight:700; color:#ffffff; background:#2563eb; padding:5px 12px; border-radius:7px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; box-shadow:0 1px 3px rgba(37,99,235,0.25);" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+                                    Switch &rarr;
+                                </a>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openAccountSwitcher() {
+            modal.style.display = 'flex';
+            fetch('/api/system-accounts', { credentials: 'same-origin' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.accounts) {
+                        renderAccounts(data.accounts, data.current_user);
+                    }
+                })
+                .catch(() => {});
+        }
+
+        window.openAccountSwitcher = openAccountSwitcher;
+
+        // Bind all switcher trigger buttons
+        document.querySelectorAll('.account-switcher-btn, .user-profile, .sidebar-footer > div:first-child').forEach(el => {
+            el.style.cursor = 'pointer';
+            el.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openAccountSwitcher();
+            };
+        });
+    }
+
     // Auto-init on DOMContentLoaded
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
@@ -518,6 +642,7 @@
             initButtonFeedback();
             initMobileSidebar();
             initStaffNotifications();
+            initAccountSwitcher();
         });
     } else {
         initCounters();
@@ -525,6 +650,8 @@
         initButtonFeedback();
         initMobileSidebar();
         initStaffNotifications();
+        initAccountSwitcher();
     }
 })();
+
 

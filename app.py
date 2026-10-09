@@ -367,17 +367,25 @@ def role_required(allowed_roles):
 
 
 @app.context_processor
-def inject_notification_count():
+def inject_global_context():
     if "user_id" in session:
         try:
             conn = get_db_connection()
             row = conn.execute("SELECT COUNT(*) AS cnt FROM notifications WHERE is_read = 0").fetchone()
             count = row["cnt"] if row else 0
+            u_rows = conn.execute("""
+                SELECT id, username, role, full_name 
+                FROM users 
+                ORDER BY CASE role WHEN 'admin' THEN 1 WHEN 'staff' THEN 2 ELSE 3 END, id ASC
+            """).fetchall()
             conn.close()
-            return {"unread_notif_count": count}
+            return {
+                "unread_notif_count": count,
+                "system_accounts": [dict(u) for u in u_rows]
+            }
         except Exception:
-            return {"unread_notif_count": 0}
-    return {"unread_notif_count": 0}
+            return {"unread_notif_count": 0, "system_accounts": []}
+    return {"unread_notif_count": 0, "system_accounts": []}
 
 
 # ============================================================
@@ -667,6 +675,110 @@ def logout():
     session.clear()
 
     return redirect("/login")
+
+
+# ============================================================
+# QUICK ACCOUNT SWITCHER
+# ============================================================
+
+@app.route("/switch-account/<username>", methods=["GET", "POST"])
+def switch_account(username):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    conn = get_db_connection()
+    try:
+        user = conn.execute(
+            "SELECT id, username, role, full_name FROM users WHERE username = ?",
+            (username,)
+        ).fetchone()
+
+        if user:
+            session["user_id"] = user["id"]
+            session["username"] = user["username"]
+            session["role"] = user["role"] if user["role"] else "admin"
+            session["full_name"] = user["full_name"] if user["full_name"] else user["username"].capitalize()
+            flash(f"Switched account to {session['full_name']} ({session['role'].upper()})", "success")
+
+            if session["role"] == "rider":
+                return redirect("/rider-app")
+
+            ref = request.referrer or "/dashboard-page"
+            if ("/rider-app" in ref) or (session["role"] != "admin" and ("/staff-page" in ref or "/settings-page" in ref)):
+                ref = "/dashboard-page"
+            return redirect(ref)
+
+        flash(f"Account '{username}' not found.", "warning")
+        return redirect("/dashboard-page")
+    finally:
+        conn.close()
+
+
+@app.route("/api/switch-account", methods=["POST"])
+def api_switch_account():
+    if "user_id" not in session:
+        return jsonify({"status": 401, "error": "Unauthorized"}), 401
+
+    data = request.get_json(silent=True) or {}
+    username = (data.get("username") or "").strip()
+
+    conn = get_db_connection()
+    try:
+        user = conn.execute(
+            "SELECT id, username, role, full_name FROM users WHERE username = ?",
+            (username,)
+        ).fetchone()
+
+        if user:
+            session["user_id"] = user["id"]
+            session["username"] = user["username"]
+            session["role"] = user["role"] if user["role"] else "admin"
+            session["full_name"] = user["full_name"] if user["full_name"] else user["username"].capitalize()
+            redirect_url = "/rider-app" if session["role"] == "rider" else "/dashboard-page"
+            return jsonify({
+                "status": 200,
+                "message": f"Switched to {session['full_name']}",
+                "redirect": redirect_url,
+                "user": {
+                    "username": session["username"],
+                    "full_name": session["full_name"],
+                    "role": session["role"]
+                }
+            })
+
+        return jsonify({"status": 404, "error": "User not found"}), 404
+    finally:
+        conn.close()
+
+
+@app.route("/api/system-accounts", methods=["GET"])
+def api_system_accounts():
+    if "user_id" not in session:
+        return jsonify({"status": 401, "error": "Unauthorized"}), 401
+
+    conn = get_db_connection()
+    try:
+        users = conn.execute("""
+            SELECT id, username, role, full_name 
+            FROM users 
+            ORDER BY CASE role WHEN 'admin' THEN 1 WHEN 'staff' THEN 2 ELSE 3 END, id ASC
+        """).fetchall()
+        accounts = []
+        for u in users:
+            accounts.append({
+                "id": u["id"],
+                "username": u["username"],
+                "role": u["role"] or "staff",
+                "full_name": u["full_name"] or u["username"].capitalize(),
+                "is_current": (u["username"] == session.get("username"))
+            })
+        return jsonify({
+            "status": 200,
+            "current_user": session.get("username"),
+            "accounts": accounts
+        })
+    finally:
+        conn.close()
 
 
 # ============================================================

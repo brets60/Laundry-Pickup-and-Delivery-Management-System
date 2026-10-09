@@ -29,6 +29,9 @@
             </a>
 
             <div class="portal-header-actions">
+                <button type="button" class="btn-portal-outline account-switcher-btn" style="background:#eff6ff; color:#1d4ed8; border:1px solid #93c5fd; font-weight:700; cursor:pointer;" title="Switch User Role / Account">
+                    <span>⇄ Switch Acc</span>
+                </button>
                 <a href="/" class="btn-portal-outline" title="View Customer Website">
                     <span>🌐 Customer Site</span>
                 </a>
@@ -46,13 +49,13 @@
 
     <!-- Courier Shift Profile Banner -->
     <div class="rider-shift-banner">
-        <div class="rider-info-group">
+        <div class="rider-info-group account-switcher-btn" style="cursor:pointer;" title="Click to Switch Account">
             <div class="rider-badge-avatar">
                 {{ (session.get('username') or 'R')[0]|upper }}
             </div>
             <div>
-                <div class="rider-name-val">{{ session.get('full_name') or session.get('username', 'Courier Juan') }}</div>
-                <div class="rider-sub-val">Assigned Motorcycle Courier &bull; Panadtalan Fleet (TCCI Hub)</div>
+                <div class="rider-name-val">{{ session.get('full_name') or session.get('username', 'Courier Juan') }} ▾</div>
+                <div class="rider-sub-val">Assigned Motorcycle Courier &bull; Switch Account</div>
             </div>
         </div>
         <div class="shift-status-badge">
