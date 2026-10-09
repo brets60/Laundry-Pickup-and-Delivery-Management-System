@@ -366,6 +366,20 @@ def role_required(allowed_roles):
 
 
 
+@app.context_processor
+def inject_notification_count():
+    if "user_id" in session:
+        try:
+            conn = get_db_connection()
+            row = conn.execute("SELECT COUNT(*) AS cnt FROM notifications WHERE is_read = 0").fetchone()
+            count = row["cnt"] if row else 0
+            conn.close()
+            return {"unread_notif_count": count}
+        except Exception:
+            return {"unread_notif_count": 0}
+    return {"unread_notif_count": 0}
+
+
 # ============================================================
 # DASHBOARD
 # ============================================================

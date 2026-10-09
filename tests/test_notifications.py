@@ -102,3 +102,50 @@ def test_notifications_page_unauthenticated_redirects():
         res = c.get('/notifications-page')
         assert res.status_code in [302, 401]
 
+
+def test_customer_portal_pickup_triggers_notification(auth_client):
+    with app.test_client() as guest_client:
+        res = guest_client.post('/book-pickup', data={
+            'name': 'Online Notif Customer',
+            'contact_number': '09123456789',
+            'email': 'notif@example.com',
+            'barangay': 'Base Camp Proper & Junction',
+            'address_details': 'Zone 5, Poblacion',
+            'service_type': 'Wash & Fold',
+            'estimated_load': 'Medium Bag (~6-8 kg)',
+            'pickup_date': '2026-10-15',
+            'pickup_time': 'Morning (8AM - 12PM)',
+            'payment_method': 'Cash on Delivery (COD)',
+            'notes': 'Fragile fabrics'
+        }, follow_redirects=True)
+        assert res.status_code == 200
+
+    # Staff checks poll endpoint
+    poll_res = auth_client.get('/api/notifications/poll?last_id=0')
+    assert poll_res.status_code == 200
+    pdata = poll_res.get_json()
+    assert pdata['unread_count'] >= 1
+    assert any('Online Notif Customer' in n['message'] for n in pdata.get('new_notifications', []))
+
+
+def test_order_dispatch_triggers_notification(auth_client):
+    # Create order first
+    conn = sqlite3.connect('laundry.db')
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO laundry_orders (customer, laundry_weight, service_type, total_price, status)
+        VALUES ('Dispatch Test Customer', 5.0, 'Wash & Fold', 250.0, 'Ready for Delivery')
+    """)
+    ord_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+
+    # Dispatch order
+    res = auth_client.post(f'/laundry-orders-page/dispatch/{ord_id}', follow_redirects=True)
+    assert res.status_code == 200
+
+    # Verify notification exists
+    notif_res = auth_client.get('/api/notifications')
+    data = notif_res.get_json()
+    assert any('Dispatch Test Customer' in n['message'] for n in data['notifications'])
+

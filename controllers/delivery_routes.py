@@ -240,6 +240,19 @@ def edit_delivery(delivery_id):
                 """,
                 (customer, order_id, delivery_date, delivery_address, status, assigned_rider, delivery_notes, delivery_id)
             )
+
+            if status == 'Delivered':
+                rider_name = assigned_rider or 'Mark Ephraim Nicor'
+                order_ref = f"#ORD-{order_id:04d}" if order_id else f"#DEL-{delivery_id:04d}"
+                add_notification(
+                    conn,
+                    title="Delivery Completed",
+                    message=f"Rider {rider_name} completed Delivery {order_ref} for {customer}.",
+                    notif_type="delivery_completed",
+                    reference_id=delivery_id,
+                    reference_type="delivery"
+                )
+
             conn.commit()
             flash(f"Delivery record #{delivery_id} updated successfully!", "success")
 

@@ -3,6 +3,7 @@ import sqlite3
 from datetime import datetime, date
 
 from controllers.utils import strip_html_tags
+from controllers.notification_service import add_notification
 
 portal_bp = Blueprint('customer_portal', __name__)
 DATABASE = "laundry.db"
@@ -111,6 +112,14 @@ def book_pickup():
             (name, pickup_date, pickup_time, full_address, assigned_rider, combined_notes, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         )
         pickup_id = cursor.lastrowid
+        add_notification(
+            conn,
+            title="New Pickup Request",
+            message=f"Customer {name} booked Pickup #PCK-{pickup_id:04d} ({zone_name}). Courier: {assigned_rider}.",
+            notif_type="new_pickup_request",
+            reference_id=pickup_id,
+            reference_type="pickup"
+        )
         conn.commit()
         conn.close()
 

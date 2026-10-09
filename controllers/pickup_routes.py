@@ -84,6 +84,14 @@ def manage_pickups():
             (customer, pickup_date, pickup_time, pickup_address, status, assigned_driver, notes)
         )
         new_id = cursor.lastrowid
+        add_notification(
+            conn,
+            title="Pickup Scheduled",
+            message=f"Pickup #PCK-{new_id:04d} booked for {customer} ({pickup_date}). Driver: {assigned_driver or 'Mark Ephraim Nicor'}.",
+            notif_type="pickup_scheduled",
+            reference_id=new_id,
+            reference_type="pickup"
+        )
         conn.commit()
         conn.close()
 

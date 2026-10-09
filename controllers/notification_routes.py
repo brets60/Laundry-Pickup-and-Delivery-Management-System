@@ -50,7 +50,15 @@ def poll_notifications():
             """, (last_id,)).fetchall()
             new_notifs = [dict(r) for r in rows]
         else:
-            new_notifs = []
+            # First poll for this session: if there are unread notifications, surface the latest one
+            rows = conn.execute("""
+                SELECT id, title, message, type, reference_id, reference_type, is_read, created_at
+                FROM notifications
+                WHERE is_read = 0
+                ORDER BY id DESC
+                LIMIT 1
+            """).fetchall()
+            new_notifs = [dict(r) for r in rows]
 
         unread = count_unread_notifications(conn)
         recent = get_recent_notifications(conn, limit=10)

@@ -16,6 +16,16 @@
      * @param {number} duration - Milliseconds before auto-dismiss
      */
     function showToast(message, type = 'success', duration = 3500) {
+        if (arguments.length >= 3 && typeof type === 'string' && (arguments[2] === 'success' || arguments[2] === 'error' || arguments[2] === 'info')) {
+            const title = message;
+            message = `<strong>${title}</strong>: ${type}`;
+            type = arguments[2];
+            duration = arguments[3] || 4000;
+        }
+        if (typeof duration !== 'number' || isNaN(duration)) {
+            duration = 4000;
+        }
+
         let container = document.querySelector('.lc-toast-container');
         if (!container) {
             container = document.createElement('div');
@@ -24,10 +34,12 @@
             document.body.appendChild(container);
         }
 
+        const validTypes = ['success', 'error', 'info', 'warning'];
+        const cleanType = validTypes.includes(type) ? type : 'success';
         const toast = document.createElement('div');
-        toast.className = `lc-toast ${type}`;
+        toast.className = `lc-toast ${cleanType}`;
 
-        const iconSvg = type === 'success'
+        const iconSvg = cleanType === 'success'
             ? `<svg class="lc-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`
             : `<svg class="lc-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
 

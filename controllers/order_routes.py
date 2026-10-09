@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, flash, jsonify
 import sqlite3
 from controllers.utils import is_async_request
+from controllers.notification_service import add_notification
 
 order_bp = Blueprint('order', __name__)
 DATABASE = os.environ.get("DATABASE", "laundry.db")
@@ -325,6 +326,15 @@ def dispatch_order(order_id):
         
         # Update order status
         conn.execute("UPDATE laundry_orders SET status = 'Out for Delivery' WHERE id = ?", (order_id,))
+
+        add_notification(
+            conn,
+            title="Order Dispatched for Delivery",
+            message=f"Order #ORD-{order_id:04d} for {order['customer']} dispatched to courier {rider}.",
+            notif_type="order_dispatched",
+            reference_id=new_del_id,
+            reference_type="delivery"
+        )
         conn.commit()
         
         flash(f"Order #ORD-{order_id:04d} successfully dispatched to {rider}! Delivery record #DEL-{new_del_id:04d} created.", "success")
