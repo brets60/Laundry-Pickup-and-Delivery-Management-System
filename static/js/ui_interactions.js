@@ -167,45 +167,117 @@
      */
     let lastSeenNotifId = parseInt(localStorage.getItem('lc_last_seen_notif_id') || '0', 10);
     let notifPanelOpen = false;
+    let sharedAudioCtx = null;
 
-    // First interaction unlocks AudioContext across modern mobile & desktop browsers
-    document.addEventListener('click', function unlockAudioContext() {
+    function getSharedAudioContext() {
         try {
-            const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            if (AudioCtx) {
-                const ctx = new AudioCtx();
-                ctx.resume();
+            if (!sharedAudioCtx) {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (AudioCtx) {
+                    sharedAudioCtx = new AudioCtx();
+                }
+            }
+            if (sharedAudioCtx && sharedAudioCtx.state === 'suspended') {
+                sharedAudioCtx.resume().catch(() => {});
             }
         } catch (e) {}
-        document.removeEventListener('click', unlockAudioContext);
-    }, { once: true });
+        return sharedAudioCtx;
+    }
 
-    function playStaffChime() {
+    // Auto-unlock AudioContext on first user interaction anywhere on the page
+    ['click', 'touchstart', 'keydown'].forEach(evt => {
+        document.addEventListener(evt, function unlockAudio() {
+            getSharedAudioContext();
+        }, { passive: true });
+    });
+
+    function isSoundEnabled() {
+        return localStorage.getItem('lc_notif_sound_enabled') !== 'false';
+    }
+
+    function setSoundEnabled(enabled) {
+        localStorage.setItem('lc_notif_sound_enabled', enabled ? 'true' : 'false');
+        updateSoundUI();
+    }
+
+    function playTone(ctx, freq, startTime, duration, maxGain, oscType) {
         try {
-            const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            if (!AudioCtx) return;
-            const ctx = new AudioCtx();
-            if (ctx.state === 'suspended') {
-                ctx.resume();
-            }
-            const now = ctx.currentTime;
-
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
 
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(587.33, now); // D5
-            osc.frequency.setValueAtTime(880.00, now + 0.12); // A5
+            osc.type = oscType || 'sine';
+            osc.frequency.setValueAtTime(freq, startTime);
 
-            gain.gain.setValueAtTime(0.20, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+            gain.gain.setValueAtTime(0.0001, startTime);
+            gain.gain.linearRampToValueAtTime(maxGain, startTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
 
             osc.connect(gain);
             gain.connect(ctx.destination);
-            osc.start(now);
-            osc.stop(now + 0.45);
+
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        } catch (e) {}
+    }
+
+    function playStaffChime(type) {
+        if (!isSoundEnabled()) return;
+        try {
+            const ctx = getSharedAudioContext();
+            if (!ctx) return;
+
+            const play = () => {
+                const now = ctx.currentTime;
+                const normType = (type || '').toLowerCase();
+
+                if (normType.includes('delivery')) {
+                    // Triumphant delivery completion fanfare (G5 -> C6 -> E6 bell chords)
+                    playTone(ctx, 783.99, now, 0.35, 0.22, 'sine');          // G5
+                    playTone(ctx, 1046.50, now + 0.12, 0.45, 0.25, 'sine');  // C6
+                    playTone(ctx, 1318.51, now + 0.24, 0.60, 0.20, 'sine');  // E6
+                } else if (normType.includes('pickup') || normType.includes('book') || normType.includes('order')) {
+                    // Cheerful shopfront counter chime (C5 -> E5 -> G5)
+                    playTone(ctx, 523.25, now, 0.30, 0.20, 'triangle');      // C5
+                    playTone(ctx, 659.25, now + 0.10, 0.35, 0.22, 'sine');   // E5
+                    playTone(ctx, 783.99, now + 0.20, 0.55, 0.26, 'sine');   // G5
+                } else {
+                    // Clean, gentle dual alert tone (E5 -> A5)
+                    playTone(ctx, 659.25, now, 0.28, 0.20, 'sine');          // E5
+                    playTone(ctx, 880.00, now + 0.11, 0.45, 0.24, 'sine');   // A5
+                }
+            };
+
+            if (ctx.state === 'suspended') {
+                ctx.resume().then(play).catch(() => {});
+            } else {
+                play();
+            }
         } catch (e) {
-            // Browser autoplay safeguard
+            // Autoplay safety
+        }
+    }
+
+    window.playStaffChime = playStaffChime;
+
+    function updateSoundUI() {
+        const soundBtn = document.getElementById('lcSoundToggleBtn');
+        const soundIcon = document.getElementById('lcSoundIcon');
+        const soundLabel = document.getElementById('lcSoundLabel');
+        const enabled = isSoundEnabled();
+        if (soundBtn && soundIcon && soundLabel) {
+            if (enabled) {
+                soundIcon.textContent = '🔊';
+                soundLabel.textContent = 'Sound ON';
+                soundBtn.style.color = '#93c5fd';
+                soundBtn.style.background = 'rgba(255,255,255,0.18)';
+                soundBtn.title = 'Audio Chime is ON (Click to Mute)';
+            } else {
+                soundIcon.textContent = '🔇';
+                soundLabel.textContent = 'Muted';
+                soundBtn.style.color = '#94a3b8';
+                soundBtn.style.background = 'rgba(255,255,255,0.08)';
+                soundBtn.title = 'Audio Chime is MUTED (Click to Enable)';
+            }
         }
     }
 
@@ -265,7 +337,7 @@
         if (!panel) {
             panel = document.createElement('div');
             panel.id = 'lcNotificationPanel';
-            panel.style.cssText = 'display:none; position:fixed; z-index:999999; width:360px; max-width:calc(100vw - 24px); background:#ffffff; border-radius:14px; box-shadow:0 16px 40px rgba(0,0,0,0.22); border:1px solid #cbd5e1; overflow:hidden; font-family:Inter,system-ui,sans-serif;';
+            panel.style.cssText = 'display:none; position:fixed; z-index:999999; width:370px; max-width:calc(100vw - 24px); background:#ffffff; border-radius:14px; box-shadow:0 16px 40px rgba(0,0,0,0.22); border:1px solid #cbd5e1; overflow:hidden; font-family:Inter,system-ui,sans-serif;';
             panel.innerHTML = `
                 <div style="background:#0f172a; color:#ffffff; padding:12px 16px; display:flex; justify-content:space-between; align-items:center;">
                     <div style="display:flex; align-items:center; gap:8px;">
@@ -273,16 +345,68 @@
                         <strong style="font-size:13.5px; font-weight:700;">Notifications</strong>
                         <span id="lcPanelUnreadBadge" style="display:none; background:#ef4444; color:#ffffff; font-size:10px; font-weight:800; padding:1px 6px; border-radius:10px;">0</span>
                     </div>
-                    <button type="button" id="lcMarkReadBtn" style="background:rgba(255,255,255,0.18); border:none; color:#93c5fd; font-size:11px; font-weight:700; padding:5px 9px; border-radius:6px; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.28)'" onmouseout="this.style.background='rgba(255,255,255,0.18)'">✓ Mark read</button>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <button type="button" id="lcSoundToggleBtn" title="Toggle chime audio alerts" style="background:rgba(255,255,255,0.18); border:none; color:#93c5fd; font-size:11px; font-weight:700; padding:5px 8px; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:4px; transition:all 0.2s;">
+                            <span id="lcSoundIcon">🔊</span>
+                            <span id="lcSoundLabel">Sound ON</span>
+                        </button>
+                        <button type="button" id="lcMarkReadBtn" style="background:rgba(255,255,255,0.18); border:none; color:#93c5fd; font-size:11px; font-weight:700; padding:5px 9px; border-radius:6px; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.28)'" onmouseout="this.style.background='rgba(255,255,255,0.18)'">✓ Mark read</button>
+                    </div>
                 </div>
                 <div id="lcNotifList" style="max-height:360px; overflow-y:auto; padding:4px 0;">
                     <div style="padding:28px 20px; text-align:center; color:#94a3b8; font-size:12.5px;">Loading alerts...</div>
                 </div>
-                <div style="padding:8px 14px; background:#f8fafc; font-size:11px; color:#64748b; text-align:center; border-top:1px solid #f1f5f9; font-weight:500;">
-                    Real-time Shop Activity Alerts
+                <div style="padding:10px 14px; background:#f8fafc; font-size:11px; color:#64748b; border-top:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:600; color:#475569;">Live Shop Activity</span>
+                    <div style="display:flex; gap:6px;">
+                        <button type="button" id="lcTestChimeBtn" style="background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:6px; cursor:pointer;" title="Click to test audible chime" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+                            🔔 Test Chime
+                        </button>
+                        <button type="button" id="lcSimulateAlertBtn" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:6px; cursor:pointer;" title="Simulate a live booking alert" onmouseover="this.style.background='#d1fae5'" onmouseout="this.style.background='#ecfdf5'">
+                            ⚡ Demo Alert
+                        </button>
+                    </div>
                 </div>
             `;
             document.body.appendChild(panel);
+
+            const soundBtn = panel.querySelector('#lcSoundToggleBtn');
+            if (soundBtn) {
+                soundBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const next = !isSoundEnabled();
+                    setSoundEnabled(next);
+                    if (next) {
+                        playStaffChime('test');
+                    }
+                });
+            }
+
+            const testChimeBtn = panel.querySelector('#lcTestChimeBtn');
+            if (testChimeBtn) {
+                testChimeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    getSharedAudioContext();
+                    playStaffChime('pickup_completed');
+                    showStaffToast('🔔 Audio Chime Test', 'Audible notification chime is active and working loud and clear!', 'pickup_completed');
+                });
+            }
+
+            const simAlertBtn = panel.querySelector('#lcSimulateAlertBtn');
+            if (simAlertBtn) {
+                simAlertBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    getSharedAudioContext();
+                    playStaffChime('new_pickup_request');
+                    showStaffToast('🧺 New Pickup Request (Demo)', 'Customer Maria Santos scheduled a laundry pickup for Panadtalan Proper.', 'new_pickup_request');
+                    const bellBadges = document.querySelectorAll('.bell-badge');
+                    bellBadges.forEach(b => {
+                        b.style.display = 'flex';
+                        const current = parseInt(b.textContent || '0', 10);
+                        b.textContent = current + 1;
+                    });
+                });
+            }
 
             const markBtn = panel.querySelector('#lcMarkReadBtn');
             if (markBtn) {
@@ -314,6 +438,7 @@
                 positionPanel(targetBell);
                 panel.style.display = 'block';
                 notifPanelOpen = true;
+                updateSoundUI();
                 fetchAndRenderNotifs();
             } else {
                 panel.style.display = 'none';
@@ -427,7 +552,7 @@
                                     lastSeenNotifId = n.id;
                                     localStorage.setItem('lc_last_seen_notif_id', lastSeenNotifId);
                                 }
-                                playStaffChime();
+                                playStaffChime(n.type);
                                 showStaffToast('🔔 ' + n.title, n.message, n.type);
                             });
                         } else if (data.unread_count > 0 && data.recent && data.recent.length > 0) {
@@ -436,7 +561,7 @@
                             const lastToasted = parseInt(localStorage.getItem('lc_last_toasted_id') || '0', 10);
                             if (topNotif.id > lastToasted) {
                                 localStorage.setItem('lc_last_toasted_id', topNotif.id);
-                                playStaffChime();
+                                playStaffChime(topNotif.type);
                                 showStaffToast('🔔 ' + topNotif.title, topNotif.message, topNotif.type);
                             }
                         }
@@ -486,7 +611,7 @@
             bc.onmessage = (event) => {
                 const data = event.data;
                 if (data && data.title) {
-                    playStaffChime();
+                    playStaffChime(data.type);
                     showStaffToast('🔔 ' + data.title, data.message, data.type);
                     poll();
                 }
@@ -498,7 +623,7 @@
                 try {
                     const ev = JSON.parse(e.newValue);
                     if (ev && ev.title) {
-                        playStaffChime();
+                        playStaffChime(ev.type);
                         showStaffToast('🔔 ' + ev.title, ev.message, ev.type);
                         poll();
                     }
