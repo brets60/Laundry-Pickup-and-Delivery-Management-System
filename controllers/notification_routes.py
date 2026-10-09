@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, jsonify, request, session, render_template, redirect
 from controllers.notification_service import (
     add_notification,
     get_recent_notifications,
@@ -81,5 +81,19 @@ def mark_notifications_read():
         conn.commit()
         unread = count_unread_notifications(conn)
         return jsonify({"status": 200, "unread_count": unread, "message": "Marked as read"})
+    finally:
+        conn.close()
+
+
+@notification_bp.route('/notifications-page')
+def notifications_page():
+    if "user_id" not in session:
+        return redirect('/login')
+
+    conn = get_db_connection()
+    try:
+        notifs = get_recent_notifications(conn, limit=100)
+        unread = count_unread_notifications(conn)
+        return render_template('notifications.html', notifications=notifs, unread_count=unread)
     finally:
         conn.close()

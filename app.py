@@ -549,6 +549,14 @@ def dashboard_page():
             """
         ).fetchall()
 
+        recent_notifications = conn.execute(
+            """
+            SELECT * FROM notifications
+            ORDER BY id DESC
+            LIMIT 5
+            """
+        ).fetchall()
+
         # ==========================================
         # DASHBOARD RENDER
         # ==========================================
@@ -568,6 +576,7 @@ def dashboard_page():
             recent_orders=recent_orders,
             recent_pickups=recent_pickups,
             recent_payments=recent_payments,
+            recent_notifications=recent_notifications,
             pipeline=pipeline,
             active_drivers=active_drivers,
             driver_statuses=driver_statuses

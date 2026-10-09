@@ -88,3 +88,17 @@ def test_pickup_completion_triggers_notification(rider_client, auth_client):
     mark_res = auth_client.post('/api/notifications/mark-read', json={})
     assert mark_res.status_code == 200
     assert mark_res.get_json()['unread_count'] == 0
+
+
+def test_notifications_page_renders_for_staff(auth_client):
+    res = auth_client.get('/notifications-page')
+    assert res.status_code == 200
+    assert b'Shop Activity Alerts' in res.data
+    assert b'Mark All as Read' in res.data
+
+
+def test_notifications_page_unauthenticated_redirects():
+    with app.test_client() as c:
+        res = c.get('/notifications-page')
+        assert res.status_code in [302, 401]
+

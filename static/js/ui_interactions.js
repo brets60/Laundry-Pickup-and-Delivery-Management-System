@@ -305,14 +305,18 @@
                 })
                 .then(data => {
                     if (data && data.status === 200) {
-                        const badge = document.querySelector('.bell-badge');
-                        if (badge) {
+                        document.querySelectorAll('.bell-badge').forEach(b => {
+                            b.style.display = data.unread_count > 0 ? 'block' : 'none';
+                        });
+
+                        document.querySelectorAll('.sidebar-notif-badge, #sidebarNotifBadge').forEach(sb => {
                             if (data.unread_count > 0) {
-                                badge.style.display = 'block';
+                                sb.style.display = 'inline-block';
+                                sb.textContent = data.unread_count;
                             } else {
-                                badge.style.display = 'none';
+                                sb.style.display = 'none';
                             }
-                        }
+                        });
 
                         // Play chime and toast for newly arrived completions
                         if (data.new_notifications && data.new_notifications.length > 0) {
@@ -331,6 +335,27 @@
                             renderNotifs(data.recent);
                             if (lastSeenNotifId === 0 && data.recent.length > 0) {
                                 lastSeenNotifId = Math.max(...data.recent.map(r => r.id));
+                            }
+
+                            const dashList = document.getElementById('dashboardLiveNotifList');
+                            if (dashList && data.recent.length > 0) {
+                                dashList.innerHTML = data.recent.slice(0, 5).map(n => {
+                                    const isDel = n.type === 'delivery_completed';
+                                    const bg = isDel ? '#f0fdf4' : '#eff6ff';
+                                    const border = isDel ? '#bbf7d0' : '#bfdbfe';
+                                    const icon = isDel ? '🚚' : '🧺';
+                                    const timeStr = n.created_at ? n.created_at.slice(11, 16) : '';
+                                    return `
+                                        <div style="display: flex; gap: 10px; align-items: center; padding: 10px 12px; background: ${bg}; border: 1px solid ${border}; border-radius: 10px;">
+                                            <div style="font-size: 18px;">${icon}</div>
+                                            <div style="flex: 1; min-width: 0;">
+                                                <div style="font-size: 12.5px; font-weight: 700; color: #0f172a;">${n.title}</div>
+                                                <div style="font-size: 11.5px; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${n.message}</div>
+                                            </div>
+                                            <span style="font-size: 10px; font-weight: 600; color: #94a3b8; white-space: nowrap;">${timeStr}</span>
+                                        </div>
+                                    `;
+                                }).join('');
                             }
                         }
                     }
