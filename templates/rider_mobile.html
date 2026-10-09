@@ -416,6 +416,19 @@
         }
     }
 
+    function broadcastRiderEvent(title, message, type) {
+        try {
+            const bc = new BroadcastChannel('laundrycare_realtime');
+            bc.postMessage({ type: type, title: title, message: message });
+            localStorage.setItem('lc_latest_realtime_event', JSON.stringify({
+                timestamp: Date.now(),
+                type: type,
+                title: title,
+                message: message
+            }));
+        } catch(e) {}
+    }
+
     function updateProDeliveryStatus(id, newStatus) {
         if (!confirm('Update delivery #' + id + ' to ' + newStatus + '?')) return;
 
@@ -425,7 +438,12 @@
             body: JSON.stringify({ status: newStatus })
         })
         .then(res => res.json())
-        .then(() => window.location.reload())
+        .then(() => {
+            if (newStatus === 'Delivered') {
+                broadcastRiderEvent('Delivery Completed', 'Courier successfully marked Delivery #' + id + ' as Delivered.', 'delivery_completed');
+            }
+            window.location.reload();
+        })
         .catch(() => window.location.reload());
     }
 
@@ -438,7 +456,10 @@
             body: JSON.stringify({ status: 'Picked Up' })
         })
         .then(res => res.json())
-        .then(() => window.location.reload())
+        .then(() => {
+            broadcastRiderEvent('Pickup Completed', 'Courier successfully collected laundry for Pickup #' + id + '.', 'pickup_completed');
+            window.location.reload();
+        })
         .catch(() => window.location.reload());
     }
 
@@ -516,13 +537,15 @@
     function submitProDeliveryHandover() {
         if (!activeDelId) return;
 
-        fetch('/rider-app/status/' + activeDelId, {
+        const delId = activeDelId;
+        fetch('/rider-app/status/' + delId, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: 'Delivered' })
         })
         .then(res => res.json())
         .then(() => {
+            broadcastRiderEvent('Delivery Handover Completed', 'Courier completed verified handover for Delivery #' + delId + '.', 'delivery_completed');
             closeProSignatureModal();
             window.location.reload();
         })

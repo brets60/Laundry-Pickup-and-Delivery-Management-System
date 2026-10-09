@@ -53,6 +53,22 @@
         </div>
 
         {% if success and booking %}
+        <script>
+            try {
+                const bc = new BroadcastChannel('laundrycare_realtime');
+                bc.postMessage({
+                    type: 'new_pickup_request',
+                    title: 'New Customer Pickup Booked',
+                    message: 'Customer {{ booking.customer }} booked Pickup #{{ booking.ref }} ({{ booking.zone }}).'
+                });
+                localStorage.setItem('lc_latest_realtime_event', JSON.stringify({
+                    timestamp: Date.now(),
+                    type: 'new_pickup_request',
+                    title: 'New Customer Pickup Booked',
+                    message: 'Customer {{ booking.customer }} booked Pickup #{{ booking.ref }} ({{ booking.zone }}).'
+                }));
+            } catch (e) {}
+        </script>
         <!-- SUCCESS CONFIRMATION STATE -->
         <div class="success-banner">
             <div class="success-badge-icon">✓</div>

@@ -144,8 +144,26 @@
         overlay.addEventListener('click', () => {
             document.body.classList.remove('sidebar-open');
         });
+    }
+
     /**
-     * 6. Universal Shop Staff Notification Engine & Real-Time Chime
+     * 6. Universal Refresh System Action
+     */
+    window.handleSystemRefresh = function (btn) {
+        if (btn) {
+            const svg = btn.querySelector('svg');
+            if (svg) {
+                svg.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                svg.style.transform = 'rotate(360deg)';
+            }
+        }
+        setTimeout(() => {
+            window.location.reload();
+        }, 220);
+    };
+
+    /**
+     * 7. Universal Shop Staff Notification Engine & Real-Time Chime
      */
     let lastSeenNotifId = parseInt(localStorage.getItem('lc_last_seen_notif_id') || '0', 10);
     let notifPanelOpen = false;
@@ -201,10 +219,11 @@
         }
 
         const toast = document.createElement('div');
-        toast.style.cssText = 'pointer-events:auto; background:#ffffff; border:1.5px solid #3b82f6; border-left:6px solid #2563eb; border-radius:12px; padding:13px 15px; box-shadow:0 12px 30px rgba(0,0,0,0.18); display:flex; gap:12px; align-items:flex-start; animation:slideInRight 0.3s ease-out; font-family:Inter,system-ui,sans-serif;';
+        toast.style.cssText = 'pointer-events:auto; background:#ffffff; border:1.5px solid #3b82f6; border-left:6px solid #2563eb; border-radius:12px; padding:13px 15px; box-shadow:0 12px 30px rgba(0,0,0,0.18); display:flex; gap:12px; align-items:flex-start; animation:slideInRight 0.3s ease-out; font-family:Inter,system-ui,sans-serif; cursor:pointer;';
 
         const isDel = type === 'delivery_completed';
-        const icon = isDel ? '🚚' : '🧺';
+        const isPck = type === 'pickup_completed' || type === 'new_pickup_request';
+        const icon = isDel ? '🚚' : (isPck ? '🧺' : '📦');
 
         toast.innerHTML = `
             <div style="font-size:24px; line-height:1; flex-shrink:0;">${icon}</div>
@@ -215,11 +234,20 @@
                 </div>
                 <div style="font-size:11.5px; color:#475569; line-height:1.35;">${message}</div>
                 <div style="margin-top:6px; display:flex; gap:10px; align-items:center;">
-                    <a href="/notifications-page" style="font-size:11px; font-weight:700; color:#2563eb; text-decoration:none;">Open Alert Center &rarr;</a>
+                    <span style="font-size:11px; font-weight:700; color:#2563eb; text-decoration:none;">Click to view notifications &rarr;</span>
                 </div>
             </div>
-            <button type="button" style="background:none; border:none; color:#94a3b8; font-size:18px; cursor:pointer; padding:0; line-height:1;" onclick="this.closest('div[style*=\"pointer-events\"]').remove()">&times;</button>
+            <button type="button" style="background:none; border:none; color:#94a3b8; font-size:18px; cursor:pointer; padding:0; line-height:1;" onclick="event.stopPropagation(); this.closest('div[style*=\"pointer-events\"]').remove()">&times;</button>
         `;
+
+        // Clicking the toast opens the notification dropdown
+        toast.addEventListener('click', (e) => {
+            if (e.target.tagName !== 'BUTTON') {
+                const bell = document.querySelector('.bell-btn');
+                if (bell) bell.click();
+                toast.remove();
+            }
+        });
 
         container.appendChild(toast);
 
@@ -237,19 +265,22 @@
         if (!panel) {
             panel = document.createElement('div');
             panel.id = 'lcNotificationPanel';
-            panel.style.cssText = 'display:none; position:fixed; z-index:99998; width:340px; max-width:92vw; background:#ffffff; border-radius:12px; box-shadow:0 14px 36px rgba(0,0,0,0.20); border:1px solid #cbd5e1; overflow:hidden; font-family:Inter,system-ui,sans-serif;';
+            panel.style.cssText = 'display:none; position:fixed; z-index:999999; width:360px; max-width:calc(100vw - 24px); background:#ffffff; border-radius:14px; box-shadow:0 16px 40px rgba(0,0,0,0.22); border:1px solid #cbd5e1; overflow:hidden; font-family:Inter,system-ui,sans-serif;';
             panel.innerHTML = `
-                <div style="background:#0f172a; color:#fff; padding:12px 16px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="background:#0f172a; color:#ffffff; padding:12px 16px; display:flex; justify-content:space-between; align-items:center;">
                     <div style="display:flex; align-items:center; gap:8px;">
                         <span style="font-size:16px;">🔔</span>
-                        <strong style="font-size:13.5px;">Shop Activity Alerts</strong>
+                        <strong style="font-size:13.5px; font-weight:700;">Notifications</strong>
+                        <span id="lcPanelUnreadBadge" style="display:none; background:#ef4444; color:#ffffff; font-size:10px; font-weight:800; padding:1px 6px; border-radius:10px;">0</span>
                     </div>
-                    <button type="button" id="lcMarkReadBtn" style="background:rgba(255,255,255,0.18); border:none; color:#93c5fd; font-size:11px; font-weight:700; padding:4px 8px; border-radius:6px; cursor:pointer;">Mark Read</button>
+                    <button type="button" id="lcMarkReadBtn" style="background:rgba(255,255,255,0.18); border:none; color:#93c5fd; font-size:11px; font-weight:700; padding:5px 9px; border-radius:6px; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.28)'" onmouseout="this.style.background='rgba(255,255,255,0.18)'">✓ Mark read</button>
                 </div>
-                <div id="lcNotifList" style="max-height:340px; overflow-y:auto; padding:4px 0;">
-                    <div style="padding:24px; text-align:center; color:#94a3b8; font-size:12.5px;">No new rider alerts yet.</div>
+                <div id="lcNotifList" style="max-height:360px; overflow-y:auto; padding:4px 0;">
+                    <div style="padding:28px 20px; text-align:center; color:#94a3b8; font-size:12.5px;">Loading alerts...</div>
                 </div>
-                <a href="/notifications-page" style="display:block; text-align:center; padding:10px; background:#f8fafc; color:#2563eb; font-weight:700; font-size:12px; text-decoration:none; border-top:1px solid #e2e8f0;">View All in Notification Center &rarr;</a>
+                <div style="padding:8px 14px; background:#f8fafc; font-size:11px; color:#64748b; text-align:center; border-top:1px solid #f1f5f9; font-weight:500;">
+                    Real-time Shop Activity Alerts
+                </div>
             `;
             document.body.appendChild(panel);
 
@@ -259,8 +290,9 @@
                     fetch('/api/notifications/mark-read', { credentials: 'same-origin', method: 'POST', headers: { 'Content-Type': 'application/json' } })
                         .then(() => {
                             document.querySelectorAll('.bell-badge').forEach(b => b.style.display = 'none');
-                            document.querySelectorAll('.sidebar-notif-badge, #sidebarNotifBadge').forEach(sb => sb.style.display = 'none');
-                            poll();
+                            const panelBadge = document.getElementById('lcPanelUnreadBadge');
+                            if (panelBadge) panelBadge.style.display = 'none';
+                            fetchAndRenderNotifs();
                         })
                         .catch(() => {});
                 });
@@ -271,8 +303,10 @@
             if (!targetBell || !panel) return;
             const rect = targetBell.getBoundingClientRect();
             panel.style.top = (rect.bottom + 8) + 'px';
-            const leftPos = Math.max(10, rect.right - 340);
-            panel.style.left = leftPos + 'px';
+            let left = rect.right - 360;
+            if (left < 12) left = 12;
+            if (left + 360 > window.innerWidth - 12) left = window.innerWidth - 372;
+            panel.style.left = Math.max(12, left) + 'px';
         }
 
         function togglePanel(targetBell) {
@@ -280,6 +314,7 @@
                 positionPanel(targetBell);
                 panel.style.display = 'block';
                 notifPanelOpen = true;
+                fetchAndRenderNotifs();
             } else {
                 panel.style.display = 'none';
                 notifPanelOpen = false;
@@ -306,31 +341,54 @@
             const listEl = document.getElementById('lcNotifList');
             if (!listEl) return;
             if (!notifs || notifs.length === 0) {
-                listEl.innerHTML = '<div style="padding:24px; text-align:center; color:#94a3b8; font-size:12.5px;">No recent rider alerts.</div>';
+                listEl.innerHTML = '<div style="padding:32px 20px; text-align:center; color:#94a3b8; font-size:12.5px;"><div style="font-size:24px; margin-bottom:6px;">🔔</div><strong>All caught up!</strong><div style="font-size:11.5px; margin-top:2px;">No recent activity notifications.</div></div>';
                 return;
             }
             listEl.innerHTML = notifs.map(n => {
                 const isDel = n.type === 'delivery_completed';
-                const icon = isDel ? '🚚' : '🧺';
-                const bg = isDel ? '#ecfdf5' : '#eff6ff';
-                const iconBg = isDel ? '#10b981' : '#2563eb';
-                const link = isDel ? '/delivery-records-page' : '/pickup-schedules-page';
+                const isPck = n.type === 'pickup_completed' || n.type === 'new_pickup_request';
+                const icon = isDel ? '🚚' : (isPck ? '🧺' : '📦');
+                const bg = n.is_read ? '#ffffff' : '#f0fdf4';
+                const iconBg = isDel ? '#10b981' : (isPck ? '#2563eb' : '#f59e0b');
+                const link = isDel ? '/delivery-records-page' : (isPck ? '/pickup-schedules-page' : '/laundry-orders-page');
+                const timeStr = n.created_at ? n.created_at.slice(11, 16) : '';
                 return `
-                    <div style="display:flex; gap:10px; padding:10px 14px; border-bottom:1px solid #f1f5f9; background:${n.is_read ? '#fff' : bg}; transition:background 0.2s;">
-                        <div style="width:30px; height:30px; border-radius:8px; background:${iconBg}; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px;">
+                    <div style="display:flex; gap:10px; padding:11px 14px; border-bottom:1px solid #f1f5f9; background:${bg}; transition:background 0.2s;">
+                        <div style="width:32px; height:32px; border-radius:9px; background:${iconBg}; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:15px;">
                             ${icon}
                         </div>
                         <div style="flex:1; min-width:0;">
-                            <div style="font-weight:700; font-size:12.5px; color:#0f172a; display:flex; justify-content:space-between;">
-                                <span>${n.title}</span>
-                                <span style="font-size:10px; font-weight:500; color:#94a3b8;">${n.created_at ? n.created_at.slice(11, 16) : ''}</span>
+                            <div style="font-weight:700; font-size:12.5px; color:#0f172a; display:flex; justify-content:space-between; align-items:center;">
+                                <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${n.title}</span>
+                                <span style="font-size:10px; font-weight:500; color:#94a3b8; margin-left:6px; flex-shrink:0;">${timeStr}</span>
                             </div>
-                            <div style="font-size:11.5px; color:#475569; margin-top:2px; line-height:1.3;">${n.message}</div>
-                            <a href="${link}" style="display:inline-block; margin-top:4px; font-size:10.5px; font-weight:700; color:#2563eb; text-decoration:none;">View in Registry →</a>
+                            <div style="font-size:11.5px; color:#475569; margin-top:3px; line-height:1.35;">${n.message}</div>
+                            <a href="${link}" style="display:inline-block; margin-top:5px; font-size:11px; font-weight:700; color:#2563eb; text-decoration:none;">View Details &rarr;</a>
                         </div>
+                        ${!n.is_read ? '<span style="width:7px; height:7px; background:#2563eb; border-radius:50%; margin-top:6px; flex-shrink:0;"></span>' : ''}
                     </div>
                 `;
             }).join('');
+        }
+
+        function fetchAndRenderNotifs() {
+            fetch('/api/notifications', { credentials: 'same-origin' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.notifications) {
+                        renderNotifs(data.notifications);
+                        const panelBadge = document.getElementById('lcPanelUnreadBadge');
+                        if (panelBadge) {
+                            if (data.unread_count > 0) {
+                                panelBadge.style.display = 'inline-block';
+                                panelBadge.textContent = data.unread_count;
+                            } else {
+                                panelBadge.style.display = 'none';
+                            }
+                        }
+                    }
+                })
+                .catch(() => {});
         }
 
         // Live Poll Function
@@ -352,17 +410,17 @@
                             }
                         });
 
-                        // Update all sidebar badges
-                        document.querySelectorAll('.sidebar-notif-badge, #sidebarNotifBadge').forEach(sb => {
+                        const panelBadge = document.getElementById('lcPanelUnreadBadge');
+                        if (panelBadge) {
                             if (data.unread_count > 0) {
-                                sb.style.display = 'inline-block';
-                                sb.textContent = data.unread_count;
+                                panelBadge.style.display = 'inline-block';
+                                panelBadge.textContent = data.unread_count;
                             } else {
-                                sb.style.display = 'none';
+                                panelBadge.style.display = 'none';
                             }
-                        });
+                        }
 
-                        // Play chime and toast for newly arrived completions
+                        // Play chime and toast for newly arrived milestones
                         if (data.new_notifications && data.new_notifications.length > 0) {
                             data.new_notifications.forEach(n => {
                                 if (n.id > lastSeenNotifId) {
@@ -373,7 +431,7 @@
                                 showStaffToast('🔔 ' + n.title, n.message, n.type);
                             });
                         } else if (data.unread_count > 0 && data.recent && data.recent.length > 0) {
-                            // Check if the latest unread alert has been toasted on this browser
+                            // First load check on this browser
                             const topNotif = data.recent[0];
                             const lastToasted = parseInt(localStorage.getItem('lc_last_toasted_id') || '0', 10);
                             if (topNotif.id > lastToasted) {
@@ -384,7 +442,9 @@
                         }
 
                         if (data.recent) {
-                            renderNotifs(data.recent);
+                            if (notifPanelOpen) {
+                                renderNotifs(data.recent);
+                            }
                             if (data.recent.length > 0) {
                                 const maxId = Math.max(...data.recent.map(r => r.id));
                                 if (maxId > lastSeenNotifId) {
@@ -397,9 +457,10 @@
                             if (dashList && data.recent.length > 0) {
                                 dashList.innerHTML = data.recent.slice(0, 5).map(n => {
                                     const isDel = n.type === 'delivery_completed';
-                                    const bg = isDel ? '#f0fdf4' : '#eff6ff';
-                                    const border = isDel ? '#bbf7d0' : '#bfdbfe';
-                                    const icon = isDel ? '🚚' : '🧺';
+                                    const isPck = n.type === 'pickup_completed' || n.type === 'new_pickup_request';
+                                    const bg = isDel ? '#f0fdf4' : (isPck ? '#eff6ff' : '#fefce8');
+                                    const border = isDel ? '#bbf7d0' : (isPck ? '#bfdbfe' : '#fef08a');
+                                    const icon = isDel ? '🚚' : (isPck ? '🧺' : '📦');
                                     const timeStr = n.created_at ? n.created_at.slice(11, 16) : '';
                                     return `
                                         <div style="display: flex; gap: 10px; align-items: center; padding: 10px 12px; background: ${bg}; border: 1px solid ${border}; border-radius: 10px;">
@@ -419,8 +480,34 @@
                 .catch(() => {});
         }
 
+        // Cross-window instant notification bridge via BroadcastChannel and storage events
+        try {
+            const bc = new BroadcastChannel('laundrycare_realtime');
+            bc.onmessage = (event) => {
+                const data = event.data;
+                if (data && data.title) {
+                    playStaffChime();
+                    showStaffToast('🔔 ' + data.title, data.message, data.type);
+                    poll();
+                }
+            };
+        } catch (e) {}
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'lc_latest_realtime_event' && e.newValue) {
+                try {
+                    const ev = JSON.parse(e.newValue);
+                    if (ev && ev.title) {
+                        playStaffChime();
+                        showStaffToast('🔔 ' + ev.title, ev.message, ev.type);
+                        poll();
+                    }
+                } catch (err) {}
+            }
+        });
+
         poll();
-        setInterval(poll, 5000);
+        setInterval(poll, 2500); // 2.5 second polling interval
     }
 
     // Auto-init on DOMContentLoaded
@@ -440,3 +527,4 @@
         initStaffNotifications();
     }
 })();
+
