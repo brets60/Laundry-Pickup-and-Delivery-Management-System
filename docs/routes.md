@@ -1,80 +1,60 @@
-# Routing Structure & API Specification (`docs/routes.md`)
+# Routing Table
 
-**Project:** Laundry Pickup and Delivery Management System (`LaundryCare`)  
-**Milestone:** Deliverable 2 — Routing, Logic & Tests (Weeks 3–5 · Phase 2)
+## Laundry Pickup and Delivery Management System
 
-This document defines the complete RESTful routing structure across all 5 core domain modules of the Laundry Pickup and Delivery Management System. Every route uses the appropriate HTTP verb, delegates input defense to isolated guard-clause validators (`controllers/validators.py`), executes business logic via thin controllers (`controllers/crud_service.py`), and returns a standardized JSON envelope.
-
----
-
-## Standardized Response Envelope
-
-All 25 CRUD routes return a consistent top-level JSON structure:
-
-```json
-{
-  "status": 200,
-  "data": {},
-  "error": null
-}
-```
-
-- **Create (`POST`)**: Returns HTTP `201 Created` with the newly created record in `data`.
-- **Read / Update / Delete (`GET`, `PUT`, `DELETE`)**: Returns HTTP `200 OK` with the requested or updated resource in `data`.
-- **Validation Error (`POST`, `PUT`)**: Returns HTTP `422 Unprocessable Entity` with `data: null` and field-level error messages in `error.fields`.
-- **Missing Record (`GET`, `PUT`, `DELETE`)**: Returns HTTP `404 Not Found` with `data: null` and `error.code: "NOT_FOUND"`.
+This document contains the routing table for the Laundry Pickup and Delivery Management System. Each CRUD operation has a corresponding RESTful route and handler.
 
 ---
 
-## 1. Customer Module (Owner: Hazil Enoc)
+## Customer Module
 
-| Method | Path             | Handler          | Validator                    | Story it serves              |
-| ------ | ---------------- | ---------------- | ---------------------------- | ---------------------------- |
-| POST   | `/customers`     | `createCustomer` | `validate_customer_payload`  | Add new customer information |
-| GET    | `/customers`     | `listCustomers`  | —                            | View all customer records    |
-| GET    | `/customers/:id` | `showCustomer`   | —                            | View customer details        |
-| PUT    | `/customers/:id` | `updateCustomer` | `validate_customer_payload`  | Edit customer information    |
-| DELETE | `/customers/:id` | `deleteCustomer` | —                            | Remove customer records      |
+| Method | Path             | Handler          | Story it serves              |
+| ------ | ---------------- | ---------------- | ---------------------------- |
+| POST   | `/customers`     | `createCustomer` | Add new customer information |
+| GET    | `/customers`     | `listCustomers`  | View all customer records    |
+| GET    | `/customers/:id` | `showCustomer`   | View customer details        |
+| PUT    | `/customers/:id` | `updateCustomer` | Edit customer information    |
+| DELETE | `/customers/:id` | `deleteCustomer` | Remove customer records      |
 
 ### Example Requests and Responses
 
-#### `POST /customers`
+**POST `/customers`**
 
-**Request:**
+Request:
 
 ```http
-POST /customers HTTP/1.1
+POST /customers
 Content-Type: application/json
 
 {
-  "name": "Juan Dela Cruz",
-  "contact_number": "09171234567"
+  "name": "John Doe",
+  "contact_number": "09123456789"
 }
 ```
 
-**Response (`201 Created`):**
+Response:
 
 ```json
 {
   "status": 201,
   "data": {
     "id": 1,
-    "name": "Juan Dela Cruz",
-    "contact_number": "09171234567"
+    "name": "John Doe",
+    "contact_number": "09123456789"
   },
   "error": null
 }
 ```
 
-#### `GET /customers`
+**GET `/customers`**
 
-**Request:**
+Request:
 
 ```http
-GET /customers HTTP/1.1
+GET /customers
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
@@ -82,73 +62,73 @@ GET /customers HTTP/1.1
   "data": [
     {
       "id": 1,
-      "name": "Juan Dela Cruz",
-      "contact_number": "09171234567"
+      "name": "John Doe",
+      "contact_number": "09123456789"
     }
   ],
   "error": null
 }
 ```
 
-#### `GET /customers/1`
+**GET `/customers/1`**
 
-**Request:**
+Request:
 
 ```http
-GET /customers/1 HTTP/1.1
+GET /customers/1
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
   "status": 200,
   "data": {
     "id": 1,
-    "name": "Juan Dela Cruz",
-    "contact_number": "09171234567"
+    "name": "John Doe",
+    "contact_number": "09123456789"
   },
   "error": null
 }
 ```
 
-#### `PUT /customers/1`
+**PUT `/customers/1`**
 
-**Request:**
+Request:
 
 ```http
-PUT /customers/1 HTTP/1.1
+PUT /customers/1
 Content-Type: application/json
 
 {
-  "name": "Juan Dela Cruz Jr.",
-  "contact_number": "09189876543"
+  "name": "John Doe",
+  "contact_number": "09198765432"
 }
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
   "status": 200,
   "data": {
     "id": 1,
-    "name": "Juan Dela Cruz Jr.",
-    "contact_number": "09189876543"
+    "name": "John Doe",
+    "contact_number": "09198765432"
   },
   "error": null
 }
 ```
 
-#### `DELETE /customers/1`
+**DELETE `/customers/1`**
 
-**Request:**
+Request:
 
 ```http
-DELETE /customers/1 HTTP/1.1
+DELETE /customers/1
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
@@ -163,55 +143,55 @@ DELETE /customers/1 HTTP/1.1
 
 ---
 
-## 2. Laundry Orders Module (Owner: John Michael D. Bretaña)
+## Laundry Orders Module
 
-| Method | Path                  | Handler              | Validator                         | Story it serves                    |
-| ------ | --------------------- | -------------------- | --------------------------------- | ---------------------------------- |
-| POST   | `/laundry-orders`     | `createLaundryOrder` | `validate_laundry_order_payload`  | Create a new laundry order         |
-| GET    | `/laundry-orders`     | `listLaundryOrders`  | —                                 | View all laundry orders and status |
-| GET    | `/laundry-orders/:id` | `showLaundryOrder`   | —                                 | View order details and status      |
-| PUT    | `/laundry-orders/:id` | `updateLaundryOrder` | `validate_laundry_order_payload`  | Update order details and weight    |
-| DELETE | `/laundry-orders/:id` | `deleteLaundryOrder` | —                                 | Cancel or delete orders            |
+| Method | Path                  | Handler              | Story it serves                    |
+| ------ | --------------------- | -------------------- | ---------------------------------- |
+| POST   | `/laundry-orders`     | `createLaundryOrder` | Create a new laundry order         |
+| GET    | `/laundry-orders`     | `listLaundryOrders`  | View all laundry orders and status |
+| GET    | `/laundry-orders/:id` | `showLaundryOrder`   | View order details and status      |
+| PUT    | `/laundry-orders/:id` | `updateLaundryOrder` | Update order status                |
+| DELETE | `/laundry-orders/:id` | `deleteLaundryOrder` | Cancel or delete orders            |
 
 ### Example Requests and Responses
 
-#### `POST /laundry-orders`
+**POST `/laundry-orders`**
 
-**Request:**
+Request:
 
 ```http
-POST /laundry-orders HTTP/1.1
+POST /laundry-orders
 Content-Type: application/json
 
 {
-  "customer": "Juan Dela Cruz",
-  "laundry_weight": 5.5
+  "customer": "John Doe",
+  "laundry_weight": 5.0
 }
 ```
 
-**Response (`201 Created`):**
+Response:
 
 ```json
 {
   "status": 201,
   "data": {
     "id": 1,
-    "customer": "Juan Dela Cruz",
-    "laundry_weight": 5.5
+    "customer": "John Doe",
+    "laundry_weight": 5.0
   },
   "error": null
 }
 ```
 
-#### `GET /laundry-orders`
+**GET `/laundry-orders`**
 
-**Request:**
+Request:
 
 ```http
-GET /laundry-orders HTTP/1.1
+GET /laundry-orders
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
@@ -219,73 +199,73 @@ GET /laundry-orders HTTP/1.1
   "data": [
     {
       "id": 1,
-      "customer": "Juan Dela Cruz",
-      "laundry_weight": 5.5
+      "customer": "John Doe",
+      "laundry_weight": 5.0
     }
   ],
   "error": null
 }
 ```
 
-#### `GET /laundry-orders/1`
+**GET `/laundry-orders/1`**
 
-**Request:**
+Request:
 
 ```http
-GET /laundry-orders/1 HTTP/1.1
+GET /laundry-orders/1
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
   "status": 200,
   "data": {
     "id": 1,
-    "customer": "Juan Dela Cruz",
-    "laundry_weight": 5.5
+    "customer": "John Doe",
+    "laundry_weight": 5.0
   },
   "error": null
 }
 ```
 
-#### `PUT /laundry-orders/1`
+**PUT `/laundry-orders/1`**
 
-**Request:**
+Request:
 
 ```http
-PUT /laundry-orders/1 HTTP/1.1
+PUT /laundry-orders/1
 Content-Type: application/json
 
 {
-  "customer": "Juan Dela Cruz",
-  "laundry_weight": 7.0
+  "customer": "John Doe",
+  "laundry_weight": 6.5
 }
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
   "status": 200,
   "data": {
     "id": 1,
-    "customer": "Juan Dela Cruz",
-    "laundry_weight": 7.0
+    "customer": "John Doe",
+    "laundry_weight": 6.5
   },
   "error": null
 }
 ```
 
-#### `DELETE /laundry-orders/1`
+**DELETE `/laundry-orders/1`**
 
-**Request:**
+Request:
 
 ```http
-DELETE /laundry-orders/1 HTTP/1.1
+DELETE /laundry-orders/1
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
@@ -300,55 +280,55 @@ DELETE /laundry-orders/1 HTTP/1.1
 
 ---
 
-## 3. Pickup Schedules Module (Owner: Mark Ephraim Nicor)
+## Pickup Schedules Module
 
-| Method | Path                    | Handler                | Validator                           | Story it serves             |
-| ------ | ----------------------- | ---------------------- | ----------------------------------- | --------------------------- |
-| POST   | `/pickup-schedules`     | `createPickupSchedule` | `validate_pickup_schedule_payload`  | Schedule a pickup request   |
-| GET    | `/pickup-schedules`     | `listPickupSchedules`  | —                                   | View pickup schedules       |
-| GET    | `/pickup-schedules/:id` | `showPickupSchedule`   | —                                   | View a pickup schedule      |
-| PUT    | `/pickup-schedules/:id` | `updatePickupSchedule` | `validate_pickup_schedule_payload`  | Modify pickup date and time |
-| DELETE | `/pickup-schedules/:id` | `deletePickupSchedule` | —                                   | Cancel pickup requests      |
+| Method | Path                    | Handler                | Story it serves             |
+| ------ | ----------------------- | ---------------------- | --------------------------- |
+| POST   | `/pickup-schedules`     | `createPickupSchedule` | Schedule a pickup request   |
+| GET    | `/pickup-schedules`     | `listPickupSchedules`  | View pickup schedules       |
+| GET    | `/pickup-schedules/:id` | `showPickupSchedule`   | View a pickup schedule      |
+| PUT    | `/pickup-schedules/:id` | `updatePickupSchedule` | Modify pickup date and time |
+| DELETE | `/pickup-schedules/:id` | `deletePickupSchedule` | Cancel pickup requests      |
 
 ### Example Requests and Responses
 
-#### `POST /pickup-schedules`
+**POST `/pickup-schedules`**
 
-**Request:**
+Request:
 
 ```http
-POST /pickup-schedules HTTP/1.1
+POST /pickup-schedules
 Content-Type: application/json
 
 {
-  "customer": "Juan Dela Cruz",
+  "customer": "John Doe",
   "pickup_date": "2026-08-26"
 }
 ```
 
-**Response (`201 Created`):**
+Response:
 
 ```json
 {
   "status": 201,
   "data": {
     "id": 1,
-    "customer": "Juan Dela Cruz",
+    "customer": "John Doe",
     "pickup_date": "2026-08-26"
   },
   "error": null
 }
 ```
 
-#### `GET /pickup-schedules`
+**GET `/pickup-schedules`**
 
-**Request:**
+Request:
 
 ```http
-GET /pickup-schedules HTTP/1.1
+GET /pickup-schedules
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
@@ -356,7 +336,7 @@ GET /pickup-schedules HTTP/1.1
   "data": [
     {
       "id": 1,
-      "customer": "Juan Dela Cruz",
+      "customer": "John Doe",
       "pickup_date": "2026-08-26"
     }
   ],
@@ -364,65 +344,65 @@ GET /pickup-schedules HTTP/1.1
 }
 ```
 
-#### `GET /pickup-schedules/1`
+**GET `/pickup-schedules/1`**
 
-**Request:**
+Request:
 
 ```http
-GET /pickup-schedules/1 HTTP/1.1
+GET /pickup-schedules/1
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
   "status": 200,
   "data": {
     "id": 1,
-    "customer": "Juan Dela Cruz",
+    "customer": "John Doe",
     "pickup_date": "2026-08-26"
   },
   "error": null
 }
 ```
 
-#### `PUT /pickup-schedules/1`
+**PUT `/pickup-schedules/1`**
 
-**Request:**
+Request:
 
 ```http
-PUT /pickup-schedules/1 HTTP/1.1
+PUT /pickup-schedules/1
 Content-Type: application/json
 
 {
-  "customer": "Juan Dela Cruz",
+  "customer": "John Doe",
   "pickup_date": "2026-08-27"
 }
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
   "status": 200,
   "data": {
     "id": 1,
-    "customer": "Juan Dela Cruz",
+    "customer": "John Doe",
     "pickup_date": "2026-08-27"
   },
   "error": null
 }
 ```
 
-#### `DELETE /pickup-schedules/1`
+**DELETE `/pickup-schedules/1`**
 
-**Request:**
+Request:
 
 ```http
-DELETE /pickup-schedules/1 HTTP/1.1
+DELETE /pickup-schedules/1
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
@@ -437,55 +417,55 @@ DELETE /pickup-schedules/1 HTTP/1.1
 
 ---
 
-## 4. Delivery Records Module (Owner: Tristan Dave M. Plaza)
+## Delivery Records Module
 
-| Method | Path                    | Handler                | Validator                           | Story it serves             |
-| ------ | ----------------------- | ---------------------- | ----------------------------------- | --------------------------- |
-| POST   | `/delivery-records`     | `createDeliveryRecord` | `validate_delivery_record_payload`  | Create delivery records     |
-| GET    | `/delivery-records`     | `listDeliveryRecords`  | —                                   | View delivery status        |
-| GET    | `/delivery-records/:id` | `showDeliveryRecord`   | —                                   | View a delivery record      |
-| PUT    | `/delivery-records/:id` | `updateDeliveryRecord` | `validate_delivery_record_payload`  | Update delivery information |
-| DELETE | `/delivery-records/:id` | `deleteDeliveryRecord` | —                                   | Delete delivery records     |
+| Method | Path                    | Handler                | Story it serves             |
+| ------ | ----------------------- | ---------------------- | --------------------------- |
+| POST   | `/delivery-records`     | `createDeliveryRecord` | Create delivery records     |
+| GET    | `/delivery-records`     | `listDeliveryRecords`  | View delivery status        |
+| GET    | `/delivery-records/:id` | `showDeliveryRecord`   | View a delivery record      |
+| PUT    | `/delivery-records/:id` | `updateDeliveryRecord` | Update delivery information |
+| DELETE | `/delivery-records/:id` | `deleteDeliveryRecord` | Delete delivery records     |
 
 ### Example Requests and Responses
 
-#### `POST /delivery-records`
+**POST `/delivery-records`**
 
-**Request:**
+Request:
 
 ```http
-POST /delivery-records HTTP/1.1
+POST /delivery-records
 Content-Type: application/json
 
 {
-  "customer": "Juan Dela Cruz",
+  "customer": "John Doe",
   "delivery_date": "2026-08-28"
 }
 ```
 
-**Response (`201 Created`):**
+Response:
 
 ```json
 {
   "status": 201,
   "data": {
     "id": 1,
-    "customer": "Juan Dela Cruz",
+    "customer": "John Doe",
     "delivery_date": "2026-08-28"
   },
   "error": null
 }
 ```
 
-#### `GET /delivery-records`
+**GET `/delivery-records`**
 
-**Request:**
+Request:
 
 ```http
-GET /delivery-records HTTP/1.1
+GET /delivery-records
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
@@ -493,7 +473,7 @@ GET /delivery-records HTTP/1.1
   "data": [
     {
       "id": 1,
-      "customer": "Juan Dela Cruz",
+      "customer": "John Doe",
       "delivery_date": "2026-08-28"
     }
   ],
@@ -501,65 +481,65 @@ GET /delivery-records HTTP/1.1
 }
 ```
 
-#### `GET /delivery-records/1`
+**GET `/delivery-records/1`**
 
-**Request:**
+Request:
 
 ```http
-GET /delivery-records/1 HTTP/1.1
+GET /delivery-records/1
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
   "status": 200,
   "data": {
     "id": 1,
-    "customer": "Juan Dela Cruz",
+    "customer": "John Doe",
     "delivery_date": "2026-08-28"
   },
   "error": null
 }
 ```
 
-#### `PUT /delivery-records/1`
+**PUT `/delivery-records/1`**
 
-**Request:**
+Request:
 
 ```http
-PUT /delivery-records/1 HTTP/1.1
+PUT /delivery-records/1
 Content-Type: application/json
 
 {
-  "customer": "Juan Dela Cruz",
+  "customer": "John Doe",
   "delivery_date": "2026-08-29"
 }
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
   "status": 200,
   "data": {
     "id": 1,
-    "customer": "Juan Dela Cruz",
+    "customer": "John Doe",
     "delivery_date": "2026-08-29"
   },
   "error": null
 }
 ```
 
-#### `DELETE /delivery-records/1`
+**DELETE `/delivery-records/1`**
 
-**Request:**
+Request:
 
 ```http
-DELETE /delivery-records/1 HTTP/1.1
+DELETE /delivery-records/1
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
@@ -574,42 +554,42 @@ DELETE /delivery-records/1 HTTP/1.1
 
 ---
 
-## 5. Payment Module (Owner: Marvin Oclarino)
+## Payment Module
 
-| Method | Path            | Handler         | Validator                  | Story it serves          |
-| ------ | --------------- | --------------- | -------------------------- | ------------------------ |
-| POST   | `/payments`     | `createPayment` | `validate_payment_payload` | Add payment transactions |
-| GET    | `/payments`     | `listPayments`  | —                          | View payment history     |
-| GET    | `/payments/:id` | `showPayment`   | —                          | View a payment record    |
-| PUT    | `/payments/:id` | `updatePayment` | `validate_payment_payload` | Update payment status    |
-| DELETE | `/payments/:id` | `deletePayment` | —                          | Delete payment records   |
+| Method | Path            | Handler         | Story it serves          |
+| ------ | --------------- | --------------- | ------------------------ |
+| POST   | `/payments`     | `createPayment` | Add payment transactions |
+| GET    | `/payments`     | `listPayments`  | View payment history     |
+| GET    | `/payments/:id` | `showPayment`   | View a payment record    |
+| PUT    | `/payments/:id` | `updatePayment` | Update payment status    |
+| DELETE | `/payments/:id` | `deletePayment` | Delete payment records   |
 
 ### Example Requests and Responses
 
-#### `POST /payments`
+**POST `/payments`**
 
-**Request:**
+Request:
 
 ```http
-POST /payments HTTP/1.1
+POST /payments
 Content-Type: application/json
 
 {
-  "customer": "Juan Dela Cruz",
-  "payment_amount": 275.0,
+  "customer": "John Doe",
+  "payment_amount": 100.0,
   "payment_method": "Cash"
 }
 ```
 
-**Response (`201 Created`):**
+Response:
 
 ```json
 {
   "status": 201,
   "data": {
     "id": 1,
-    "customer": "Juan Dela Cruz",
-    "payment_amount": 275.0,
+    "customer": "John Doe",
+    "payment_amount": 100.0,
     "payment_method": "Cash",
     "transaction_time": "2026-08-26 14:30:00"
   },
@@ -617,15 +597,15 @@ Content-Type: application/json
 }
 ```
 
-#### `GET /payments`
+**GET `/payments`**
 
-**Request:**
+Request:
 
 ```http
-GET /payments HTTP/1.1
+GET /payments
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
@@ -633,8 +613,8 @@ GET /payments HTTP/1.1
   "data": [
     {
       "id": 1,
-      "customer": "Juan Dela Cruz",
-      "payment_amount": 275.0,
+      "customer": "John Doe",
+      "payment_amount": 100.0,
       "payment_method": "Cash",
       "transaction_time": "2026-08-26 14:30:00"
     }
@@ -643,23 +623,23 @@ GET /payments HTTP/1.1
 }
 ```
 
-#### `GET /payments/1`
+**GET `/payments/1`**
 
-**Request:**
+Request:
 
 ```http
-GET /payments/1 HTTP/1.1
+GET /payments/1
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
   "status": 200,
   "data": {
     "id": 1,
-    "customer": "Juan Dela Cruz",
-    "payment_amount": 275.0,
+    "customer": "John Doe",
+    "payment_amount": 100.0,
     "payment_method": "Cash",
     "transaction_time": "2026-08-26 14:30:00"
   },
@@ -667,45 +647,45 @@ GET /payments/1 HTTP/1.1
 }
 ```
 
-#### `PUT /payments/1`
+**PUT `/payments/1`**
 
-**Request:**
+Request:
 
 ```http
-PUT /payments/1 HTTP/1.1
+PUT /payments/1
 Content-Type: application/json
 
 {
-  "customer": "Juan Dela Cruz",
-  "payment_amount": 350.0,
+  "customer": "John Doe",
+  "payment_amount": 150.0,
   "payment_method": "GCash"
 }
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
   "status": 200,
   "data": {
     "id": 1,
-    "customer": "Juan Dela Cruz",
-    "payment_amount": 350.0,
+    "customer": "John Doe",
+    "payment_amount": 150.0,
     "payment_method": "GCash"
   },
   "error": null
 }
 ```
 
-#### `DELETE /payments/1`
+**DELETE `/payments/1`**
 
-**Request:**
+Request:
 
 ```http
-DELETE /payments/1 HTTP/1.1
+DELETE /payments/1
 ```
 
-**Response (`200 OK`):**
+Response:
 
 ```json
 {
@@ -720,48 +700,86 @@ DELETE /payments/1 HTTP/1.1
 
 ---
 
-## Route Verification Matrix (25/25 CRUD Endpoints)
+## Response Format
 
-All 25 CRUD routes are verified both manually and in the automated test suite (`tests/test_deliverable_2_crud.py`).
+All CRUD handlers use the same standardized response structure:
 
-| # | Module | Method | Route | Expected Status | Actual Status | Result |
-|---:|---|---|---|---:|---:|:---:|
-| 1 | Customer | `POST` | `/customers` | 201 | 201 | PASS |
-| 2 | Customer | `GET` | `/customers` | 200 | 200 | PASS |
-| 3 | Customer | `GET` | `/customers/1` | 200 | 200 | PASS |
-| 4 | Customer | `PUT` | `/customers/1` | 200 | 200 | PASS |
-| 5 | Customer | `DELETE` | `/customers/1` | 200 | 200 | PASS |
-| 6 | Laundry Orders | `POST` | `/laundry-orders` | 201 | 201 | PASS |
-| 7 | Laundry Orders | `GET` | `/laundry-orders` | 200 | 200 | PASS |
-| 8 | Laundry Orders | `GET` | `/laundry-orders/1` | 200 | 200 | PASS |
-| 9 | Laundry Orders | `PUT` | `/laundry-orders/1` | 200 | 200 | PASS |
-| 10 | Laundry Orders | `DELETE` | `/laundry-orders/1` | 200 | 200 | PASS |
-| 11 | Pickup Schedules | `POST` | `/pickup-schedules` | 201 | 201 | PASS |
-| 12 | Pickup Schedules | `GET` | `/pickup-schedules` | 200 | 200 | PASS |
-| 13 | Pickup Schedules | `GET` | `/pickup-schedules/1` | 200 | 200 | PASS |
-| 14 | Pickup Schedules | `PUT` | `/pickup-schedules/1` | 200 | 200 | PASS |
-| 15 | Pickup Schedules | `DELETE` | `/pickup-schedules/1` | 200 | 200 | PASS |
-| 16 | Delivery Records | `POST` | `/delivery-records` | 201 | 201 | PASS |
-| 17 | Delivery Records | `GET` | `/delivery-records` | 200 | 200 | PASS |
-| 18 | Delivery Records | `GET` | `/delivery-records/1` | 200 | 200 | PASS |
-| 19 | Delivery Records | `PUT` | `/delivery-records/1` | 200 | 200 | PASS |
-| 20 | Delivery Records | `DELETE` | `/delivery-records/1` | 200 | 200 | PASS |
-| 21 | Payments | `POST` | `/payments` | 201 | 201 | PASS |
-| 22 | Payments | `GET` | `/payments` | 200 | 200 | PASS |
-| 23 | Payments | `GET` | `/payments/1` | 200 | 200 | PASS |
-| 24 | Payments | `PUT` | `/payments/1` | 200 | 200 | PASS |
-| 25 | Payments | `DELETE` | `/payments/1` | 200 | 200 | PASS |
-
-### Wrong-Method Defense (`405 Method Not Allowed`)
-
-Collection endpoints reject destructive `DELETE` or `PUT` calls that omit a resource `:id`:
-
-```http
-DELETE /customers HTTP/1.1
-DELETE /laundry-orders HTTP/1.1
-DELETE /pickup-schedules HTTP/1.1
-DELETE /delivery-records HTTP/1.1
-DELETE /payments HTTP/1.1
+```json
+{
+  "status": 200,
+  "data": {},
+  "error": null
+}
 ```
 
-**Response:** `405 Method Not Allowed`
+Create operations use HTTP status **201**. Read, update, and delete operations use **200** for successful responses.
+
+---
+
+## Route Testing Summary
+
+All 25 routes were tested against the running Flask application at `http://127.0.0.1:5000`.
+
+### Customer Module
+
+| Method | Route | Actual Status | Result |
+|---|---|---:|---|
+| POST | `/customers` | 201 | PASS |
+| GET | `/customers` | 200 | PASS |
+| GET | `/customers/1` | 200 | PASS |
+| PUT | `/customers/1` | 200 | PASS |
+| DELETE | `/customers/1` | 200 | PASS |
+
+### Laundry Orders Module
+
+| Method | Route | Actual Status | Result |
+|---|---|---:|---|
+| POST | `/laundry-orders` | 201 | PASS |
+| GET | `/laundry-orders` | 200 | PASS |
+| GET | `/laundry-orders/1` | 200 | PASS |
+| PUT | `/laundry-orders/1` | 200 | PASS |
+| DELETE | `/laundry-orders/1` | 200 | PASS |
+
+### Pickup Schedules Module
+
+| Method | Route | Actual Status | Result |
+|---|---|---:|---|
+| POST | `/pickup-schedules` | 201 | PASS |
+| GET | `/pickup-schedules` | 200 | PASS |
+| GET | `/pickup-schedules/1` | 200 | PASS |
+| PUT | `/pickup-schedules/1` | 200 | PASS |
+| DELETE | `/pickup-schedules/1` | 200 | PASS |
+
+### Delivery Records Module
+
+| Method | Route | Actual Status | Result |
+|---|---|---:|---|
+| POST | `/delivery-records` | 201 | PASS |
+| GET | `/delivery-records` | 200 | PASS |
+| GET | `/delivery-records/1` | 200 | PASS |
+| PUT | `/delivery-records/1` | 200 | PASS |
+| DELETE | `/delivery-records/1` | 200 | PASS |
+
+### Payment Module
+
+| Method | Route | Actual Status | Result |
+|---|---|---:|---|
+| POST | `/payments` | 201 | PASS |
+| GET | `/payments` | 200 | PASS |
+| GET | `/payments/1` | 200 | PASS |
+| PUT | `/payments/1` | 200 | PASS |
+| DELETE | `/payments/1` | 200 | PASS |
+
+### Wrong-Method Test
+
+**Request:**
+
+```http
+DELETE /customers
+```
+
+**Response:**
+
+```text
+405 Method Not Allowed
+```

@@ -1,14 +1,7 @@
-"""
-Guard-clause input validation module for Deliverable 2 (Routing, Logic & Tests).
-Isolates all input validation rules from routing and database persistence.
-Every create/update route returns a standardized HTTP 422 envelope on invalid input.
-"""
-
 from flask import jsonify
 
 
 def validation_error_response(fields_dict):
-    """Returns the standardized HTTP 422 Unprocessable Entity JSON envelope."""
     return jsonify({
         "status": 422,
         "data": None,
@@ -21,7 +14,6 @@ def validation_error_response(fields_dict):
 
 
 def not_found_response(message):
-    """Returns the standardized HTTP 404 Not Found JSON envelope."""
     return jsonify({
         "status": 404,
         "data": None,
@@ -33,7 +25,6 @@ def not_found_response(message):
 
 
 def success_response(data, status_code=200):
-    """Returns the standardized HTTP 200/201 success JSON envelope."""
     return jsonify({
         "status": status_code,
         "data": data,
@@ -42,7 +33,6 @@ def success_response(data, status_code=200):
 
 
 def _is_blank_string(val):
-    """Guard helper: checks if a value is None or a whitespace-only string."""
     if val is None:
         return True
     if isinstance(val, str) and not val.strip():
@@ -51,11 +41,6 @@ def _is_blank_string(val):
 
 
 def _parse_positive_number(val, field_label):
-    """
-    Guard helper: parses a positive numeric value (> 0), rejecting booleans,
-    strings that cannot be parsed as floats, NaN/Inf, and values <= 0.
-    Returns (parsed_float, error_message_or_None).
-    """
     if isinstance(val, bool):
         return None, f"{field_label} must be a number."
     try:
@@ -70,10 +55,6 @@ def _parse_positive_number(val, field_label):
 
 
 def validate_customer_payload(data):
-    """
-    Guard-clause validation for POST /customers and PUT /customers/<id>.
-    Returns (cleaned_data_dict, errors_dict).
-    """
     if not isinstance(data, dict):
         data = {}
 
@@ -97,10 +78,6 @@ def validate_customer_payload(data):
 
 
 def validate_laundry_order_payload(data):
-    """
-    Guard-clause validation for POST /laundry-orders and PUT /laundry-orders/<id>.
-    Returns (cleaned_data_dict, errors_dict).
-    """
     if not isinstance(data, dict):
         data = {}
 
@@ -130,10 +107,6 @@ def validate_laundry_order_payload(data):
 
 
 def validate_pickup_schedule_payload(data):
-    """
-    Guard-clause validation for POST /pickup-schedules and PUT /pickup-schedules/<id>.
-    Returns (cleaned_data_dict, errors_dict).
-    """
     if not isinstance(data, dict):
         data = {}
 
@@ -157,10 +130,6 @@ def validate_pickup_schedule_payload(data):
 
 
 def validate_delivery_record_payload(data):
-    """
-    Guard-clause validation for POST /delivery-records and PUT /delivery-records/<id>.
-    Returns (cleaned_data_dict, errors_dict).
-    """
     if not isinstance(data, dict):
         data = {}
 
@@ -184,10 +153,6 @@ def validate_delivery_record_payload(data):
 
 
 def validate_payment_payload(data):
-    """
-    Guard-clause validation for POST /payments and PUT /payments/<id>.
-    Returns (cleaned_data_dict, errors_dict).
-    """
     if not isinstance(data, dict):
         data = {}
 

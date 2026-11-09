@@ -2,50 +2,64 @@
 
 **Live Web Application:** [https://laundrycare-management.onrender.com](https://laundrycare-management.onrender.com)  
 **GitHub Repository:** [https://github.com/brets60/Laundry-Pickup-and-Delivery-Management-System](https://github.com/brets60/Laundry-Pickup-and-Delivery-Management-System)  
-**Cloud Database:** Supabase (PostgreSQL - Singapore Region) / Local SQLite Fallback  
+**Cloud Database:** Supabase (PostgreSQL - Singapore Region)  
 **Application Hosting:** Render Cloud Platform (PaaS)
 
 ---
 
-## Problem Statement
+# Problem Statement
 
 Many laundry shops still use manual methods to record customer information, laundry orders, pickup schedules, and delivery transactions. This often leads to lost records, delayed deliveries, and poor communication with customers. The proposed Laundry Pickup and Delivery Management System aims to automate these processes by allowing customers to schedule pickups and deliveries, monitor the status of their laundry, and help administrators efficiently manage orders and records.
 
----
-
-## Team Roster
+# Team Roster
 
 **Project Title:** Laundry Pickup and Delivery Management System
 
-| Name | Coursework Role | System Operational Role | Owned Controller & Test Modules |
+| Name | Coursework Role | System Operational Role | System Responsibilities |
 | :--- | :--- | :--- | :--- |
-| **John Michael D. Bretaña** | Repo Lead | Manager (Admin) | Laundry Orders (`controllers/order_routes.py`, `/laundry-orders`), Core Architecture & Auth |
-| **Hazil Enoc** | Builder | Store Cashier | Customers (`controllers/customer_routes.py`, `/customers`), CRM & Loyalty |
-| **Marvin Oclarino** | Builder | Delivery Driver | Payments (`controllers/payment_routes.py`, `/payments`), POS Billing & Receipts |
-| **Tristan Dave M. Plaza** | Board Lead | Delivery Driver | Delivery Records (`controllers/delivery_routes.py`, `/delivery-records`), Fleet Dispatch |
-| **Mark Ephraim Nicor** | Scribe | Laundry Operator | Pickup Schedules (`controllers/pickup_routes.py`, `/pickup-schedules`), Wash Hub Operations |
+| **John Michael D. Bretaña** | Repo Lead | Manager (Admin) | Manages system operations, GitHub repository, system administration, and customer module. |
+| **Tristan Dave M. Plaza** | Board Lead | Delivery Driver | Laundry orders module, pickup collection, schedule dispatch, and sprint task tracking. |
+| **Mark Ephraim Nicor** | Scribe | Laundry Operator | Pickup schedules module, wash hub operations, machine cycle tracking, and documentation. |
+| **Marvin Oclarino** | Builder | Delivery Driver | Delivery records module, fleet logistics, order dispatches, and route execution. |
+| **Hazil Enoc** | Builder | Store Cashier | Payments module, front-counter intake, client registration, POS billing, and receipts. |
 
----
+## Team Members
 
-## Objectives
+1. John Michael D. Bretaña
+2. Tristan Dave M. Plaza
+3. Mark Ephraim Nicor
+4. Marvin Oclarino
+5. Hazil Enoc
 
-### General Objective
+# Objectives 
+
+## General Objective
 
 The main objective of the study is to develop a Laundry Pickup and Delivery Management System that will automate and improve the management of laundry services, including customer records, order processing, pickup scheduling, and delivery tracking.
 
-### Specific Objectives
+## Specific Objectives
 
 1. To create a system that allows customers to schedule laundry pickup and delivery services conveniently.
+
 2. To develop a centralized database for managing customer information and laundry orders.
+
 3. To provide real-time updates on the status of laundry orders, from pickup to delivery.
+
 4. To enable administrators to efficiently manage pickup schedules, deliveries, and payment transactions.
+
 5. To evaluate the effectiveness of the system in terms of usability, reliability, efficiency, security, and user satisfaction.
 
----
+   
+# Record Types
+1. Customers
+2. Laundry Orders
+3. Pickup Schedules
+4. Delivery Records
+5. Payments
 
-## Record Types & CRUD Matrix
+# Crud Table
 
-| Module / Record Type | Create (`POST`)              | Read (`GET`)                  | Update (`PUT`)              | Delete (`DELETE`)       |
+| Module / Record Type | Create                       | Read                          | Update                      | Delete                  |
 | -------------------- | ---------------------------- | ----------------------------- | --------------------------- | ----------------------- |
 | **Customers**        | Add new customer information | View customer details         | Edit customer information   | Remove customer records |
 | **Laundry Orders**   | Create a new laundry order   | View order details and status | Update order status         | Cancel or delete orders |
@@ -53,60 +67,70 @@ The main objective of the study is to develop a Laundry Pickup and Delivery Mana
 | **Delivery Records** | Create delivery records      | View delivery status          | Update delivery information | Delete delivery records |
 | **Payments**         | Add payment transactions     | View payment history          | Update payment status       | Delete payment records  |
 
----
 
-## Project Architecture & Deliverable Documentation
+# The Features(CRUD)
 
-- **Routing Specification (Deliverable 2):** [`docs/routes.md`](docs/routes.md) — Full 25-route CRUD routing table and standardized request/response examples.
-- **Validation Rules (Deliverable 2):** [`docs/validation.md`](docs/validation.md) — Guard-clause input validation matrix and HTTP `422` test evidence.
-- **Isolated Validators & Services (Deliverable 2):** [`controllers/validators.py`](controllers/validators.py) & [`controllers/crud_service.py`](controllers/crud_service.py).
-- **AI Statements & Notes:**
-  - Deliverable 1 (Planning & Wireframes): [`docs/ai-notes/deliverable-1.md`](docs/ai-notes/deliverable-1.md)
-  - Deliverable 2 (Phase 2 — AI OFF Statement): [`docs/ai-notes/deliverable-2.md`](docs/ai-notes/deliverable-2.md)
-  - Deliverable 3 (Weeks 6–8 Interface & View Binding): [`docs/ai-notes/week-06.md`](docs/ai-notes/week-06.md), [`docs/ai-notes/week-07.md`](docs/ai-notes/week-07.md), [`docs/ai-notes/week-08.md`](docs/ai-notes/week-08.md)
-  - Deliverable 4 (QA, Deployment & Final Defense): [`docs/ai-notes/deliverable-4.md`](docs/ai-notes/deliverable-4.md)
+**Customer Management**
+1. Add customer
+2. View customer
+3. Update customer
+4. Delete customer
 
----
+**Laundry Order Management**
+1. Create order
+2. Update order status
+3. View order history
+4. Delete order
 
-## Running the Application & Automated Test Suite
+**Pickup Scheduling**
+1. Schedule pickup
+2. Edit pickup date
+3. Cancel pickup
+
+**Delivery Management**
+1. Assign delivery
+2. Track status
+3. Confirm delivery
+
+**Payment Management**
+1. Record payment
+2. View payment history
+3. Update payment status
+4. Delete payment
+
+# Target Users of the System
+
+The proposed Laundry Pickup and Delivery Management System will serve the following users:
+
+**1. Customers**
+
+Customers can schedule laundry pickups and deliveries, monitor the status of their orders, and view their transaction history.
+
+**2. Administrator**
+
+The administrator is responsible for managing customer records, laundry orders, pickup schedules, deliveries, and payment transactions.
+
+**3. Delivery Personnel**
+
+The delivery personnel handles the pickup and delivery of laundry items and updates the status of each transaction.
+
+**4. Laundry Staff**
+
+The laundry staff manages the washing, drying, folding, and packaging processes and updates the progress of customers' orders.
+
+# How to Run the Project and Tests
 
 ### 1. Install Dependencies
-
 ```bash
-python -m venv .venv
-# Windows PowerShell:
-.venv\Scripts\pip install -r requirements.txt
-# macOS / Linux:
-.venv/bin/pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
-### 2. Run the Web Application Locally
-
+### 2. Run the Application
 ```bash
 python app.py
 ```
 
-The server starts at `http://127.0.0.1:5000`.
-
-### 3. Run the Automated Test Suite
-
-Run the full automated test suite (covering happy paths, HTTP `422` validation failures, and `404`/`405` edge cases across all 5 CRUD modules):
-
+### 3. Run the Test Suite
 ```bash
 pytest -v
 ```
-
-To run only the Deliverable 2 core CRUD routing, validation, and controller test suite:
-
-```bash
-pytest tests/test_deliverable_2_crud.py -v
-```
-
----
-
-## Target Users of the System
-
-1. **Customers** — Schedule laundry pickups and deliveries, monitor the status of their orders, and view transaction history.
-2. **Administrator** — Manages customer records, laundry orders, pickup schedules, deliveries, and payment transactions.
-3. **Delivery Personnel** — Handles the pickup and delivery of laundry items and updates the status of each transaction.
-4. **Laundry Staff** — Manages the washing, drying, folding, and packaging processes and updates the progress of customers' orders.

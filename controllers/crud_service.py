@@ -1,14 +1,8 @@
-"""
-Isolated Business Logic & Persistence Service for Deliverable 2 (Routing, Logic & Tests).
-Separates database CRUD operations from thin HTTP controllers and input validation.
-"""
-
 from datetime import datetime
 from db import get_db_connection
 
 
 def customer_exists(customer_name):
-    """Checks whether a customer record with the given name exists."""
     conn = get_db_connection()
     customer = conn.execute(
         "SELECT id FROM customers WHERE name = ?",
@@ -19,16 +13,13 @@ def customer_exists(customer_name):
 
 
 def _coerce_id(raw_id):
-    """Safely converts a numeric string ID to int if possible, otherwise returns raw_id."""
     try:
         return int(raw_id)
     except (TypeError, ValueError):
         return raw_id
 
 
-# ============================================================
-# 1. CUSTOMERS SERVICE
-# ============================================================
+# Customers
 
 def create_customer_record(cleaned_data):
     conn = get_db_connection()
@@ -107,9 +98,7 @@ def delete_customer_record(customer_id):
     }
 
 
-# ============================================================
-# 2. LAUNDRY ORDERS SERVICE
-# ============================================================
+# Laundry Orders
 
 def create_laundry_order_record(cleaned_data):
     conn = get_db_connection()
@@ -188,9 +177,7 @@ def delete_laundry_order_record(order_id):
     }
 
 
-# ============================================================
-# 3. PICKUP SCHEDULES SERVICE
-# ============================================================
+# Pickup Schedules
 
 def create_pickup_schedule_record(cleaned_data):
     conn = get_db_connection()
@@ -269,9 +256,7 @@ def delete_pickup_schedule_record(schedule_id):
     }
 
 
-# ============================================================
-# 4. DELIVERY RECORDS SERVICE
-# ============================================================
+# Delivery Records
 
 def create_delivery_record_entry(cleaned_data):
     conn = get_db_connection()
@@ -350,9 +335,7 @@ def delete_delivery_record_entry(delivery_id):
     }
 
 
-# ============================================================
-# 5. PAYMENTS SERVICE
-# ============================================================
+# Payments
 
 def create_payment_record(cleaned_data):
     conn = get_db_connection()
