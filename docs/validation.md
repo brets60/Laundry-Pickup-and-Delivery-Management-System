@@ -1,78 +1,15 @@
-# Week 4 Validation Matrix
+# Input Validation Rules & Guard-Clause Specification (`docs/validation.md`)
 
-This document defines the validation rules for the create and update routes of the Laundry Pickup and Delivery Management System.
+**Project:** Laundry Pickup and Delivery Management System (`LaundryCare`)  
+**Milestone:** Deliverable 2 — Routing, Logic & Tests (Weeks 3–5 · Phase 2)
 
-## Customer Module
+This document defines the guard-clause input validation rules defending every create (`POST`) and update (`PUT`) route in the Laundry Pickup and Delivery Management System. Validation logic is isolated in [`controllers/validators.py`](../controllers/validators.py) so that malformed, empty, or out-of-range payloads are rejected with a standardized `422 Unprocessable Entity` JSON envelope before reaching controller persistence logic—never resulting in a `500 Internal Server Error`.
 
-### POST /customers
+---
 
-| Field | Required | Validation Rule |
-|---|---|---|
-| name | Yes | Must not be blank |
-| contact_number | Yes | Must not be blank |
+## Standardized HTTP 422 Validation Error Envelope
 
-### PUT /customers/:id
-
-| Field | Required | Validation Rule |
-|---|---|---|
-| name | Yes | Must not be blank |
-| contact_number | Yes | Must not be blank |
-
-## Laundry Orders Module
-
-### POST /laundry-orders
-
-| Field | Required | Validation Rule |
-|---|---|---|
-| customer | Yes | Customer must be selected |
-| laundry_weight | Yes | Must be greater than zero |
-
-### PUT /laundry-orders/:id
-
-| Field | Required | Validation Rule |
-|---|---|---|
-| customer | Yes | Customer must be selected |
-| laundry_weight | Yes | Must be greater than zero |
-
-## Pickup Module
-
-### POST /pickup-schedules
-
-| Field | Required | Validation Rule |
-|---|---|---|
-| pickup_date | Yes | Must not be blank |
-| customer | Yes | Customer must be selected |
-
-### PUT /pickup-schedules/:id
-
-| Field | Required | Validation Rule |
-|---|---|---|
-| pickup_date | Yes | Must not be blank |
-| customer | Yes | Customer must be selected |
-
-## Payment Module
-
-### POST /payments
-
-| Field | Required | Validation Rule |
-|---|---|---|
-| payment_amount | Yes | Must not be blank |
-| payment_method | Yes | Must be selected |
-
-### PUT /payments/:id
-
-| Field | Required | Validation Rule |
-|---|---|---|
-| payment_amount | Yes | Must not be blank |
-| payment_method | Yes | Must be selected |
-
-## Delivery Module
-
-Delivery validation rules will be added after the Delivery Module requirements are provided.
-
-## Standard Validation Response
-
-Invalid input must return HTTP 422 with the following structure:
+Whenever one or more validation rules fail on a `POST` or `PUT` request, the validator halts execution and returns HTTP `422 Unprocessable Entity`:
 
 ```json
 {
@@ -81,324 +18,557 @@ Invalid input must return HTTP 422 with the following structure:
   "error": {
     "code": "VALIDATION_ERROR",
     "message": "Validation failed.",
-    "fields": {}
+    "fields": {
+      "field_name": "Human-readable validation message."
+    }
   }
 }
+```
 
-## Customer Validation Test Evidence
+---
 
-### POST /customers — Missing Fields
+## 1. Customer Module Validation Rules (`validate_customer_payload`)
 
-**Request**
+### `POST /customers` & `PUT /customers/:id`
+
+| Field | Type | Required | Guard-Clause Rule | Error Message (`422`) |
+|---|---|:---:|---|---|
+| `name` | `string` | Yes | Must be present and non-blank after `.strip()` | `"Name is required."` |
+| `contact_number` | `string` | Yes | Must be present and non-blank after `.strip()` | `"Contact number is required."` |
+
+### Customer Validation Test Evidence
+
+#### `POST /customers` — Missing All Fields (`422`)
+
+**Request:**
 
 ```json
 {}
+```
 
-### POST /customers — Missing Contact Number
+**Response (`422 Unprocessable Entity`):**
 
-Request:
+```json
+{
+  "status": 422,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed.",
+    "fields": {
+      "name": "Name is required.",
+      "contact_number": "Contact number is required."
+    }
+  }
+}
+```
+
+#### `POST /customers` — Missing Contact Number (`422`)
+
+**Request:**
 
 ```json
 {
   "name": "John Doe"
 }
+```
 
-### POST /customers — Missing Name
+**Response (`422 Unprocessable Entity`):**
 
-Request:
+```json
+{
+  "status": 422,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed.",
+    "fields": {
+      "contact_number": "Contact number is required."
+    }
+  }
+}
+```
+
+#### `POST /customers` — Missing Name (`422`)
+
+**Request:**
 
 ```json
 {
   "contact_number": "09123456789"
 }
+```
 
-### POST /customers — Valid Data
+**Response (`422 Unprocessable Entity`):**
 
-Request:
+```json
+{
+  "status": 422,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed.",
+    "fields": {
+      "name": "Name is required."
+    }
+  }
+}
+```
+
+#### `POST /customers` & `PUT /customers/1` — Valid Data (`201` / `200`)
+
+**Request:**
 
 ```json
 {
   "name": "John Doe",
   "contact_number": "09123456789"
 }
+```
 
-### PUT /customers/1 — Missing Fields
-
-Request:
-
-```json
-{}
-
-### PUT /customers/1 — Valid Data
-
-Request:
+**Response (`201 Created` on `POST`, `200 OK` on `PUT`):**
 
 ```json
 {
-  "name": "John Doe",
-  "contact_number": "09123456789"
+  "status": 201,
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "contact_number": "09123456789"
+  },
+  "error": null
 }
-
-## Laundry Orders Validation Test Evidence
-
-### POST /laundry-orders — Missing Fields
-
-Request:
-
-```json
-{}
-
-### POST /laundry-orders — Zero Laundry Weight
-
-Request:
-
-```json
-{
-  "customer": "1",
-  "laundry_weight": 0
-}
-
-### POST /laundry-orders — Invalid Laundry Weight Type
-
-Request:
-
-```json
-{
-  "customer": "1",
-  "laundry_weight": "abc"
-}
-
-### POST /laundry-orders — Valid Data
-
-Request:
-
-```json
-{
-  "customer": "1",
-  "laundry_weight": 5
-}
-
-### PUT /laundry-orders/1 — Missing Fields
-
-Request:
-
-```json
-{}
-
-{
-  "customer": "1",
-  "laundry_weight": 0
-}
-
-{
-  "customer": "1",
-  "laundry_weight": "abc"
-}
-{
-  "customer": "1",
-  "laundry_weight": 5
-}
-
-## Pickup Validation Test Evidence
-
-### POST /pickup-schedules — Missing Fields
-
-Request:
-
-```json
-{}
-
-{
-  "pickup_date": "2026-08-26"
-}
-
-{
-  "pickup_date": "2026-08-26",
-  "customer": "1"
-}
-
-### PUT /pickup-schedules/1 — Missing Fields
-
-Request:
-
-```json
-{}
-
-{
-  "pickup_date": "2026-08-26"
-}
-
-{
-  "pickup_date": "2026-08-26",
-  "customer": "1"
-}
-
-## Delivery Validation Test Evidence
-
-### POST /delivery-records — Missing Fields
-
-Request:
-
-```json
-{}
-
-{
-  "delivery_date": "2026-08-26"
-}
-
-{
-  "delivery_date": "2026-08-26",
-  "customer": "1"
-}   
-
-### PUT /delivery-records/1 — Missing Fields
-
-Request:
-
-```json
-{}
-
-{
-  "delivery_date": "2026-08-26"
-}
-
-{
-  "delivery_date": "2026-08-26",
-  "customer": "1"
-}
-
-## Payment Validation Test Evidence
-
-### POST /payments — Missing Fields
-
-Request:
-
-```json
-{}
-
-{
-  "payment_amount": 0,
-  "payment_method": "Cash"
-}
-
-{
-  "payment_amount": "abc",
-  "payment_method": "Cash"
-}
-
-{
-  "payment_amount": 100
-}
-
-{
-  "payment_amount": 100,
-  "payment_method": "Cash"
-}
-
-### PUT /payments/1 — Missing Fields
-
-Request:
-
-```json
-{}
-
-{
-  "payment_amount": 0,
-  "payment_method": "Cash"
-}
-
-{
-  "payment_amount": "abc",
-  "payment_method": "Cash"
-}
-
-{
-  "payment_amount": 100,
-  "payment_method": "Cash"
-}
-
-## Week 5 CRUD Route Test Evidence
-
-### DELETE Route Tests
-
-#### DELETE /customers/1
-
-Expected Result: `200`
-
-Result: Passed. The Customer DELETE endpoint returned a successful response.
-
-#### DELETE /laundry-orders/1
-
-Expected Result: `200`
-
-Result: Passed. The Laundry Order DELETE endpoint returned a successful response.
-
-#### DELETE /pickup-schedules/1
-
-Expected Result: `200`
-
-Result: Passed. The Pickup DELETE endpoint returned a successful response.
-
-#### DELETE /delivery-records/1
-
-Expected Result: `200`
-
-Result: Passed. The Delivery DELETE endpoint returned a successful response.
-
-#### DELETE /payments/1
-
-Expected Result: `200`
-
-Result: Passed. The Payment DELETE endpoint returned a successful response.
+```
 
 ---
 
-### GET Route Tests
+## 2. Laundry Orders Module Validation Rules (`validate_laundry_order_payload`)
 
-The GET list and GET details endpoints were tested for all five modules.
+### `POST /laundry-orders` & `PUT /laundry-orders/:id`
 
-| Module | GET List | GET Details |
-|---|---|---|
-| Customer | Passed | Passed |
-| Laundry Orders | Passed | Passed |
-| Pickup | Passed | Passed |
-| Delivery | Passed | Passed |
-| Payment | Passed | Passed |
+| Field | Type | Required | Guard-Clause Rule | Error Message (`422`) |
+|---|---|:---:|---|---|
+| `customer` | `string` | Yes | Must be present and non-blank; on `POST`, customer must exist | `"Customer is required."` |
+| `laundry_weight` | `number` | Yes | Must be present, numeric (not boolean/string), and `> 0` | `"Laundry weight is required."` / `"Laundry weight must be a number."` / `"Laundry weight must be greater than zero."` |
 
-Expected Result: `200`
+### Laundry Orders Validation Test Evidence
 
-Result: Passed. All GET list and detail endpoints returned successful responses.
+#### `POST /laundry-orders` — Missing Fields (`422`)
+
+**Request:**
+
+```json
+{}
+```
+
+**Response (`422 Unprocessable Entity`):**
+
+```json
+{
+  "status": 422,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed.",
+    "fields": {
+      "customer": "Customer is required.",
+      "laundry_weight": "Laundry weight is required."
+    }
+  }
+}
+```
+
+#### `POST /laundry-orders` — Zero or Negative Laundry Weight (`422`)
+
+**Request:**
+
+```json
+{
+  "customer": "John Doe",
+  "laundry_weight": 0
+}
+```
+
+**Response (`422 Unprocessable Entity`):**
+
+```json
+{
+  "status": 422,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed.",
+    "fields": {
+      "laundry_weight": "Laundry weight must be greater than zero."
+    }
+  }
+}
+```
+
+#### `POST /laundry-orders` — Non-Numeric Laundry Weight (`422`)
+
+**Request:**
+
+```json
+{
+  "customer": "John Doe",
+  "laundry_weight": "abc"
+}
+```
+
+**Response (`422 Unprocessable Entity`):**
+
+```json
+{
+  "status": 422,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed.",
+    "fields": {
+      "laundry_weight": "Laundry weight must be a number."
+    }
+  }
+}
+```
+
+#### `POST /laundry-orders` & `PUT /laundry-orders/1` — Valid Data (`201` / `200`)
+
+**Request:**
+
+```json
+{
+  "customer": "John Doe",
+  "laundry_weight": 5
+}
+```
+
+**Response (`201 Created` on `POST`, `200 OK` on `PUT`):**
+
+```json
+{
+  "status": 201,
+  "data": {
+    "id": 1,
+    "customer": "John Doe",
+    "laundry_weight": 5.0
+  },
+  "error": null
+}
+```
 
 ---
 
-### Invalid GET ID Tests
+## 3. Pickup Schedules Module Validation Rules (`validate_pickup_schedule_payload`)
 
-The following nonexistent record IDs were tested using ID `99999`:
+### `POST /pickup-schedules` & `PUT /pickup-schedules/:id`
 
-- `GET /customers/99999`
-- `GET /laundry-orders/99999`
-- `GET /pickup-schedules/99999`
-- `GET /delivery-records/99999`
-- `GET /payments/99999`
+| Field | Type | Required | Guard-Clause Rule | Error Message (`422`) |
+|---|---|:---:|---|---|
+| `pickup_date` | `string` | Yes | Must be present and non-blank after `.strip()` | `"Pickup date is required."` |
+| `customer` | `string` | Yes | Must be present and non-blank; on `POST`, customer must exist | `"Customer is required."` |
 
-Expected Result: `404`
+### Pickup Validation Test Evidence
 
-Result: Passed. All five endpoints correctly returned a not-found response for nonexistent records.
+#### `POST /pickup-schedules` & `PUT /pickup-schedules/1` — Missing Fields (`422`)
 
-## Week 5 Wrong HTTP Method Test Evidence
+**Request:**
 
-### DELETE /customers
+```json
+{}
+```
 
-Request:
+**Response (`422 Unprocessable Entity`):**
 
-```http
-DELETE /customers
+```json
+{
+  "status": 422,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed.",
+    "fields": {
+      "pickup_date": "Pickup date is required.",
+      "customer": "Customer is required."
+    }
+  }
+}
+```
 
-DELETE /laundry-orders
+#### `POST /pickup-schedules` — Missing Customer (`422`)
 
-DELETE /pickup-schedules
+**Request:**
 
-DELETE /delivery-records
+```json
+{
+  "pickup_date": "2026-08-26"
+}
+```
 
-DELETE /payments
+**Response (`422 Unprocessable Entity`):**
 
+```json
+{
+  "status": 422,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed.",
+    "fields": {
+      "customer": "Customer is required."
+    }
+  }
+}
+```
+
+#### `POST /pickup-schedules` & `PUT /pickup-schedules/1` — Valid Data (`201` / `200`)
+
+**Request:**
+
+```json
+{
+  "pickup_date": "2026-08-26",
+  "customer": "John Doe"
+}
+```
+
+**Response (`201 Created` on `POST`, `200 OK` on `PUT`):**
+
+```json
+{
+  "status": 201,
+  "data": {
+    "id": 1,
+    "customer": "John Doe",
+    "pickup_date": "2026-08-26"
+  },
+  "error": null
+}
+```
+
+---
+
+## 4. Delivery Records Module Validation Rules (`validate_delivery_record_payload`)
+
+### `POST /delivery-records` & `PUT /delivery-records/:id`
+
+| Field | Type | Required | Guard-Clause Rule | Error Message (`422`) |
+|---|---|:---:|---|---|
+| `delivery_date` | `string` | Yes | Must be present and non-blank after `.strip()` | `"Delivery date is required."` |
+| `customer` | `string` | Yes | Must be present and non-blank; on `POST`, customer must exist | `"Customer is required."` |
+
+### Delivery Validation Test Evidence
+
+#### `POST /delivery-records` & `PUT /delivery-records/1` — Missing Fields (`422`)
+
+**Request:**
+
+```json
+{}
+```
+
+**Response (`422 Unprocessable Entity`):**
+
+```json
+{
+  "status": 422,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed.",
+    "fields": {
+      "delivery_date": "Delivery date is required.",
+      "customer": "Customer is required."
+    }
+  }
+}
+```
+
+#### `POST /delivery-records` — Missing Customer (`422`)
+
+**Request:**
+
+```json
+{
+  "delivery_date": "2026-08-26"
+}
+```
+
+**Response (`422 Unprocessable Entity`):**
+
+```json
+{
+  "status": 422,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed.",
+    "fields": {
+      "customer": "Customer is required."
+    }
+  }
+}
+```
+
+#### `POST /delivery-records` & `PUT /delivery-records/1` — Valid Data (`201` / `200`)
+
+**Request:**
+
+```json
+{
+  "delivery_date": "2026-08-26",
+  "customer": "John Doe"
+}
+```
+
+**Response (`201 Created` on `POST`, `200 OK` on `PUT`):**
+
+```json
+{
+  "status": 201,
+  "data": {
+    "id": 1,
+    "customer": "John Doe",
+    "delivery_date": "2026-08-26"
+  },
+  "error": null
+}
+```
+
+---
+
+## 5. Payment Module Validation Rules (`validate_payment_payload`)
+
+### `POST /payments` & `PUT /payments/:id`
+
+| Field | Type | Required | Guard-Clause Rule | Error Message (`422`) |
+|---|---|:---:|---|---|
+| `customer` | `string` | Yes | Must be present and non-blank after `.strip()` | `"Customer is required."` |
+| `payment_amount` | `number` | Yes | Must be present, numeric (not boolean/string), and `> 0` | `"Payment amount is required."` / `"Payment amount must be a number."` / `"Payment amount must be greater than zero."` |
+| `payment_method` | `string` | Yes | Must be present and non-blank after `.strip()` | `"Payment method is required."` |
+
+### Payment Validation Test Evidence
+
+#### `POST /payments` & `PUT /payments/1` — Missing All Fields (`422`)
+
+**Request:**
+
+```json
+{}
+```
+
+**Response (`422 Unprocessable Entity`):**
+
+```json
+{
+  "status": 422,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed.",
+    "fields": {
+      "customer": "Customer is required.",
+      "payment_amount": "Payment amount is required.",
+      "payment_method": "Payment method is required."
+    }
+  }
+}
+```
+
+#### `POST /payments` — Zero or Negative Payment Amount (`422`)
+
+**Request:**
+
+```json
+{
+  "customer": "John Doe",
+  "payment_amount": 0,
+  "payment_method": "Cash"
+}
+```
+
+**Response (`422 Unprocessable Entity`):**
+
+```json
+{
+  "status": 422,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed.",
+    "fields": {
+      "payment_amount": "Payment amount must be greater than zero."
+    }
+  }
+}
+```
+
+#### `POST /payments` — Invalid Payment Amount Type (`422`)
+
+**Request:**
+
+```json
+{
+  "customer": "John Doe",
+  "payment_amount": "abc",
+  "payment_method": "Cash"
+}
+```
+
+**Response (`422 Unprocessable Entity`):**
+
+```json
+{
+  "status": 422,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed.",
+    "fields": {
+      "payment_amount": "Payment amount must be a number."
+    }
+  }
+}
+```
+
+#### `POST /payments` & `PUT /payments/1` — Valid Data (`201` / `200`)
+
+**Request:**
+
+```json
+{
+  "customer": "John Doe",
+  "payment_amount": 100,
+  "payment_method": "Cash"
+}
+```
+
+**Response (`201 Created` on `POST`, `200 OK` on `PUT`):**
+
+```json
+{
+  "status": 201,
+  "data": {
+    "id": 1,
+    "customer": "John Doe",
+    "payment_amount": 100.0,
+    "payment_method": "Cash",
+    "transaction_time": "2026-08-26 15:00:00"
+  },
+  "error": null
+}
+```
+
+---
+
+## Week 5 CRUD & Edge-Case Verification Summary
+
+| Test Category | Endpoints Covered | Expected HTTP Status | Result |
+|---|---|:---:|:---:|
+| **Create (`POST`) — Valid Payload** | `/customers`, `/laundry-orders`, `/pickup-schedules`, `/delivery-records`, `/payments` | `201 Created` | **PASS** |
+| **Create/Update (`POST`/`PUT`) — Invalid/Missing/Blank Input** | All 10 Create & Update routes | `422 Unprocessable Entity` | **PASS** |
+| **Read List & Details (`GET`) — Existing Records** | All 10 Read routes | `200 OK` | **PASS** |
+| **Update (`PUT`) — Valid Payload on Existing ID** | All 5 Update routes | `200 OK` | **PASS** |
+| **Delete (`DELETE`) — Existing ID** | All 5 Delete routes | `200 OK` | **PASS** |
+| **Missing Record ID (`99999`) on `GET`, `PUT`, `DELETE`** | All 15 `:id` routes | `404 Not Found` | **PASS** |
+| **Wrong HTTP Method on Collection (`DELETE /customers`, etc.)** | All 5 Collection routes | `405 Method Not Allowed` | **PASS** |
